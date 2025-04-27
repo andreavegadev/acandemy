@@ -1,5 +1,5 @@
 // Ejemplo en HomePage.js
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 const ProductPage = () => {
   return (

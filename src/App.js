@@ -22,8 +22,6 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/add-pet" element={<AddPetPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
-          {/* Puedes agregar más rutas aquí */}
         </Routes>
       </Router>
     </CartProvider>
