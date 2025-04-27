@@ -4,10 +4,10 @@ import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
-import LoginPage from "./pages/LoginPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import LoginPage from "./pages/login/LoginPage";
+import ForgotPasswordPage from "./pages/login/ForgotPasswordPage";
 import AddPetPage from "./pages/AddPetPage";
-import RegisterPage from "./pages/RegisterPage";
+import RegisterPage from "./pages/login/RegisterPage";
 
 function App() {
   return (
