@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 
 const AddPetPage = () => {
@@ -26,7 +26,6 @@ const AddPetPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Inserta los datos en Supabase
     const { data, error } = await supabase.from("pets").insert([formData]);
 
     if (error) {
@@ -35,7 +34,7 @@ const AddPetPage = () => {
     } else {
       console.log("Mascota guardada con éxito:", data);
       alert("Mascota añadida con éxito.");
-      navigate("/pets"); // Redirige al listado de mascotas
+      navigate("/pets");
     }
   };
 

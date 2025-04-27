@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 import LogoutButton from "./components/LogoutButton";
 import HomePage from "./pages/HomePage";
-import ProductPage from "./pages/ProductPage";
+import ProductPage from "./pages/products/ProductPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/login/LoginPage";
 import ForgotPasswordPage from "./pages/login/ForgotPasswordPage";
-import AddPetPage from "./pages/AddPetPage";
+import AddPetPage from "./pages/pets/AddPetPage";
+import PetListPage from "./pages/pets/PetListPage";
+import PetDetailPage from "./pages/pets/PetDetailPage";
+import ErrorPage from "./pages/ErrorPage";
 import RegisterPage from "./pages/login/RegisterPage";
 import ResetPasswordPage from "./pages/login/ResetPasswordPage";
 
@@ -85,6 +88,8 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/pets" element={<PetListPage />} />
+        <Route path="/pets/:id" element={<PetDetailPage />} />
 
         {/* Rutas privadas */}
         {session && (
@@ -92,6 +97,8 @@ function App() {
             <Route path="/add-pet" element={<AddPetPage />} />
           </>
         )}
+        {/* Ruta de error al final para que no caigan por aqui las urls */}
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </CartProvider>
   );
