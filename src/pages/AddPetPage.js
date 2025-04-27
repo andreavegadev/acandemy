@@ -1,23 +1,42 @@
 import React, { useState } from "react";
+import { supabase } from "../supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 const AddPetPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     species: "",
-    age: "",
-    description: "",
+    breed: "",
+    birth_date: "",
+    neck_size: "",
+    chest_size: "",
+    weight: "",
+    active: true, // Siempre será true por defecto
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Nueva mascota añadida:", formData);
-    alert("Mascota añadida con éxito");
-    setFormData({ name: "", species: "", age: "", description: "" });
+
+    // Inserta los datos en Supabase
+    const { data, error } = await supabase.from("pets").insert([formData]);
+
+    if (error) {
+      console.error("Error al guardar la mascota:", error.message);
+      alert("Hubo un error al guardar la mascota. Inténtalo de nuevo.");
+    } else {
+      console.log("Mascota guardada con éxito:", data);
+      alert("Mascota añadida con éxito.");
+      navigate("/pets"); // Redirige al listado de mascotas
+    }
   };
 
   return (
@@ -49,98 +68,72 @@ const AddPetPage = () => {
             </option>
             <option value="Perro">Perro</option>
             <option value="Gato">Gato</option>
+            <option value="Pájaro">Pájaro</option>
+            <option value="Reptil">Reptil</option>
           </select>
         </div>
         <div>
-          <label htmlFor="birthDate">Fecha de nacimiento:</label>
+          <label htmlFor="breed">Raza:</label>
+          <input
+            type="text"
+            id="breed"
+            name="breed"
+            value={formData.breed}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="birth_date">Fecha de nacimiento:</label>
           <input
             type="date"
-            id="birthDate"
-            name="birthDate"
-            value={formData.birthDate}
+            id="birth_date"
+            name="birth_date"
+            value={formData.birth_date}
             onChange={handleChange}
           />
         </div>
         <section>
           <h3>Medidas de la mascota</h3>
           <div>
-            <label htmlFor="neckSize">Medida del cuello:</label>
+            <label htmlFor="neck_size">Medida del cuello (cm):</label>
             <input
               type="number"
-              id="neckSize"
-              name="neckSize"
-              value={formData.neckSize}
+              id="neck_size"
+              name="neck_size"
+              value={formData.neck_size}
               onChange={handleChange}
               min="0"
-              step="0.1"
+              step="0.01"
               placeholder="En cm"
             />
           </div>
           <div>
-            <label htmlFor="chestSize">Medida del pecho:</label>
+            <label htmlFor="chest_size">Medida del pecho (cm):</label>
             <input
               type="number"
-              id="chestSize"
-              name="chestSize"
-              value={formData.chestSize}
+              id="chest_size"
+              name="chest_size"
+              value={formData.chest_size}
               onChange={handleChange}
               min="0"
-              step="0.1"
+              step="0.01"
               placeholder="En cm"
-              required
+            />
+          </div>
+          <div>
+            <label htmlFor="weight">Peso (kg):</label>
+            <input
+              type="number"
+              id="weight"
+              name="weight"
+              value={formData.weight}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              placeholder="En kg"
             />
           </div>
         </section>
-        <section>
-          <h3>Desparasitaciones</h3>
-          <div>
-            <label htmlFor="dewormingDateInternal">
-              Fecha de desparasitacion interna:
-            </label>
-            <input
-              type="date"
-              id="dewormingDateInternal"
-              name="dewormingDateInternal"
-              value={formData.dewormingDateInternal}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="dewormingDateExternal">
-              Fecha de desparasitacion externa:
-            </label>
-            <input
-              type="date"
-              id="dewormingDateExternal"
-              name="dewormingDateExternal"
-              value={formData.dewormingDateExternal}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="dewormingTypeExternal">
-              Tipo de desparasitacion:
-            </label>
-            <input
-              type="text"
-              id="dewormingTypeExternal"
-              name="dewormingTypeExternal"
-              value={formData.dewormingTypeExternal}
-              onChange={handleChange}
-            />
-          </div>
-        </section>
-
-        <div>
-          <label htmlFor="description">Descripción:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-        </div>
         <button type="submit">Añadir Mascota</button>
       </form>
     </div>
