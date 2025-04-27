@@ -97,6 +97,7 @@ function App() {
             <Route path="/add-pet" element={<AddPetPage />} />
           </>
         )}
+        {/* Ruta de error al final para que no caigan por aqui las urls */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </CartProvider>
