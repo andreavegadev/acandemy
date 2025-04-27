@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "../supabaseClient"; // Asegúrate de tener configurado el cliente de Supabase
+import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -30,7 +30,7 @@ const LoginPage = () => {
       setError("Credenciales incorrectas. Inténtalo de nuevo.");
     } else {
       console.log("Usuario autenticado:", data);
-      navigate("/home"); // Redirige al home después de iniciar sesión
+      navigate("/home");
     }
   };
 
