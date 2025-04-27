@@ -7,6 +7,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import AddPetPage from "./pages/AddPetPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/add-pet" element={<AddPetPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
           {/* Puedes agregar más rutas aquí */}
         </Routes>
       </Router>

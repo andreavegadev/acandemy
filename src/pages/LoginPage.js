@@ -30,7 +30,7 @@ const LoginPage = () => {
       setError("Credenciales incorrectas. Inténtalo de nuevo.");
     } else {
       console.log("Usuario autenticado:", data);
-      navigate("/home");
+      navigate("/home"); // Redirige al home después de iniciar sesión
     }
   };
 
@@ -63,9 +63,6 @@ const LoginPage = () => {
         </p>
         <p>
           <a href="/register">Registrarse</a>
-        </p>
-        <p>
-          <a href="/home">Ir a Home</a>
         </p>
       </div>
     </div>
