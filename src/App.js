@@ -11,6 +11,7 @@ import LoginPage from "./pages/login/LoginPage";
 import ForgotPasswordPage from "./pages/login/ForgotPasswordPage";
 import AddPetPage from "./pages/AddPetPage";
 import RegisterPage from "./pages/login/RegisterPage";
+import ResetPasswordPage from "./pages/login/ResetPasswordPage";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -51,21 +52,39 @@ function App() {
       <header>
         <a href="/home">Home</a>
         <a href="/cart">Cart</a>
-        <LogoutButton />
+        {session && <LogoutButton />}
       </header>
       <Routes>
         {/* Redirige al login si no hay sesión */}
-        {!session && <Route path="*" element={<Navigate to="/login" />} />}
+        {!session && (
+          <>
+            <Route path="/add-pet" element={<Navigate to="/login" />} />
+            <Route path="/pets" element={<Navigate to="/login" />} />
+          </>
+        )}
 
-        {/* Rutas públicas */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        {/* Rutas públicas con redirección si hay sesión */}
+        {session ? (
+          <>
+            <Route path="/login" element={<Navigate to="/home" />} />
+            <Route path="/register" element={<Navigate to="/home" />} />
+            <Route path="/forgot-password" element={<Navigate to="/home" />} />
+          </>
+        ) : (
+          <>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          </>
+        )}
+
+        {/* Rutas públicas sin restricciones */}
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Rutas privadas */}
         {session && (
