@@ -15,6 +15,7 @@ import PetDetailPage from "./pages/pets/PetDetailPage";
 import ErrorPage from "./pages/ErrorPage";
 import RegisterPage from "./pages/login/RegisterPage";
 import ResetPasswordPage from "./pages/login/ResetPasswordPage";
+import UserProfilePage from "./pages/UserProfilePage";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -88,13 +89,14 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/pets" element={<PetListPage />} />
-        <Route path="/pets/:id" element={<PetDetailPage />} />
 
         {/* Rutas privadas */}
         {session && (
           <>
             <Route path="/add-pet" element={<AddPetPage />} />
+            <Route path="/pets" element={<PetListPage />} />
+            <Route path="/pets/:id" element={<PetDetailPage />} />
+            <Route path="/profile" element={<UserProfilePage />} />
           </>
         )}
         {/* Ruta de error al final para que no caigan por aqui las urls */}
