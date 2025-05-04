@@ -15,7 +15,8 @@ import PetDetailPage from "./pages/pets/PetDetailPage";
 import ErrorPage from "./pages/ErrorPage";
 import RegisterPage from "./pages/login/RegisterPage";
 import ResetPasswordPage from "./pages/login/ResetPasswordPage";
-import UserProfilePage from "./pages/UserProfilePage";
+import UserMenuPage from "./pages/user/UserMenuPage";
+import UserButton from "./components/UserButton";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -57,6 +58,7 @@ function App() {
         <a href="/home">Home</a>
         <a href="/cart">Cart</a>
         {session && <LogoutButton />}
+        {session && <UserButton />} {/* Agrega el botón de perfil */}
       </header>
       <Routes>
         {/* Redirige al login si no hay sesión */}
@@ -93,10 +95,10 @@ function App() {
         {/* Rutas privadas */}
         {session && (
           <>
-            <Route path="/add-pet" element={<AddPetPage />} />
+            <Route path="/pets/add" element={<AddPetPage />} />
             <Route path="/pets" element={<PetListPage />} />
             <Route path="/pets/:id" element={<PetDetailPage />} />
-            <Route path="/profile" element={<UserProfilePage />} />
+            <Route path="/profile" element={<UserMenuPage />} />
           </>
         )}
         {/* Ruta de error al final para que no caigan por aqui las urls */}

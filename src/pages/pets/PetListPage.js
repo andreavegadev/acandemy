@@ -1,41 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
+import { useNavigate } from "react-router-dom";
+import PetList from "../../components/PetList";
 
 const PetListPage = () => {
   const [pets, setPets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPets = async () => {
       setLoading(true);
-      setError("");
 
-      // Obtén el usuario autenticado
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError) {
-        console.error("Error al obtener el usuario:", userError.message);
-        setError("No se pudo obtener el usuario. Inténtalo de nuevo.");
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+      if (sessionError) {
+        console.error("Error al obtener la sesión:", sessionError.message);
         setLoading(false);
         return;
       }
 
-      // Obtén las mascotas del usuario autenticado
-      const { data, error: petsError } = await supabase
+      const userId = sessionData?.session?.user?.id;
+      if (!userId) {
+        console.error("No se pudo obtener el ID del usuario.");
+        setLoading(false);
+        return;
+      }
+
+      const { data: petsData, error: petsError } = await supabase
         .from("pets")
-        .select("*")
-        .eq("user_id", user.id);
+        .select("id, name, birth_date")
+        .eq("user_id", userId);
 
       if (petsError) {
         console.error("Error al obtener las mascotas:", petsError.message);
-        setError("No se pudieron cargar las mascotas. Inténtalo de nuevo.");
       } else {
-        setPets(data);
+        setPets(petsData);
       }
 
       setLoading(false);
@@ -44,31 +44,20 @@ const PetListPage = () => {
     fetchPets();
   }, []);
 
-  if (loading) {
-    return <p>Cargando mascotas...</p>;
-  }
+  const handleEditPet = (petId) => {
+    navigate(`/pets/${petId}/edit`);
+  };
 
-  if (error) {
-    return <p className="error">{error}</p>;
+  const handleAddPet = () => {
+    navigate("/pets/add");
+  };
+
+  if (loading) {
+    return <p>Cargando...</p>;
   }
 
   return (
-    <div className="pet-list-container">
-      <h2>Mis Mascotas</h2>
-      {pets.length > 0 ? (
-        <ul>
-          {pets.map((pet) => (
-            <li key={pet.id}>
-              <Link to={`/pets/${pet.id}`}>
-                <strong>{pet.name}</strong> - {pet.species}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No tienes mascotas registradas.</p>
-      )}
-    </div>
+    <PetList pets={pets} onEditPet={handleEditPet} onAddPet={handleAddPet} />
   );
 };
 

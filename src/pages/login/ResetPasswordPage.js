@@ -25,7 +25,6 @@ const ResetPasswordPage = () => {
     setMessage("");
     setError("");
 
-    // Actualizar la contraseña
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
@@ -37,7 +36,7 @@ const ResetPasswordPage = () => {
       setMessage(
         "Contraseña restablecida con éxito. Ahora puedes iniciar sesión."
       );
-      setTimeout(() => navigate("/login"), 3000); // Redirige al login después de 3 segundos
+      setTimeout(() => navigate("/login"), 3000);
     }
   };
 

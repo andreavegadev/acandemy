@@ -30,7 +30,7 @@ const LoginPage = () => {
       setError("Credenciales incorrectas. Inténtalo de nuevo.");
     } else {
       console.log("Usuario autenticado:", data);
-      navigate("/home"); // Redirige al home después de iniciar sesión
+      navigate("/home");
     }
   };
 

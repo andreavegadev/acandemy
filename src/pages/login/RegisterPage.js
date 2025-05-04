@@ -39,7 +39,7 @@ const RegisterPage = () => {
       // Inserta datos adicionales en la tabla `users`
       const { error: userError } = await supabase.from("users").insert([
         {
-          id: data.user.id, // ID del usuario generado por Supabase
+          id: data.user.id,
           full_name: formData.full_name,
           phone: formData.phone,
           address: formData.address,
@@ -56,7 +56,7 @@ const RegisterPage = () => {
         setSuccess(
           "Usuario registrado con éxito. Ahora puedes iniciar sesión."
         );
-        setTimeout(() => navigate("/login"), 3000); // Redirige al login después de 3 segundos
+        setTimeout(() => navigate("/login"), 3000);
       }
     }
   };
