@@ -1,3 +1,25 @@
+/* Fondo general con degradado suave */
+.legal-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ede7f6 0%, #fff 100%);
+  padding: 40px 0;
+}
+
+/* Tarjeta centrada para el contenido legal */
+.legal-card, .legal-page {
+  max-width: 850px;
+  margin: 40px auto;
+  background: #fff;
+  border: 1.5px solid #d1c4e9;
+  border-radius: 18px;
+  padding: 48px 48px 36px 48px;
+  box-shadow: 0 4px 32px #b39ddb33;
+  position: relative;
+  color: #3a2e5c;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  line-height: 1.7;
+}
+
 /* Estilo general para las páginas legales */
 .legal-page {
   padding: 40px 20px;
@@ -51,7 +73,81 @@
   text-decoration: underline;
 }
 
+/* Títulos principales */
+.legal-card h1, .legal-page h1 {
+  color: #5e35b1;
+  font-size: 2.5em;
+  margin-bottom: 24px;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Subtítulos */
+.legal-card h2, .legal-page h2 {
+  color: #4a148c;
+  font-size: 1.5em;
+  margin-top: 36px;
+  margin-bottom: 18px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-align: left;
+}
+
+.legal-card h3, .legal-page h3 {
+  color: #7e57c2;
+  font-size: 1.15em;
+  margin-top: 28px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+/* Párrafos y listas */
+.legal-card p, .legal-page p,
+.legal-card ul, .legal-page ul,
+.legal-card ol, .legal-page ol {
+  color: #3a2e5c;
+  font-size: 1.08em;
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+.legal-card ul, .legal-page ul,
+.legal-card ol, .legal-page ol {
+  margin-left: 32px;
+  padding-left: 0;
+}
+
+.legal-card ul li, .legal-page ul li,
+.legal-card ol li, .legal-page ol li {
+  margin-bottom: 10px;
+}
+
+/* Enlaces */
+.legal-card a, .legal-page a {
+  color: #4db6ac;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.legal-card a:hover, .legal-page a:hover {
+  color: #00897b;
+  text-decoration: underline;
+}
+
+/* Elementos destacados */
+.legal-card strong, .legal-page strong {
+  color: #5e35b1;
+}
+
 /* Responsividad */
+@media (max-width: 900px) {
+  .legal-card, .legal-page {
+    padding: 32px 16px 24px 16px;
+  }
+}
+
 @media (max-width: 768px) {
   .legal-page {
     padding: 20px;
@@ -68,5 +164,23 @@
   .legal-page p,
   .legal-page ul {
     font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .legal-card, .legal-page {
+    padding: 18px 4px 12px 4px;
+    margin: 16px 0;
+  }
+  .legal-card h1, .legal-page h1 {
+    font-size: 1.5em;
+  }
+  .legal-card h2, .legal-page h2 {
+    font-size: 1.1em;
+  }
+  .legal-card p, .legal-page p,
+  .legal-card ul, .legal-page ul,
+  .legal-card ol, .legal-page ol {
+    font-size: 0.98em;
   }
 }
