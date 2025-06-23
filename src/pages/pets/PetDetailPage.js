@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import "../../styles/PetDetailPage.css";
 
-const PetDetailPage = () => {
+const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   const { id } = useParams(); // Obtiene el ID de la mascota desde la URL
   const navigate = useNavigate();
-  const [pet, setPet] = useState(null);
+  const [pet, setPet] = useState(initialPet);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    species: "",
-    breed: "",
-    birth_date: "",
-    neck_size: "",
-    chest_size: "",
-    weight: "",
-    active: true,
+    name: initialPet?.name || "",
+    species: initialPet?.species || "",
+    breed: initialPet?.breed || "",
+    birth_date: initialPet?.birth_date || "",
+    neck_size: initialPet?.neck_size || "",
+    chest_size: initialPet?.chest_size || "",
+    weight: initialPet?.weight || "",
+    active: initialPet?.active ?? true,
   });
 
   useEffect(() => {
@@ -54,8 +55,10 @@ const PetDetailPage = () => {
       setLoading(false);
     };
 
-    fetchPet();
-  }, [id]);
+    if (!initialPet) {
+      fetchPet();
+    }
+  }, [id, initialPet]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,29 +68,44 @@ const PetDetailPage = () => {
   const handleSave = async () => {
     setLoading(true);
 
-    const { error } = await supabase
-      .from("pets")
-      .update({
-        name: formData.name,
-        species: formData.species,
-        breed: formData.breed,
-        birth_date: formData.birth_date,
-        neck_size: formData.neck_size,
-        chest_size: formData.chest_size,
-        weight: formData.weight,
-        active: formData.active,
-      })
-      .eq("id", id);
+    if (pet && pet.id) {
+      // update
+      const { error } = await supabase
+        .from("pets")
+        .update({
+          name: formData.name,
+          species: formData.species,
+          breed: formData.breed,
+          birth_date: formData.birth_date,
+          neck_size: formData.neck_size,
+          chest_size: formData.chest_size,
+          weight: formData.weight,
+          active: formData.active,
+        })
+        .eq("id", pet.id);
 
-    if (error) {
-      console.error(
-        "Error al actualizar los datos de la mascota:",
-        error.message
-      );
-      setError("No se pudieron guardar los cambios.");
+      if (error) {
+        console.error(
+          "Error al actualizar los datos de la mascota:",
+          error.message
+        );
+        setError("No se pudieron guardar los cambios.");
+      } else {
+        alert("Datos de la mascota actualizados correctamente.");
+        setIsEditing(false);
+        if (onSave) onSave();
+      }
     } else {
-      alert("Datos de la mascota actualizados correctamente.");
-      setIsEditing(false);
+      // create
+      const { error } = await supabase.from("pets").insert([formData]);
+
+      if (error) {
+        console.error("Error al crear la mascota:", error.message);
+        setError("No se pudo crear la mascota.");
+      } else {
+        alert("Mascota creada correctamente.");
+        if (onSave) onSave();
+      }
     }
 
     setLoading(false);
@@ -105,132 +123,144 @@ const PetDetailPage = () => {
     <div className="pet-detail-container">
       <h2>Detalles de la Mascota</h2>
       {isEditing ? (
-        <form>
-          <div>
-            <label htmlFor="name">Nombre:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-            />
+        <form className="pet-detail-form">
+          <div className="pet-detail-fields">
+            <div className="pet-detail-field">
+              <label htmlFor="name">Nombre:</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="pet-detail-field">
+              <label htmlFor="species">Especie:</label>
+              <input
+                type="text"
+                id="species"
+                name="species"
+                value={formData.species}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="pet-detail-field">
+              <label htmlFor="breed">Raza:</label>
+              <input
+                type="text"
+                id="breed"
+                name="breed"
+                value={formData.breed}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="pet-detail-field">
+              <label htmlFor="birth_date">Fecha de Nacimiento:</label>
+              <input
+                type="date"
+                id="birth_date"
+                name="birth_date"
+                value={formData.birth_date}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="species">Especie:</label>
-            <input
-              type="text"
-              id="species"
-              name="species"
-              value={formData.species}
-              onChange={handleInputChange}
-            />
+          <div className="pet-detail-fields">
+            <div className="pet-detail-field">
+              <label htmlFor="neck_size">Medida del Cuello (cm):</label>
+              <input
+                type="number"
+                id="neck_size"
+                name="neck_size"
+                value={formData.neck_size}
+                onChange={handleInputChange}
+                step="0.01"
+              />
+            </div>
+            <div className="pet-detail-field">
+              <label htmlFor="chest_size">Medida del Pecho (cm):</label>
+              <input
+                type="number"
+                id="chest_size"
+                name="chest_size"
+                value={formData.chest_size}
+                onChange={handleInputChange}
+                step="0.01"
+              />
+            </div>
+            <div className="pet-detail-field">
+              <label htmlFor="weight">Peso (kg):</label>
+              <input
+                type="number"
+                id="weight"
+                name="weight"
+                value={formData.weight}
+                onChange={handleInputChange}
+                step="0.01"
+              />
+            </div>
+            <div className="pet-detail-field">
+              <label htmlFor="active">Estado:</label>
+              <select
+                id="active"
+                name="active"
+                value={formData.active}
+                onChange={handleInputChange}
+              >
+                <option value={true}>Activo</option>
+                <option value={false}>Inactivo</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label htmlFor="breed">Raza:</label>
-            <input
-              type="text"
-              id="breed"
-              name="breed"
-              value={formData.breed}
-              onChange={handleInputChange}
-            />
+          <div className="pet-detail-actions">
+            <button type="button" onClick={handleSave}>
+              {pet && pet.id ? "Guardar cambios" : "Crear mascota"}
+            </button>
+            <button type="button" onClick={() => setIsEditing(false)}>
+              Cancelar
+            </button>
           </div>
-          <div>
-            <label htmlFor="birth_date">Fecha de Nacimiento:</label>
-            <input
-              type="date"
-              id="birth_date"
-              name="birth_date"
-              value={formData.birth_date}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="neck_size">Medida del Cuello (cm):</label>
-            <input
-              type="number"
-              id="neck_size"
-              name="neck_size"
-              value={formData.neck_size}
-              onChange={handleInputChange}
-              step="0.01"
-            />
-          </div>
-          <div>
-            <label htmlFor="chest_size">Medida del Pecho (cm):</label>
-            <input
-              type="number"
-              id="chest_size"
-              name="chest_size"
-              value={formData.chest_size}
-              onChange={handleInputChange}
-              step="0.01"
-            />
-          </div>
-          <div>
-            <label htmlFor="weight">Peso (kg):</label>
-            <input
-              type="number"
-              id="weight"
-              name="weight"
-              value={formData.weight}
-              onChange={handleInputChange}
-              step="0.01"
-            />
-          </div>
-          <div>
-            <label htmlFor="active">Estado:</label>
-            <select
-              id="active"
-              name="active"
-              value={formData.active}
-              onChange={handleInputChange}
-            >
-              <option value={true}>Activo</option>
-              <option value={false}>Inactivo</option>
-            </select>
-          </div>
-          <button type="button" onClick={handleSave}>
-            Guardar Cambios
-          </button>
-          <button type="button" onClick={() => setIsEditing(false)}>
-            Cancelar
-          </button>
         </form>
       ) : (
-        <div>
-          <p>
-            <strong>Nombre:</strong> {pet.name}
-          </p>
-          <p>
-            <strong>Especie:</strong> {pet.species}
-          </p>
-          <p>
-            <strong>Raza:</strong> {pet.breed || "Sin raza"}
-          </p>
-          <p>
-            <strong>Fecha de nacimiento:</strong>{" "}
-            {pet.birth_date || "No especificada"}
-          </p>
-          <p>
-            <strong>Medida del cuello:</strong>{" "}
-            {pet.neck_size ? `${pet.neck_size} cm` : "No especificada"}
-          </p>
-          <p>
-            <strong>Medida del pecho:</strong>{" "}
-            {pet.chest_size ? `${pet.chest_size} cm` : "No especificada"}
-          </p>
-          <p>
-            <strong>Peso:</strong>{" "}
-            {pet.weight ? `${pet.weight} kg` : "No especificado"}
-          </p>
-          <p>
-            <strong>Estado:</strong> {pet.active ? "Activo" : "Inactivo"}
-          </p>
-          <button onClick={() => setIsEditing(true)}>Editar Mascota</button>
-          <button onClick={() => navigate("/pets")}>Volver al Listado</button>
+        <div className="pet-detail-view">
+          <div className="pet-detail-fields">
+            <div className="pet-detail-field">
+              <strong>Nombre:</strong> {pet.name}
+            </div>
+            <div className="pet-detail-field">
+              <strong>Especie:</strong> {pet.species}
+            </div>
+            <div className="pet-detail-field">
+              <strong>Raza:</strong> {pet.breed || "Sin raza"}
+            </div>
+            <div className="pet-detail-field">
+              <strong>Fecha de nacimiento:</strong>{" "}
+              {pet.birth_date || "No especificada"}
+            </div>
+          </div>
+          <div className="pet-detail-fields">
+            <div className="pet-detail-field">
+              <strong>Medida del cuello:</strong>{" "}
+              {pet.neck_size ? `${pet.neck_size} cm` : "No especificada"}
+            </div>
+            <div className="pet-detail-field">
+              <strong>Medida del pecho:</strong>{" "}
+              {pet.chest_size ? `${pet.chest_size} cm` : "No especificada"}
+            </div>
+            <div className="pet-detail-field">
+              <strong>Peso:</strong>{" "}
+              {pet.weight ? `${pet.weight} kg` : "No especificado"}
+            </div>
+            <div className="pet-detail-field">
+              <strong>Estado:</strong> {pet.active ? "Activo" : "Inactivo"}
+            </div>
+          </div>
+          <div className="pet-detail-actions">
+            <button onClick={() => setIsEditing(true)}>Editar Mascota</button>
+            <button onClick={() => navigate("/pets")}>Volver al Listado</button>
+          </div>
         </div>
       )}
     </div>

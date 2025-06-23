@@ -3,11 +3,14 @@ import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import PetList from "../../components/PetList";
 
+import "../../styles/UserMenuPage.css";
+
 const UserMenuPage = () => {
-  const [userData, setUserData] = useState({ full_name: "" });
+  const [userData, setUserData] = useState({ full_name: "", email: "" });
   const [orders, setOrders] = useState([]);
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [view, setView] = useState("profile");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,11 +26,15 @@ const UserMenuPage = () => {
       }
 
       const userId = sessionData?.session?.user?.id;
+      const email = sessionData?.session?.user?.email;
+
       if (!userId) {
         console.error("No se pudo obtener el ID del usuario.");
         setLoading(false);
         return;
       }
+
+      setUserData((prev) => ({ ...prev, email }));
 
       const { data: userData, error: userDataError } = await supabase
         .from("users")
@@ -41,9 +48,10 @@ const UserMenuPage = () => {
           userDataError.message
         );
       } else {
-        setUserData(userData);
+        setUserData((prev) => ({ ...prev, full_name: userData.full_name }));
       }
 
+      // Obtener últimos 5 pedidos
       const { data: ordersData, error: ordersError } = await supabase
         .from("orders")
         .select("id, order_date, total_amount, status")
@@ -90,43 +98,95 @@ const UserMenuPage = () => {
     navigate("/pets/add");
   };
 
+  const handleViewAllUserData = () => {
+    navigate("/profile/details");
+  };
+
   if (loading) {
     return <p>Cargando...</p>;
   }
 
   return (
-    <div className="user-profile">
-      <header>
-        <h1>Bienvenido a Academy, {userData.full_name}.</h1>
-        <h2>La felicidad de tu mascota comienza aquí.</h2>
-      </header>
-
-      <section>
-        <h2>Últimos 5 pedidos</h2>
-        {orders.length > 0 ? (
+    <div className="user-menu-container">
+      <aside className="user-menu-sidebar">
+        <h2>Mi cuenta</h2>
+        <nav>
           <ul>
-            {orders.map((order) => (
-              <li key={order.id}>
-                Pedido #{order.id} -{" "}
-                {new Date(order.order_date).toLocaleDateString()} - $
-                {order.total_amount} - {order.status}
-                <button onClick={() => handleViewOrderDetails(order.id)}>
-                  Ver Detalles
-                </button>
-              </li>
-            ))}
+            <li>
+              <button
+                className={view === "profile" ? "active" : ""}
+                onClick={() => setView("profile")}
+              >
+                Perfil
+              </button>
+            </li>
+            <li>
+              <button
+                className={view === "orders" ? "active" : ""}
+                onClick={() => setView("orders")}
+              >
+                Mis pedidos
+              </button>
+            </li>
+            {/* Puedes añadir más opciones aquí */}
           </ul>
-        ) : (
-          <p>No tienes pedidos recientes.</p>
-        )}
-        <button onClick={handleViewAllOrders}>Ver todos los pedidos</button>
-      </section>
+        </nav>
+      </aside>
+      <main className="user-menu-content">
+        {view === "profile" && (
+          <div className="user-profile">
+            <header>
+              <h1>Bienvenido a Academy, {userData.full_name}.</h1>
+              <h2>La felicidad de tu mascota comienza aquí.</h2>
+            </header>
 
-      <PetList
-        pets={pets}
-        onViewPet={handleViewPetDetails}
-        onAddPet={handleAddPet}
-      />
+            <section>
+              <h2>Datos principales</h2>
+              <p>
+                <strong>Nombre:</strong> {userData.full_name}
+              </p>
+              <p>
+                <strong>Email:</strong> {userData.email}
+              </p>
+              <button onClick={handleViewAllUserData}>Ver todos mis datos</button>
+            </section>
+
+            <section>
+              <h2>Últimos 5 pedidos</h2>
+              {orders.length > 0 ? (
+                <ul>
+                  {orders.map((order) => (
+                    <li key={order.id}>
+                      Pedido #{order.id} -{" "}
+                      {new Date(order.order_date).toLocaleDateString()} - $
+                      {order.total_amount} - {order.status}
+                      <button onClick={() => handleViewOrderDetails(order.id)}>
+                        Ver Detalles
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No tienes pedidos recientes.</p>
+              )}
+              <button onClick={handleViewAllOrders}>Ver todos los pedidos</button>
+            </section>
+
+            <PetList
+              pets={pets}
+              onViewPet={handleViewPetDetails}
+              onAddPet={handleAddPet}
+            />
+          </div>
+        )}
+        {view === "orders" && (
+          <div>
+            <h3>Mis pedidos</h3>
+            <p>Aquí aparecerán tus pedidos realizados.</p>
+            {/* <UserOrdersPage /> */}
+          </div>
+        )}
+      </main>
     </div>
   );
 };

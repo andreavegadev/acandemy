@@ -2,9 +2,8 @@ import { CartProvider } from "./context/CartContext";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
-import LogoutButton from "./components/LogoutButton";
 import HomePage from "./pages/HomePage";
-import ProductPage from "./pages/products/ProductPage";
+import ProductDetailPage from "./pages/products/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/login/LoginPage";
@@ -16,7 +15,22 @@ import ErrorPage from "./pages/ErrorPage";
 import RegisterPage from "./pages/login/RegisterPage";
 import ResetPasswordPage from "./pages/login/ResetPasswordPage";
 import UserMenuPage from "./pages/user/UserMenuPage";
-import UserButton from "./components/UserButton";
+import ProductListPage from "./pages/products/ProductListPage";
+import Header from "./components/Header";
+import ContactPage from "./pages/ContactPage";
+import AboutPage from "./pages/AboutPage";
+import ProfilePage from "./pages/user/ProfilePage";
+import LegalNoticePage from "./pages/legal/LegalNoticePage";
+import CookiesPolicyPage from "./pages/legal/CookiesPolicyPage";
+import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
+import Footer from "./components/Footer";
+import PrivateRoute from "./components/PrivateRoute";
+import AddProductPage from "./pages/admin/AddProductPage";
+import AddCategoryPage from "./pages/admin/AddCategoryPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import EditProductPage from "./pages/admin/EditProductPage";
+import EditOrderPage from "./pages/admin/EditOrderPage";
+import MyOrdersPage from "./pages/orders/MyOrdersPage";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -54,17 +68,11 @@ function App() {
 
   return (
     <CartProvider>
-      <header>
-        <a href="/home">Home</a>
-        <a href="/cart">Cart</a>
-        {session && <LogoutButton />}
-        {session && <UserButton />} {/* Agrega el botón de perfil */}
-      </header>
+      <Header session={session} />
       <Routes>
         {/* Redirige al login si no hay sesión */}
         {!session && (
           <>
-            <Route path="/add-pet" element={<Navigate to="/login" />} />
             <Route path="/pets" element={<Navigate to="/login" />} />
           </>
         )}
@@ -87,10 +95,17 @@ function App() {
         {/* Rutas públicas sin restricciones */}
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/product/:name" element={<ProductDetailPage />} />
+        <Route path="/products/:category" element={<ProductListPage />} />
+        <Route path="/products" element={<ProductListPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/legal-notice" element={<LegalNoticePage />} />
+        <Route path="/cookies-policy" element={<CookiesPolicyPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
         {/* Rutas privadas */}
         {session && (
@@ -99,11 +114,62 @@ function App() {
             <Route path="/pets" element={<PetListPage />} />
             <Route path="/pets/:id" element={<PetDetailPage />} />
             <Route path="/profile" element={<UserMenuPage />} />
+            <Route path="/profile/details" element={<ProfilePage />} />
+            <Route path="/orders" element={<MyOrdersPage />} />
           </>
         )}
+        <Route
+          path="/admin/add-product"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <AddProductPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/add-category"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <AddCategoryPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <AdminDashboardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/products/:id/edit"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <EditProductPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/orders/:id/edit"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <EditOrderPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute adminOnly={true}>
+              <AdminDashboardPage />
+            </PrivateRoute>
+          }
+        />
         {/* Ruta de error al final para que no caigan por aqui las urls */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
+      <Footer />
     </CartProvider>
   );
 }

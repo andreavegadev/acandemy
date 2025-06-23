@@ -2,25 +2,43 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
-const PrivateRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+const PrivateRoute = ({ children, adminOnly = false }) => {
+  const [isAllowed, setIsAllowed] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      setIsAuthenticated(!!user); // Si hay un usuario, está autenticado
+      if (!user) {
+        setIsAllowed(false);
+        return;
+      }
+      if (adminOnly) {
+        const { data: userData, error } = await supabase
+          .from("users")
+          .select("profile")
+          .eq("id", user.id)
+          .single();
+
+        console.log("Consulta users:", { userId: user.id, userData, error });
+
+        if (error || !userData) {
+          setIsAllowed(false);
+        } else {
+          setIsAllowed(userData.profile?.toLowerCase() === "admin");
+          console.log("User profile:", userData.profile);
+        }
+      } else {
+        setIsAllowed(true);
+      }
     };
 
     checkAuth();
-  }, []);
+  }, [adminOnly]);
 
-  if (isAuthenticated === null) {
-    return <p>Cargando...</p>; // Muestra un mensaje mientras se verifica la autenticación
-  }
-
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  if (isAllowed === null) return <p>Cargando...</p>;
+  return isAllowed ? children : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

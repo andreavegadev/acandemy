@@ -1,0 +1,124 @@
+.about-page {
+  padding: 40px 20px;
+  background-color: #f8f9fa; /* Fondo blanco suave */
+  color: #333; /* Texto oscuro */
+  font-family: 'Arial', sans-serif;
+}
+
+.about-page h1 {
+  color: #6a1b9a; /* Lila pastel */
+  font-size: 36px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.about-page p {
+  color: #555;
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.about-section {
+  margin-bottom: 50px;
+  padding: 20px;
+  background-color: #ffffff; /* Fondo blanco */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.about-section h2 {
+  color: #4a148c; /* Lila oscuro */
+  font-size: 24px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.about-section p {
+  color: #555;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.about-section ul {
+  list-style-type: disc;
+  padding-left: 40px;
+  color: #555;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.about-section ul li {
+  margin-bottom: 10px;
+}
+
+.about-section a {
+  color: #4db6ac; /* Aguamarina */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.about-section a:hover {
+  color: #00897b; /* Aguamarina más oscuro */
+}
+
+/* Estilos para la sección de valores */
+.values-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.value-card {
+  background-color: #e1bee7; /* Lila pastel */
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  width: 250px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.value-card .icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+  color: #4a148c; /* Lila oscuro */
+}
+
+.value-card h3 {
+  color: #4a148c; /* Lila oscuro */
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.value-card p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .about-page {
+    padding: 20px;
+  }
+
+  .values-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .value-card {
+    width: 100%;
+    max-width: 300px;
+  }
+}
