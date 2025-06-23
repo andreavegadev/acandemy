@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import "../../styles/AuthPages.css";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -35,35 +36,37 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
-      <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Iniciar Sesión</button>
-      </form>
-      {error && <p className="error">{error}</p>}
-      <div className="links">
-        <p>
-          <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
-        </p>
-        <p>
-          <a href="/register">Registrarse</a>
-        </p>
+    <div className="auth-bg">
+      <div className="auth-page">
+        <h1>Iniciar sesión</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            name="email"
+            placeholder="Correo electrónico"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Contraseña"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Iniciar Sesión</button>
+        </form>
+        {error && <p className="error">{error}</p>}
+        <div className="links">
+          <p>
+            <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
+          </p>
+          <p>
+            <a href="/register">Registrarse</a>
+          </p>
+        </div>
       </div>
     </div>
   );

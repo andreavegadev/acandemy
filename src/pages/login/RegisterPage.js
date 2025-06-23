@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import "../../styles/AuthPages.css";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -62,55 +63,57 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="register-container">
-      <h2>Registrarse</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="full_name"
-          placeholder="Nombre completo"
-          value={formData.full_name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="phone"
-          placeholder="Teléfono"
-          value={formData.phone}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="address"
-          placeholder="Dirección"
-          value={formData.address}
-          onChange={handleChange}
-        />
-        <button type="submit">Registrarse</button>
-      </form>
-      {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
-      <div className="links">
-        <p>
-          <a href="/login">¿Ya tienes una cuenta? Inicia sesión</a>
-        </p>
+    <div className="auth-bg">
+      <div className="auth-page">
+        <h1>Registrarse</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="full_name"
+            placeholder="Nombre completo"
+            value={formData.full_name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Correo electrónico"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Contraseña"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="phone"
+            placeholder="Teléfono"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="address"
+            placeholder="Dirección"
+            value={formData.address}
+            onChange={handleChange}
+          />
+          <button type="submit">Registrarse</button>
+        </form>
+        {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
+        <div className="links">
+          <p>
+            <a href="/login">¿Ya tienes una cuenta? Inicia sesión</a>
+          </p>
+        </div>
       </div>
     </div>
   );
