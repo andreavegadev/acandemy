@@ -1,0 +1,54 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* Alinea los elementos al inicio verticalmente */
+  padding: 20px;
+  background-color: #6a1b9a; /* Lila pastel */
+  color: white;
+}
+
+.footer-logo {
+  flex: 0 0 20%; /* El logo ocupa el 20% del ancho */
+  display: flex;
+  flex-direction: column; /* Coloca el logo y el enlace de Instagram en columna */
+  align-items: flex-start; /* Alinea el contenido a la izquierda */
+}
+
+.footer-logo-image {
+  width: 100%; /* La imagen se ajusta al 20% del contenedor */
+  height: auto; /* Mantiene la proporción */
+  margin-bottom: 10px; /* Espaciado entre el logo y el enlace de Instagram */
+}
+
+.footer-social {
+  margin-top: 5px; /* Espaciado adicional entre el logo y el enlace de Instagram */
+}
+
+.instagram-link {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.instagram-link:hover {
+  color: #4db6ac; /* Aguamarina */
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex: 1; /* Ocupa el espacio restante */
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.footer-links a:hover {
+  color: #4db6ac; /* Aguamarina */
+}

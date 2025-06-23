@@ -1,0 +1,124 @@
+.contact-page {
+  padding: 20px;
+  text-align: center;
+}
+
+.contact-page h1 {
+  color: #6a1b9a; /* Lila pastel */
+  margin-bottom: 20px;
+}
+
+.contact-page p {
+  color: #555;
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+.contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.contact-item {
+  background-color: #e1bee7; /* Lila pastel */
+  border-radius: 10px;
+  padding: 20px;
+  width: 250px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contact-item h3 {
+  color: #4a148c; /* Lila oscuro */
+  margin-bottom: 10px;
+}
+
+.contact-item p {
+  color: #333;
+  font-size: 14px;
+}
+
+.contact-form {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #4a148c; /* Lila oscuro */
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #6a1b9a; /* Lila pastel */
+  outline: none;
+}
+
+.submit-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4db6ac; /* Aguamarina */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #00897b; /* Aguamarina más oscuro */
+}
+
+.google-maps-link {
+  color: #4db6ac; /* Aguamarina */
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.google-maps-link:hover {
+  color: #00897b; /* Aguamarina más oscuro */
+  text-decoration: underline;
+}
+
+.phone-link {
+  color: #4db6ac; /* Aguamarina */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.phone-link:hover {
+  color: #00897b; /* Aguamarina más oscuro */
+  text-decoration: underline;
+}
+
+.email-link {
+  color: #4db6ac; /* Aguamarina */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.email-link:hover {
+  color: #00897b; /* Aguamarina más oscuro */
+  text-decoration: underline;
+}
