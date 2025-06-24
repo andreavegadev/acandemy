@@ -31,6 +31,7 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import EditProductPage from "./pages/admin/EditProductPage";
 import EditOrderPage from "./pages/admin/EditOrderPage";
 import MyOrdersPage from "./pages/orders/MyOrdersPage";
+import CookiesBanner from "./components/CookiesBanner";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -169,6 +170,7 @@ function App() {
         {/* Ruta de error al final para que no caigan por aqui las urls */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
+      <CookiesBanner />
       <Footer />
     </CartProvider>
   );
