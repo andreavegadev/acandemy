@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { getWishlist, removeFromWishlist } from "../../utils/wishlist";
+import { getWishlist } from "../../utils/wishlist";
 import { getProductById } from "../../api/products";
 import ProductCard from "../../components/ProductCard";
+import useWishlistSync from "../../hooks/useWishlistSync";
 
 const WishlistPage = () => {
   const [products, setProducts] = useState([]);
+  const tick = useWishlistSync(); // Se actualiza cuando cambia la wishlist
 
   useEffect(() => {
     const wishlist = getWishlist().filter((id) => id);
     Promise.all(wishlist.map((id) => getProductById(id))).then(setProducts);
-  }, []);
-
-  const handleRemove = (productId) => {
-    removeFromWishlist(productId);
-    setProducts(products.filter((p) => p.id !== productId));
-  };
+  }, [tick]); // <-- Se vuelve a cargar cuando cambia la wishlist
 
   return (
     <div style={{ maxWidth: 900, margin: "40px auto" }}>
@@ -35,24 +32,6 @@ const WishlistPage = () => {
                   image={product.photo_url}
                   linkDetails={`/product/${encodeURIComponent(product.name)}`}
                 />
-                <button
-                  onClick={() => handleRemove(product.id)}
-                  style={{
-                    position: "absolute",
-                    top: 16,
-                    right: 16,
-                    background: "#ede7f6",
-                    color: "#5e35b1",
-                    border: "1px solid #d1c4e9",
-                    borderRadius: 8,
-                    padding: "6px 14px",
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    zIndex: 2,
-                  }}
-                >
-                  Quitar
-                </button>
               </div>
             ))}
         </div>
