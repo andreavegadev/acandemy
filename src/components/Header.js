@@ -64,9 +64,6 @@ const Header = ({ session }) => {
             <Link to="/profile" style={navLinkStyle}>
               Mi Perfil
             </Link>
-            <Link to="/pets" style={navLinkStyle}>
-              Mis Mascotas
-            </Link>
           </>
         )}
       </nav>
