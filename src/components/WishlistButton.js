@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { addToWishlist, removeFromWishlist, isInWishlist } from "../utils/wishlist";
+import {
+  addToWishlist,
+  removeFromWishlist,
+  isInWishlist,
+} from "../utils/wishlist";
 import useWishlistSync from "../hooks/useWishlistSync";
 
 const WishlistButton = ({ productId, size = 24 }) => {
@@ -10,9 +14,7 @@ const WishlistButton = ({ productId, size = 24 }) => {
     setInWishlist(isInWishlist(productId));
   }, [productId, tick]);
 
-  useEffect(() => {
-    console.log("WishlistButton productId:", productId);
-  }, [productId]);
+  useEffect(() => {}, [productId]);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -37,7 +39,7 @@ const WishlistButton = ({ productId, size = 24 }) => {
         cursor: "pointer",
         padding: 0,
         marginLeft: 8,
-        verticalAlign: "middle"
+        verticalAlign: "middle",
       }}
     >
       <svg

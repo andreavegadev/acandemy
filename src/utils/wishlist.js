@@ -3,7 +3,6 @@ export function getWishlist() {
 }
 
 export function addToWishlist(productId) {
-  console.log("Adding to wishlist:", productId);
   const id = String(productId);
   if (!id || id === "null" || id === "undefined") return;
   const wishlist = getWishlist();
