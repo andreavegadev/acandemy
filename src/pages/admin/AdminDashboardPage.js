@@ -9,20 +9,50 @@ import AdminCategoriesTable from "./AdminCategoriesTable";
 import OrderDetailPanel from "./OrderDetailPanel";
 import ProductDetailPanel from "./ProductDetailPanel";
 import DiscountDetailPanel from "./DiscountDetailPanel";
+import CategoryDetailPanel from "./CategoryDetailPanel";
+import { supabase } from "../../supabaseClient";
 
 const AdminDashboardPage = () => {
   const [view, setView] = useState("home");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [reloadFlag, setReloadFlag] = useState(false);
 
   // Nueva función para cambiar la vista y limpiar detalles
   const handleSetView = (newView) => {
     setSelectedOrder(null);
     setSelectedProduct(null);
     setSelectedDiscount(null);
+    setSelectedCategory(null);
     setView(newView);
   };
+
+  const handleReloadOrder = async (orderId) => {
+    const { data: order } = await supabase
+      .from("orders")
+      .select(
+        `
+        *,
+        user:users (
+          full_name,
+          id_number
+        ),
+        items:order_items (
+          *,
+          product:products (name)
+        )
+      `
+      )
+      .eq("id", orderId)
+      .single();
+    setSelectedOrder(order);
+  };
+
+  const reloadOrders = () => setReloadFlag((flag) => !flag);
+  const reloadDiscounts = () => setReloadFlag((flag) => !flag);
+  const reloadCategories = () => setReloadFlag((flag) => !flag);
 
   return (
     <div
@@ -39,7 +69,10 @@ const AdminDashboardPage = () => {
         }}
       >
         <div>
-          <AdminOrdersTable onOrderSelect={setSelectedOrder} />
+          <AdminOrdersTable
+            onOrderSelect={setSelectedOrder}
+            reloadFlag={reloadFlag}
+          />
         </div>
         <div>
           <AdminProductsTable
@@ -54,7 +87,10 @@ const AdminDashboardPage = () => {
           />
         </div>
         <div>
-          <AdminCategoriesTable onAddCategory={() => handleSetView("add-category")} />
+          <AdminCategoriesTable
+            onAddCategory={() => handleSetView("add-category")}
+            onCategorySelect={setSelectedCategory}
+          />
         </div>
       </div>
       <div
@@ -64,6 +100,7 @@ const AdminDashboardPage = () => {
           <OrderDetailPanel
             order={selectedOrder}
             onClose={() => setSelectedOrder(null)}
+            onReloadOrders={reloadOrders}
           />
         ) : selectedProduct ? (
           <ProductDetailPanel
@@ -73,13 +110,31 @@ const AdminDashboardPage = () => {
               setSelectedProduct(null);
               setView("edit-product");
               // Si usas un estado para el producto a editar, puedes guardarlo aquí
-              // setEditProduct(product);
+              //setEditProduct(product);
             }}
           />
         ) : selectedDiscount ? (
           <DiscountDetailPanel
             discount={selectedDiscount}
             onClose={() => setSelectedDiscount(null)}
+            onEdit={(discount) => {
+              setSelectedDiscount(null);
+              setView("edit-discount");
+              // Si tienes un estado para el descuento a editar, puedes guardarlo aquí
+              //setEditDiscount(discount);
+            }}
+            onReloadDiscounts={reloadDiscounts}
+          />
+        ) : selectedCategory ? (
+          <CategoryDetailPanel
+            category={selectedCategory}
+            onClose={() => setSelectedCategory(null)}
+            onEdit={(category) => {
+              setSelectedCategory(null);
+              setView("edit-category");
+              // setEditCategory(category);
+            }}
+            onReloadCategories={reloadCategories}
           />
         ) : view === "add-product" ? (
           <AddProductPage />

@@ -1,6 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
+import { supabase } from "../../supabaseClient";
+import {
+  ORDER_STATUSES,
+  PAYMENT_STATUSES,
+  STATUS_LABELS,
+  PAYMENT_LABELS,
+} from "../../constants/order";
 
-const OrderDetailPanel = ({ order, onClose }) => {
+const OrderDetailPanel = ({
+  order,
+  onClose,
+  onStatusChange,
+  onReloadOrder,
+  onReloadOrders,
+}) => {
+  const [status, setStatus] = useState(order.status);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleStatusUpdate = async (e) => {
+    const newStatus = e.target.value;
+    setStatus(newStatus);
+    setSaving(true);
+    setError("");
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: newStatus })
+      .eq("id", order.id);
+    setSaving(false);
+    if (error) {
+      setError("Error al actualizar el estado");
+    } else {
+      if (onStatusChange) onStatusChange(newStatus);
+      if (onReloadOrder) onReloadOrder(order.id); // <-- recarga el pedido
+      if (onReloadOrders) onReloadOrders();
+    }
+  };
+
+  // Lo mismo para el pago:
+  const handlePaymentUpdate = async (e) => {
+    const newPaymentStatus = e.target.value;
+    setSaving(true);
+    setError("");
+    const { error } = await supabase
+      .from("orders")
+      .update({ payment_status: newPaymentStatus })
+      .eq("id", order.id);
+    setSaving(false);
+    if (error) {
+      setError("Error al actualizar el pago");
+    } else {
+      if (onReloadOrder) onReloadOrder(order.id); // <-- recarga el pedido
+      if (onReloadOrders) onReloadOrders();
+    }
+  };
+
   if (!order) return null;
   return (
     <div>
@@ -67,19 +121,35 @@ const OrderDetailPanel = ({ order, onClose }) => {
         }
       `}</style>
       <div className="detail-panel">
-        <button onClick={onClose} style={{ float: "right" }}>Cerrar</button>
+        <button onClick={onClose} style={{ float: "right" }}>
+          Cerrar
+        </button>
         <h3>Detalle pedido #{order.id}</h3>
         <p>
           <b>Usuario:</b>{" "}
-          {order.user
-            ? `${order.user.name} (${order.user.id})`
-            : order.user_id}
+          {order.user ? (
+            <>
+              {order.user.full_name}
+              {order.user.id_number && (
+                <>
+                  <br />
+                  DNI: {order.user.id_number}
+                </>
+              )}
+              {order.user.phone && (
+                <>
+                  <br />
+                  Tel: {order.user.phone}
+                </>
+              )}
+            </>
+          ) : (
+            order.user_id
+          )}
         </p>
         <p>
           <b>Fecha:</b>{" "}
-          {order.order_date
-            ? new Date(order.order_date).toLocaleString()
-            : "-"}
+          {order.order_date ? new Date(order.order_date).toLocaleString() : "-"}
         </p>
         <p>
           <b>Total:</b> {Number(order.total_amount).toFixed(2)} €
@@ -88,10 +158,62 @@ const OrderDetailPanel = ({ order, onClose }) => {
           <b>Descuento:</b> {order.discount_id || "-"}
         </p>
         <p>
-          <b>Estado:</b> {order.status}
+          <b>Estado:</b>{" "}
+          <select
+            value={status}
+            onChange={handleStatusUpdate}
+            disabled={saving}
+            style={{
+              padding: "4px 10px",
+              borderRadius: 6,
+              border: "1px solid #d1c4e9",
+              marginLeft: 8,
+              background: "#fff",
+              color: "#5e35b1",
+              fontWeight: 600,
+            }}
+          >
+            {ORDER_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {STATUS_LABELS[s]}
+              </option>
+            ))}
+          </select>
+          {saving && (
+            <span style={{ marginLeft: 8, color: "#888" }}>Guardando...</span>
+          )}
+          {error && (
+            <span style={{ color: "#e53935", marginLeft: 8 }}>{error}</span>
+          )}
         </p>
         <p>
-          <b>Pago:</b> {order.payment_status}
+          <b>Pago:</b>{" "}
+          <select
+            value={order.payment_status || "unpaid"}
+            onChange={handlePaymentUpdate}
+            disabled={saving}
+            style={{
+              padding: "4px 10px",
+              borderRadius: 6,
+              border: "1px solid #d1c4e9",
+              marginLeft: 8,
+              background: "#fff",
+              color: "#5e35b1",
+              fontWeight: 600,
+            }}
+          >
+            {PAYMENT_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {PAYMENT_LABELS[s]}
+              </option>
+            ))}
+          </select>
+          {saving && (
+            <span style={{ marginLeft: 8, color: "#888" }}>Guardando...</span>
+          )}
+          {error && (
+            <span style={{ color: "#e53935", marginLeft: 8 }}>{error}</span>
+          )}
         </p>
         <p>
           <b>Tracking:</b> {order.tracking_number || "-"}

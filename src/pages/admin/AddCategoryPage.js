@@ -20,7 +20,7 @@ const AddCategoryPage = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const onAddCategory = async (e) => {
     e.preventDefault();
     setSuccess("");
     setError("");
@@ -53,7 +53,7 @@ const AddCategoryPage = () => {
   return (
     <div className="add-product-page">
       <h1>Añadir Categoría</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onAddCategory}>
         <input
           type="text"
           name="name"
@@ -86,7 +86,7 @@ const AddCategoryPage = () => {
           />
           Destacada
         </label>
-        <button type="submit">Añadir categoría</button>
+        <button onClick={onAddCategory}>Añadir categoría</button>
       </form>
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { useNavigate } from "react-router-dom";
+import {
+  ORDER_STATUSES,
+  STATUS_LABELS,
+  PAYMENT_LABELS,
+} from "../../constants/order";
 
-const AdminOrdersTable = ({ onOrderSelect }) => {
+const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -16,7 +20,7 @@ const AdminOrdersTable = ({ onOrderSelect }) => {
   const [orderItems, setOrderItems] = useState([]);
   const [orderDetailLoading, setOrderDetailLoading] = useState(false);
   const [orderUser, setOrderUser] = useState(null);
-  const navigate = useNavigate();
+  const [reloadFlagState, setReloadFlag] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -38,7 +42,19 @@ const AdminOrdersTable = ({ onOrderSelect }) => {
       let dataQuery = supabase
         .from("orders")
         .select(
-          "id, user_id, order_date, total_amount, discount_id, status, payment_status, tracking_number, shipping_address, billing_address"
+          `
+            id,
+            user_id,
+            order_date,
+            total_amount,
+            discount_id,
+            status,
+            payment_status,
+            tracking_number,
+            shipping_address,
+            billing_address,
+            user:users (full_name, id_number)
+          `
         )
         .order(orderBy, { ascending: orderAsc });
 
@@ -67,6 +83,7 @@ const AdminOrdersTable = ({ onOrderSelect }) => {
     statusFilter,
     paymentStatusFilter,
     search,
+    reloadFlag,
   ]);
 
   const handleHeaderClick = (col) => {
@@ -93,7 +110,7 @@ const AdminOrdersTable = ({ onOrderSelect }) => {
     if (order.user_id) {
       const { data: userData } = await supabase
         .from("users")
-        .select("id, name")
+        .select("id, full_name, phone, id_number")
         .eq("id", order.user_id)
         .single();
       user = userData;
@@ -122,12 +139,37 @@ const AdminOrdersTable = ({ onOrderSelect }) => {
     setSearch("");
   };
 
+  // Calcula el total y el conteo por estado
+  const totalPedidos = orders.length;
+  const pedidosPorEstado = ORDER_STATUSES.reduce((acc, estado) => {
+    acc[estado] = orders.filter((o) => o.status === estado).length;
+    return acc;
+  }, {});
+
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div style={{ display: "flex", alignItems: "flex-start" }}>
       <div style={{ flex: 2 }}>
         <h2>Pedidos</h2>
+        {/* Resumen de estadísticas */}
+        <div
+          style={{
+            marginBottom: 16,
+            background: "#ede7f6",
+            padding: 12,
+            borderRadius: 8,
+          }}
+        >
+          <b>Total pedidos:</b> {totalPedidos}
+          <span style={{ marginLeft: 24 }}>
+            {ORDER_STATUSES.map((estado) => (
+              <span key={estado} style={{ marginRight: 18 }}>
+                <b>{STATUS_LABELS[estado]}:</b> {pedidosPorEstado[estado]}
+              </span>
+            ))}
+          </span>
+        </div>
         <div
           style={{
             marginBottom: 8,
@@ -237,7 +279,11 @@ const AdminOrdersTable = ({ onOrderSelect }) => {
             {orders.map((order) => (
               <tr key={order.id} onDoubleClick={() => handleDoubleClick(order)}>
                 <td>{order.id}</td>
-                <td>{order.user_id}</td>
+                <td>
+                  {order.user
+                    ? `${order.user.full_name} (DNI: ${order.user.id_number})`
+                    : order.user_id}
+                </td>
                 <td>
                   {order.order_date
                     ? new Date(order.order_date).toLocaleString()
@@ -245,8 +291,8 @@ const AdminOrdersTable = ({ onOrderSelect }) => {
                 </td>
                 <td>{Number(order.total_amount).toFixed(2)} €</td>
                 <td>{order.discount_id || "-"}</td>
-                <td>{order.status}</td>
-                <td>{order.payment_status}</td>
+                <td>{STATUS_LABELS[order.status]}</td>
+                <td>{PAYMENT_LABELS[order.payment_status]}</td>
                 <td>{order.tracking_number || "-"}</td>
               </tr>
             ))}
