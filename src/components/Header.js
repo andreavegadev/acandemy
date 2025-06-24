@@ -51,12 +51,17 @@ const Header = ({ session }) => {
             {isAdmin && <Link to="/admin/dashboard">Dashboard</Link>}
           </>
         )}
-      </nav>
-      <div className="cart">
-        <span className="cart-icon">🛒</span>
-        <Link to="/cart">
-          Carrito ({cart.reduce((total, item) => total + item.quantity, 0)})
+        <Link to="/wishlist" className="wishlist-link">
+          <span role="img" aria-label="wishlist">
+            ❤️
+          </span>{" "}
+          Wishlist
         </Link>
+        <Link to="/cart">
+          🛒 Carrito ({cart.reduce((total, item) => total + item.quantity, 0)})
+        </Link>
+      </nav>
+      <div className="user-actions">
         {session ? (
           <>
             <button className="logout-button" onClick={handleLogout}>

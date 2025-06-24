@@ -21,13 +21,10 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
           .eq("id", user.id)
           .single();
 
-        console.log("Consulta users:", { userId: user.id, userData, error });
-
         if (error || !userData) {
           setIsAllowed(false);
         } else {
           setIsAllowed(userData.profile?.toLowerCase() === "admin");
-          console.log("User profile:", userData.profile);
         }
       } else {
         setIsAllowed(true);
