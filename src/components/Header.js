@@ -56,9 +56,6 @@ const Header = ({ session }) => {
         <Link to="/about" style={navLinkStyle}>
           Sobre Nosotros
         </Link>
-        <Link to="/contact" style={navLinkStyle}>
-          Contacto
-        </Link>
         {session && (
           <>
             <Link to="/profile" style={navLinkStyle}>
