@@ -3,6 +3,46 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "../../styles/PetDetailPage.css";
 
+const cardStyle = {
+  background: "#f8f6ff",
+  border: "1px solid #d1c4e9",
+  borderRadius: 16,
+  boxShadow: "0 2px 12px #ede7f6",
+  padding: 32,
+  margin: "40px auto",
+  maxWidth: 500,
+  color: "#3a2e5c",
+};
+
+const fieldStyle = {
+  marginBottom: 12,
+  fontSize: 16,
+};
+
+const labelStyle = {
+  color: "#5e35b1",
+  fontWeight: 600,
+  minWidth: 140,
+  display: "inline-block",
+};
+
+const actionsStyle = {
+  display: "flex",
+  gap: 16,
+  marginTop: 24,
+};
+
+const buttonStyle = {
+  background: "#ede7f6",
+  border: "none",
+  color: "#5e35b1",
+  fontWeight: "bold",
+  padding: "8px 20px",
+  borderRadius: 8,
+  cursor: "pointer",
+  transition: "background 0.2s",
+};
+
 const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   const { id } = useParams(); // Obtiene el ID de la mascota desde la URL
   const navigate = useNavigate();
@@ -112,7 +152,7 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   };
 
   if (loading) {
-    return <p>Cargando datos de la mascota...</p>;
+    return <p style={{ textAlign: "center", marginTop: 40 }}>Cargando datos de la mascota...</p>;
   }
 
   if (error) {
@@ -120,13 +160,13 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   }
 
   return (
-    <div className="pet-detail-container">
-      <h2>Detalles de la Mascota</h2>
+    <div style={cardStyle}>
+      <h2 style={{ color: "#5e35b1", marginBottom: 24 }}>Detalles de la Mascota</h2>
       {isEditing ? (
         <form className="pet-detail-form">
-          <div className="pet-detail-fields">
-            <div className="pet-detail-field">
-              <label htmlFor="name">Nombre:</label>
+          <div>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="name">Nombre:</label>
               <input
                 type="text"
                 id="name"
@@ -136,8 +176,8 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
                 required
               />
             </div>
-            <div className="pet-detail-field">
-              <label htmlFor="species">Especie:</label>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="species">Especie:</label>
               <input
                 type="text"
                 id="species"
@@ -146,8 +186,8 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="pet-detail-field">
-              <label htmlFor="breed">Raza:</label>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="breed">Raza:</label>
               <input
                 type="text"
                 id="breed"
@@ -156,8 +196,8 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="pet-detail-field">
-              <label htmlFor="birth_date">Fecha de Nacimiento:</label>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="birth_date">Fecha de Nacimiento:</label>
               <input
                 type="date"
                 id="birth_date"
@@ -166,10 +206,8 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
                 onChange={handleInputChange}
               />
             </div>
-          </div>
-          <div className="pet-detail-fields">
-            <div className="pet-detail-field">
-              <label htmlFor="neck_size">Medida del Cuello (cm):</label>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="neck_size">Medida del Cuello (cm):</label>
               <input
                 type="number"
                 id="neck_size"
@@ -179,8 +217,8 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
                 step="0.01"
               />
             </div>
-            <div className="pet-detail-field">
-              <label htmlFor="chest_size">Medida del Pecho (cm):</label>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="chest_size">Medida del Pecho (cm):</label>
               <input
                 type="number"
                 id="chest_size"
@@ -190,8 +228,8 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
                 step="0.01"
               />
             </div>
-            <div className="pet-detail-field">
-              <label htmlFor="weight">Peso (kg):</label>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="weight">Peso (kg):</label>
               <input
                 type="number"
                 id="weight"
@@ -201,8 +239,8 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
                 step="0.01"
               />
             </div>
-            <div className="pet-detail-field">
-              <label htmlFor="active">Estado:</label>
+            <div style={fieldStyle}>
+              <label style={labelStyle} htmlFor="active">Estado:</label>
               <select
                 id="active"
                 name="active"
@@ -214,52 +252,50 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               </select>
             </div>
           </div>
-          <div className="pet-detail-actions">
-            <button type="button" onClick={handleSave}>
+          <div style={actionsStyle}>
+            <button type="button" style={buttonStyle} onClick={handleSave}>
               {pet && pet.id ? "Guardar cambios" : "Crear mascota"}
             </button>
-            <button type="button" onClick={() => setIsEditing(false)}>
+            <button type="button" style={buttonStyle} onClick={() => setIsEditing(false)}>
               Cancelar
             </button>
           </div>
         </form>
       ) : (
-        <div className="pet-detail-view">
-          <div className="pet-detail-fields">
-            <div className="pet-detail-field">
-              <strong>Nombre:</strong> {pet.name}
+        <div>
+          <div>
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Nombre:</strong></span> {pet.name}
             </div>
-            <div className="pet-detail-field">
-              <strong>Especie:</strong> {pet.species}
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Especie:</strong></span> {pet.species}
             </div>
-            <div className="pet-detail-field">
-              <strong>Raza:</strong> {pet.breed || "Sin raza"}
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Raza:</strong></span> {pet.breed || "Sin raza"}
             </div>
-            <div className="pet-detail-field">
-              <strong>Fecha de nacimiento:</strong>{" "}
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Fecha de nacimiento:</strong></span>{" "}
               {pet.birth_date || "No especificada"}
             </div>
-          </div>
-          <div className="pet-detail-fields">
-            <div className="pet-detail-field">
-              <strong>Medida del cuello:</strong>{" "}
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Medida del cuello:</strong></span>{" "}
               {pet.neck_size ? `${pet.neck_size} cm` : "No especificada"}
             </div>
-            <div className="pet-detail-field">
-              <strong>Medida del pecho:</strong>{" "}
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Medida del pecho:</strong></span>{" "}
               {pet.chest_size ? `${pet.chest_size} cm` : "No especificada"}
             </div>
-            <div className="pet-detail-field">
-              <strong>Peso:</strong>{" "}
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Peso:</strong></span>{" "}
               {pet.weight ? `${pet.weight} kg` : "No especificado"}
             </div>
-            <div className="pet-detail-field">
-              <strong>Estado:</strong> {pet.active ? "Activo" : "Inactivo"}
+            <div style={fieldStyle}>
+              <span style={labelStyle}><strong>Estado:</strong></span> {pet.active ? "Activo" : "Inactivo"}
             </div>
           </div>
-          <div className="pet-detail-actions">
-            <button onClick={() => setIsEditing(true)}>Editar Mascota</button>
-            <button onClick={() => navigate("/pets")}>Volver al Listado</button>
+          <div style={actionsStyle}>
+            <button style={buttonStyle} onClick={() => setIsEditing(true)}>Editar Mascota</button>
+            <button style={buttonStyle} onClick={() => navigate("/profile")}>Volver</button>
           </div>
         </div>
       )}

@@ -9,7 +9,6 @@ import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/login/LoginPage";
 import ForgotPasswordPage from "./pages/login/ForgotPasswordPage";
 import AddPetPage from "./pages/pets/AddPetPage";
-import PetListPage from "./pages/pets/PetListPage";
 import PetDetailPage from "./pages/pets/PetDetailPage";
 import ErrorPage from "./pages/ErrorPage";
 import RegisterPage from "./pages/login/RegisterPage";
@@ -33,6 +32,7 @@ import EditOrderPage from "./pages/admin/EditOrderPage";
 import MyOrdersPage from "./pages/orders/MyOrdersPage";
 import CookiesBanner from "./components/CookiesBanner";
 import WishlistPage from "./pages/wishlist/WishlistPage";
+import UserOrderDetailPage from "./pages/user/UserOrderDetailPage";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -114,11 +114,11 @@ function App() {
         {session && (
           <>
             <Route path="/pets/add" element={<AddPetPage />} />
-            <Route path="/pets" element={<PetListPage />} />
             <Route path="/pets/:id" element={<PetDetailPage />} />
             <Route path="/profile" element={<UserMenuPage />} />
             <Route path="/profile/details" element={<ProfilePage />} />
             <Route path="/orders" element={<MyOrdersPage />} />
+            <Route path="/orders/:orderId" element={<UserOrderDetailPage />} />
           </>
         )}
         <Route
