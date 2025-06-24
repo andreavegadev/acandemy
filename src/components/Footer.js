@@ -3,29 +3,46 @@ import { Link } from "react-router-dom";
 import "../styles/Footer.css";
 import Logo from "../assets/images/Logo.png";
 
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="footer-logo">
-        <img src={Logo} alt="Acandemy" className="footer-logo-image" />
-        <div className="footer-social">
-          <a
-            href="https://www.instagram.com/acandemy.tienda/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="instagram-link"
-          >
-            <span>📸 Instagram</span>
-          </a>
-        </div>
-      </div>
-      <div className="footer-links">
-        <Link to="/legal-notice">Aviso Legal</Link>
-        <Link to="/cookies-policy">Política de Cookies</Link>
-        <Link to="/privacy-policy">Política de Privacidad</Link>
-      </div>
-    </footer>
-  );
+const Footer = () => (
+  <footer
+    style={{
+      background: "linear-gradient(90deg, #ede7f6 60%, #d1c4e9 100%)",
+      color: "#5e35b1",
+      padding: "32px 0 16px 0",
+      textAlign: "center",
+      marginTop: 48,
+      borderTop: "2px solid #b39ddb55",
+    }}
+  >
+    <div style={{ marginBottom: 12 }}>
+      <Link to="/legal-notice" style={footerLinkStyle}>
+        Aviso Legal
+      </Link>
+      {" | "}
+      <Link to="/cookies-policy" style={footerLinkStyle}>
+        Cookies
+      </Link>
+      {" | "}
+      <Link to="/privacy-policy" style={footerLinkStyle}>
+        Privacidad
+      </Link>
+      {" | "}
+      <Link to="/contact" style={footerLinkStyle}>
+        Contacto
+      </Link>
+    </div>
+    <div style={{ fontSize: 15, color: "#7e57c2" }}>
+      © {new Date().getFullYear()} Acandemy. Todos los derechos reservados.
+    </div>
+  </footer>
+);
+
+const footerLinkStyle = {
+  color: "#5e35b1",
+  textDecoration: "none",
+  margin: "0 8px",
+  fontWeight: 500,
+  fontSize: 16,
 };
 
 export default Footer;
