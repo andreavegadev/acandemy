@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 
-const AdminCategoriesTable = () => {
+const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -38,10 +38,6 @@ const AdminCategoriesTable = () => {
     setSearch("");
     setPage(1);
     setPageSize(10);
-  };
-
-  const onAddCategory = () => {
-    // Logic to add a new category
   };
 
   return (
@@ -100,23 +96,25 @@ const AdminCategoriesTable = () => {
             <th>Icono</th>
             <th>Nombre</th>
             <th>Descripción</th>
+            <th>Destacada</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan={3}>Cargando...</td>
+              <td colSpan={4}>Cargando...</td>
             </tr>
           ) : categories.length === 0 ? (
             <tr>
-              <td colSpan={3}>Sin categorías</td>
+              <td colSpan={4}>Sin categorías</td>
             </tr>
           ) : (
             categories.map((cat) => (
-              <tr key={cat.id}>
+              <tr key={cat.id} onDoubleClick={() => onCategorySelect(cat)}>
                 <td>{cat.icon || "-"}</td>
                 <td>{cat.name}</td>
                 <td>{cat.description || "-"}</td>
+                <td>{cat.featured ? "Sí" : "No"}</td>
               </tr>
             ))
           )}

@@ -56,7 +56,7 @@ const PetListPage = () => {
     setSaving(true);
     const speciesEnum = form.species.trim().toLowerCase();
     const { name, breed } = form;
-    const { data, error } = await supabase.from("pets").insert([
+    const { error } = await supabase.from("pets").insert([
       {
         name,
         species: speciesEnum,

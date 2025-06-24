@@ -13,6 +13,7 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
   const [pageSize, setPageSize] = useState(5);
   const [filter, setFilter] = useState("all");
   const [handmadeFilter, setHandmadeFilter] = useState("all");
+  const [topVentas, setTopVentas] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +59,18 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
     };
     fetchProducts();
   }, [page, pageSize, filter, handmadeFilter, orderBy, orderAsc]);
+
+  useEffect(() => {
+    const fetchTopVentas = async () => {
+      const { data } = await supabase
+        .from("products")
+        .select("id, name, sales_count")
+        .order("sales_count", { ascending: false })
+        .limit(3);
+      setTopVentas(data || []);
+    };
+    fetchTopVentas();
+  }, []);
 
   const handleHeaderClick = (col) => {
     if (orderBy === col) {
@@ -115,6 +128,11 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
   };
 
   const totalPages = Math.ceil(total / pageSize);
+
+  // Estadísticas de productos
+  const noStock = products.filter((p) => p.stock === 0).length;
+  const lowStock = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
+  const active = products.filter((p) => p.active).length;
 
   return (
     <div>
@@ -183,6 +201,54 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
           &nbsp;por página
         </label>
         <button onClick={handleClearFilters}>Limpiar filtros</button>
+      </div>
+      <div
+        style={{
+          marginBottom: 16,
+          background: "#ede7f6",
+          padding: 12,
+          borderRadius: 8,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 24,
+          alignItems: "center",
+        }}
+      >
+        <span>
+          <b>Total productos:</b> {total}
+        </span>
+        <span>
+          <b>Sin stock:</b> {noStock}
+        </span>
+        <span>
+          <b>Poco stock (≤5):</b> {lowStock}
+        </span>
+        <span>
+          <b>Activos:</b> {active}
+        </span>
+        <span>
+          <b>Top ventas:</b>{" "}
+          {topVentas.map((p, i) => (
+            <span key={p.id}>
+              {i > 0 && ", "}
+              <a
+                href="#"
+                style={{
+                  color: "#5e35b1",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(`/product/${encodeURIComponent(p.name)}`);
+                }}
+              >
+                {p.name}
+              </a>{" "}
+              ({p.sales_count ?? 0})
+            </span>
+          ))}
+        </span>
       </div>
       <table className="admin-products-table">
         <thead>
