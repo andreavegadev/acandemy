@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import PetList from "../../components/PetList";
+import UserOrdersPage from "./UserOrdersPage";
+import UserMainData from "../../components/UserMainData";
+import LastOrdersList from "../../components/LastOrdersList";
+import PetListPage from "../pets/PetList"; // Asegúrate de tener este componente creado
 
 import "../../styles/UserMenuPage.css";
 
@@ -51,13 +54,12 @@ const UserMenuPage = () => {
         setUserData((prev) => ({ ...prev, full_name: userData.full_name }));
       }
 
-      // Obtener últimos 5 pedidos
       const { data: ordersData, error: ordersError } = await supabase
         .from("orders")
         .select("id, order_date, total_amount, status")
         .eq("user_id", userId)
         .order("order_date", { ascending: false })
-        .limit(5);
+        .limit(5); // Limitar a los últimos 5 pedidos
 
       if (ordersError) {
         console.error("Error al obtener los pedidos:", ordersError.message);
@@ -128,6 +130,14 @@ const UserMenuPage = () => {
                 Mis pedidos
               </button>
             </li>
+            <li>
+              <button
+                className={view === "petlist" ? "active" : ""}
+                onClick={() => setView("petlist")}
+              >
+                Mis mascotas
+              </button>
+            </li>
             {/* Puedes añadir más opciones aquí */}
           </ul>
         </nav>
@@ -139,51 +149,37 @@ const UserMenuPage = () => {
               <h1>Bienvenido a Academy, {userData.full_name}.</h1>
               <h2>La felicidad de tu mascota comienza aquí.</h2>
             </header>
-
             <section>
-              <h2>Datos principales</h2>
-              <p>
-                <strong>Nombre:</strong> {userData.full_name}
-              </p>
-              <p>
-                <strong>Email:</strong> {userData.email}
-              </p>
-              <button onClick={handleViewAllUserData}>Ver todos mis datos</button>
+              <UserMainData
+                user={userData}
+                onViewAllUserData={handleViewAllUserData}
+              />
             </section>
-
             <section>
-              <h2>Últimos 5 pedidos</h2>
-              {orders.length > 0 ? (
-                <ul>
-                  {orders.map((order) => (
-                    <li key={order.id}>
-                      Pedido #{order.id} -{" "}
-                      {new Date(order.order_date).toLocaleDateString()} - $
-                      {order.total_amount} - {order.status}
-                      <button onClick={() => handleViewOrderDetails(order.id)}>
-                        Ver Detalles
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No tienes pedidos recientes.</p>
-              )}
-              <button onClick={handleViewAllOrders}>Ver todos los pedidos</button>
+              <LastOrdersList
+                orders={orders}
+                onViewOrder={handleViewOrderDetails}
+                onViewAllOrders={handleViewAllOrders}
+                limit={5}
+              />
             </section>
-
-            <PetList
-              pets={pets}
-              onViewPet={handleViewPetDetails}
-              onAddPet={handleAddPet}
-            />
           </div>
         )}
         {view === "orders" && (
           <div>
             <h3>Mis pedidos</h3>
-            <p>Aquí aparecerán tus pedidos realizados.</p>
-            {/* <UserOrdersPage /> */}
+            <UserOrdersPage />
+          </div>
+        )}
+        {view === "petlist" && (
+          <div>
+            <h3>Listado completo de mascotas</h3>
+            <PetListPage
+              userId={userData.id}
+              pets={pets}
+              onViewPet={handleViewPetDetails}
+              onAddPet={handleAddPet}
+            />
           </div>
         )}
       </main>
