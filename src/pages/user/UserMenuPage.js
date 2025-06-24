@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import PetList from "../../components/PetList";
+import UserOrdersPage from "./UserOrdersPage";
+import { STATUS_LABELS } from "../../constants/order";
 
 import "../../styles/UserMenuPage.css";
 
@@ -51,13 +53,12 @@ const UserMenuPage = () => {
         setUserData((prev) => ({ ...prev, full_name: userData.full_name }));
       }
 
-      // Obtener últimos 5 pedidos
       const { data: ordersData, error: ordersError } = await supabase
         .from("orders")
         .select("id, order_date, total_amount, status")
         .eq("user_id", userId)
         .order("order_date", { ascending: false })
-        .limit(5);
+        .limit(5); // Limitar a los últimos 5 pedidos
 
       if (ordersError) {
         console.error("Error al obtener los pedidos:", ordersError.message);
@@ -128,6 +129,14 @@ const UserMenuPage = () => {
                 Mis pedidos
               </button>
             </li>
+            <li>
+              <button
+                className={view === "pets" ? "active" : ""}
+                onClick={() => setView("pets")}
+              >
+                Mis Mascotas
+              </button>
+            </li>
             {/* Puedes añadir más opciones aquí */}
           </ul>
         </nav>
@@ -148,18 +157,20 @@ const UserMenuPage = () => {
               <p>
                 <strong>Email:</strong> {userData.email}
               </p>
-              <button onClick={handleViewAllUserData}>Ver todos mis datos</button>
+              <button onClick={handleViewAllUserData}>
+                Ver todos mis datos
+              </button>
             </section>
 
             <section>
-              <h2>Últimos 5 pedidos</h2>
+              <h2>Últimos pedidos</h2>
               {orders.length > 0 ? (
                 <ul>
                   {orders.map((order) => (
                     <li key={order.id}>
                       Pedido #{order.id} -{" "}
                       {new Date(order.order_date).toLocaleDateString()} - $
-                      {order.total_amount} - {order.status}
+                      {order.total_amount} - {STATUS_LABELS[order.status] || order.status}
                       <button onClick={() => handleViewOrderDetails(order.id)}>
                         Ver Detalles
                       </button>
@@ -169,7 +180,9 @@ const UserMenuPage = () => {
               ) : (
                 <p>No tienes pedidos recientes.</p>
               )}
-              <button onClick={handleViewAllOrders}>Ver todos los pedidos</button>
+              <button onClick={handleViewAllOrders}>
+                Ver todos los pedidos
+              </button>
             </section>
 
             <PetList
@@ -182,8 +195,17 @@ const UserMenuPage = () => {
         {view === "orders" && (
           <div>
             <h3>Mis pedidos</h3>
-            <p>Aquí aparecerán tus pedidos realizados.</p>
-            {/* <UserOrdersPage /> */}
+            <UserOrdersPage />
+          </div>
+        )}
+        {view === "pets" && (
+          <div>
+            <h3>Mis mascotas</h3>
+            <PetList
+              pets={pets}
+              onViewPet={handleViewPetDetails}
+              onAddPet={handleAddPet}
+            />
           </div>
         )}
       </main>

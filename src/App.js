@@ -33,6 +33,7 @@ import EditOrderPage from "./pages/admin/EditOrderPage";
 import MyOrdersPage from "./pages/orders/MyOrdersPage";
 import CookiesBanner from "./components/CookiesBanner";
 import WishlistPage from "./pages/wishlist/WishlistPage";
+import UserOrderDetailPage from "./pages/user/UserOrderDetailPage";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -119,6 +120,7 @@ function App() {
             <Route path="/profile" element={<UserMenuPage />} />
             <Route path="/profile/details" element={<ProfilePage />} />
             <Route path="/orders" element={<MyOrdersPage />} />
+            <Route path="/orders/:orderId" element={<UserOrderDetailPage />} />
           </>
         )}
         <Route

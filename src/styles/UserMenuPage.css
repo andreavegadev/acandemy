@@ -51,6 +51,45 @@
 }
 
 .user-menu-content {
-  flex: 1;
-  padding: 40px 32px;
+  background: #f8f6ff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #ede7f6;
+  padding: 32px 24px;
+  min-height: 400px;
+  margin-left: 24px;
+  color: #3a2e5c;
+  font-size: 17px;
+  transition: box-shadow 0.2s;
+  width: 100%;
+}
+
+.user-menu-content h1,
+.user-menu-content h2,
+.user-menu-content h3 {
+  color: #5e35b1;
+  margin-bottom: 12px;
+}
+
+.user-menu-content section {
+  margin-bottom: 32px;
+}
+
+.user-menu-content ul {
+  padding-left: 18px;
+}
+
+.user-menu-content button {
+  background: #ede7f6;
+  color: #5e35b1;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.user-menu-content button:hover {
+  background: #d1c4e9;
 }
