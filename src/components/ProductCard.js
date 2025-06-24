@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "../styles/Products.css"; // Import your CSS file for styling
-import { useCart } from "../context/CartContext"; // Importa el contexto del carrito
+import "../styles/Products.css";
+import { useCart } from "../context/CartContext";
+import WishlistButton from "../components/WishlistButton";
 
 const ProductCard = ({ id, title, description, price, image, linkDetails }) => {
   const { addToCart } = useCart(); // Obtén la función para añadir productos al carrito
@@ -19,7 +20,16 @@ const ProductCard = ({ id, title, description, price, image, linkDetails }) => {
   return (
     <div className="product-card">
       <img src={image} alt={title} className="product-image" />
-      <h3>{title}</h3>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <h3>{title}</h3>
+        <WishlistButton productId={id} />
+      </div>
       <p>{description}</p>
       <p className="product-price">{price}</p>
       <div className="product-actions">
@@ -35,10 +45,10 @@ const ProductCard = ({ id, title, description, price, image, linkDetails }) => {
 };
 
 ProductCard.propTypes = {
-  id: PropTypes.string.isRequired, // Asegúrate de que cada producto tenga un ID único
+  id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired, // Cambiado a número para cálculos
+  price: PropTypes.number.isRequired,
   image: PropTypes.string,
   linkDetails: PropTypes.string.isRequired,
 };
