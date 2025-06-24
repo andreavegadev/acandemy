@@ -3,6 +3,39 @@ import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { STATUS_LABELS } from "../../constants/order";
 
+const cardStyle = {
+  background: "#f8f6ff",
+  border: "1px solid #d1c4e9",
+  borderRadius: 12,
+  boxShadow: "0 1px 6px #ede7f6",
+  padding: "18px 24px",
+  marginBottom: 18,
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+};
+
+const statusStyle = {
+  fontWeight: 600,
+  borderRadius: 8,
+  padding: "2px 10px",
+  fontSize: 13,
+  display: "inline-block",
+};
+
+const buttonStyle = {
+  background: "#ede7f6",
+  border: "none",
+  color: "#5e35b1",
+  fontWeight: "bold",
+  padding: "6px 16px",
+  borderRadius: 8,
+  cursor: "pointer",
+  marginTop: 8,
+  alignSelf: "flex-start",
+  transition: "background 0.2s",
+};
+
 const UserOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,39 +70,79 @@ const UserOrdersPage = () => {
     navigate(`/orders/${orderId}`);
   };
 
-  if (loading) return <p>Cargando pedidos...</p>;
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>Cargando pedidos...</p>
+    );
 
   return (
-    <div>
+    <div style={{ maxWidth: 700, margin: "40px auto" }}>
+      <h2
+        style={{
+          color: "#5e35b1",
+          marginBottom: 24,
+          textAlign: "center",
+        }}
+      >
+        Mis pedidos
+      </h2>
       {orders.length === 0 ? (
-        <p>No tienes pedidos.</p>
+        <div style={{ textAlign: "center", color: "#888" }}>No tienes pedidos.</div>
       ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Fecha</th>
-              <th>Total</th>
-              <th>Estado</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{new Date(order.order_date).toLocaleDateString()}</td>
-                <td>{Number(order.total_amount).toFixed(2)} €</td>
-                <td>{STATUS_LABELS[order.status] || order.status}</td>
-                <td>
-                  <button onClick={() => handleViewOrderDetails(order.id)}>
-                    Ver detalles
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div>
+          {orders.map((order) => (
+            <div key={order.id} style={cardStyle}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span style={{ fontWeight: 600 }}>Pedido #{order.id}</span>
+                <span
+                  style={{
+                    ...statusStyle,
+                    background:
+                      order.status === "pending"
+                        ? "#fffde7"
+                        : order.status === "delivered"
+                        ? "#e8f5e9"
+                        : order.status === "cancelled"
+                        ? "#ffebee"
+                        : "#ede7f6",
+                    color:
+                      order.status === "pending"
+                        ? "#fbc02d"
+                        : order.status === "delivered"
+                        ? "#43a047"
+                        : order.status === "cancelled"
+                        ? "#e53935"
+                        : "#5e35b1",
+                  }}
+                >
+                  {STATUS_LABELS[order.status] || order.status}
+                </span>
+              </div>
+              <div style={{ fontSize: 15, color: "#3a2e5c" }}>
+                <div>
+                  <b>Fecha:</b> {new Date(order.order_date).toLocaleDateString()}
+                </div>
+                <div>
+                  <b>Total:</b> {Number(order.total_amount).toFixed(2)} €
+                </div>
+              </div>
+              <button
+                style={buttonStyle}
+                onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
+                onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
+                onClick={() => handleViewOrderDetails(order.id)}
+              >
+                Ver detalles
+              </button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

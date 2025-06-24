@@ -2,6 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 
+const cardStyle = {
+  background: "#f8f6ff",
+  border: "1px solid #d1c4e9",
+  borderRadius: 12,
+  boxShadow: "0 1px 6px #ede7f6",
+  padding: "18px 24px",
+  marginBottom: 18,
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+};
+
+const statusStyle = {
+  fontWeight: 600,
+  borderRadius: 8,
+  padding: "2px 10px",
+  fontSize: 13,
+  display: "inline-block",
+};
+
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +33,9 @@ const MyOrdersPage = () => {
       setLoading(true);
       setError("");
       // Obtén el usuario en sesión
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         setError("No hay sesión activa.");
         setLoading(false);
@@ -32,11 +54,31 @@ const MyOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  if (loading) return <div style={{ textAlign: "center", marginTop: 40 }}>Cargando pedidos...</div>;
-  if (error) return <div style={{ color: "red", textAlign: "center", marginTop: 40 }}>{error}</div>;
+  if (loading)
+    return (
+      <div style={{ textAlign: "center", marginTop: 40 }}>
+        Cargando pedidos...
+      </div>
+    );
+  if (error)
+    return (
+      <div style={{ color: "red", textAlign: "center", marginTop: 40 }}>
+        {error}
+      </div>
+    );
 
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto", background: "#fff", borderRadius: 12, boxShadow: "0 2px 12px #ede7f6", padding: 32, position: "relative" }}>
+    <div
+      style={{
+        maxWidth: 700,
+        margin: "40px auto",
+        background: "#fff",
+        borderRadius: 12,
+        boxShadow: "0 2px 12px #ede7f6",
+        padding: 32,
+        position: "relative",
+      }}
+    >
       <button
         onClick={() => navigate("/profile")}
         style={{
@@ -56,30 +98,61 @@ const MyOrdersPage = () => {
       >
         ← Volver
       </button>
-      <h2 style={{ color: "#5e35b1", marginBottom: 24, textAlign: "center" }}>Mis pedidos</h2>
+      <h2 style={{ color: "#5e35b1", marginBottom: 24, textAlign: "center" }}>
+        Mis pedidos
+      </h2>
       {orders.length === 0 ? (
-        <div style={{ textAlign: "center", color: "#888" }}>No tienes pedidos aún.</div>
+        <div style={{ textAlign: "center", color: "#888" }}>
+          No tienes pedidos aún.
+        </div>
       ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: "#ede7f6", color: "#5e35b1" }}>
-              <th style={{ padding: 10, borderRadius: 6 }}>ID</th>
-              <th style={{ padding: 10 }}>Fecha</th>
-              <th style={{ padding: 10 }}>Estado</th>
-              <th style={{ padding: 10 }}>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map(order => (
-              <tr key={order.id} style={{ borderBottom: "1px solid #eee" }}>
-                <td style={{ padding: 10 }}>{order.id}</td>
-                <td style={{ padding: 10 }}>{new Date(order.created_at).toLocaleString()}</td>
-                <td style={{ padding: 10 }}>{order.status}</td>
-                <td style={{ padding: 10 }}>{order.total ? `€${order.total.toFixed(2)}` : "-"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div>
+          {orders.map((order) => (
+            <div key={order.id} style={cardStyle}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span style={{ fontWeight: 600 }}>Pedido #{order.id}</span>
+                <span
+                  style={{
+                    ...statusStyle,
+                    background:
+                      order.status === "pending"
+                        ? "#fffde7"
+                        : order.status === "delivered"
+                        ? "#e8f5e9"
+                        : order.status === "cancelled"
+                        ? "#ffebee"
+                        : "#ede7f6",
+                    color:
+                      order.status === "pending"
+                        ? "#fbc02d"
+                        : order.status === "delivered"
+                        ? "#43a047"
+                        : order.status === "cancelled"
+                        ? "#e53935"
+                        : "#5e35b1",
+                  }}
+                >
+                  {order.status}
+                </span>
+              </div>
+              <div style={{ fontSize: 15, color: "#3a2e5c" }}>
+                <div>
+                  <b>Fecha:</b> {new Date(order.created_at).toLocaleString()}
+                </div>
+                <div>
+                  <b>Total:</b>{" "}
+                  {order.total ? `€${order.total.toFixed(2)}` : "-"}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
