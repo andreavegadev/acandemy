@@ -21,7 +21,7 @@ const LoginPage = () => {
     setError("");
 
     // Autenticar al usuario con Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,
     });
@@ -30,7 +30,6 @@ const LoginPage = () => {
       console.error("Error al iniciar sesión:", error.message);
       setError("Credenciales incorrectas. Inténtalo de nuevo.");
     } else {
-      console.log("Usuario autenticado:", data);
       navigate("/home");
     }
   };

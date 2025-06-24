@@ -75,6 +75,7 @@ const ProductListPage = () => {
           products.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               title={product.name}
               description={product.description}
               price={`€${product.price.toFixed(2)}`}
