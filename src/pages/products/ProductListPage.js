@@ -51,7 +51,7 @@ const ProductListPage = () => {
             return;
           }
           categoryId = categoryData?.id;
-          setSelectedCategory(category); // Sincroniza chip con URL
+          setSelectedCategory(category);
         } else if (selectedCategory !== "Todos") {
           // Si no hay categoría en la URL, usa la seleccionada en el chip
           const cat = categories.find((c) => c.name === selectedCategory);
@@ -97,7 +97,8 @@ const ProductListPage = () => {
       search === ""
         ? true
         : p.name.toLowerCase().includes(search.toLowerCase()) ||
-          (p.description && p.description.toLowerCase().includes(search.toLowerCase()))
+          (p.description &&
+            p.description.toLowerCase().includes(search.toLowerCase()))
     );
 
   if (loading) {
@@ -112,7 +113,9 @@ const ProductListPage = () => {
           : `Productos en la categoría: ${selectedCategory}`}
       </h1>
       {/* Filtros */}
-      <div style={{ marginBottom: 24, display: "flex", flexWrap: "wrap", gap: 16 }}>
+      <div
+        style={{ marginBottom: 24, display: "flex", flexWrap: "wrap", gap: 16 }}
+      >
         {/* Chips de categoría */}
         <div>
           {categories.map((cat) => (
@@ -126,12 +129,16 @@ const ProductListPage = () => {
                 padding: "8px 18px",
                 borderRadius: 20,
                 border: "none",
-                background: selectedCategory === cat.name ? "#5e35b1" : "#ede7f6",
+                background:
+                  selectedCategory === cat.name ? "#5e35b1" : "#ede7f6",
                 color: selectedCategory === cat.name ? "#fff" : "#5e35b1",
                 fontWeight: 600,
                 cursor: "pointer",
-                boxShadow: selectedCategory === cat.name ? "0 2px 8px #b39ddb55" : "none",
-                transition: "background 0.2s"
+                boxShadow:
+                  selectedCategory === cat.name
+                    ? "0 2px 8px #b39ddb55"
+                    : "none",
+                transition: "background 0.2s",
               }}
             >
               {cat.name}
@@ -139,52 +146,56 @@ const ProductListPage = () => {
           ))}
         </div>
         {/* Filtro por precio */}
-        <div style={{
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-  background: "#f3e5f5",
-  borderRadius: 20,
-  padding: "6px 18px",
-  marginRight: 16,
-  boxShadow: "0 1px 4px #b39ddb33"
-}}>
-  <span style={{ color: "#5e35b1", fontWeight: 600, marginRight: 6 }}>Precio:</span>
-  <input
-    type="number"
-    min="0"
-    value={minPrice}
-    onChange={(e) => setMinPrice(e.target.value)}
-    placeholder="Mín"
-    style={{
-      width: 70,
-      border: "1px solid #d1c4e9",
-      borderRadius: 8,
-      padding: "4px 8px",
-      marginRight: 4,
-      background: "#fff",
-      color: "#5e35b1"
-    }}
-  />
-  <span style={{ color: "#5e35b1" }}>-</span>
-  <input
-    type="number"
-    min="0"
-    value={maxPrice}
-    onChange={(e) => setMaxPrice(e.target.value)}
-    placeholder="Máx"
-    style={{
-      width: 70,
-      border: "1px solid #d1c4e9",
-      borderRadius: 8,
-      padding: "4px 8px",
-      marginLeft: 4,
-      background: "#fff",
-      color: "#5e35b1"
-    }}
-  />
-  <span style={{ color: "#5e35b1", marginLeft: 4 }}>€</span>
-</div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            background: "#f3e5f5",
+            borderRadius: 20,
+            padding: "6px 18px",
+            marginRight: 16,
+            boxShadow: "0 1px 4px #b39ddb33",
+          }}
+        >
+          <span style={{ color: "#5e35b1", fontWeight: 600, marginRight: 6 }}>
+            Precio:
+          </span>
+          <input
+            type="number"
+            min="0"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            placeholder="Mín"
+            style={{
+              width: 70,
+              border: "1px solid #d1c4e9",
+              borderRadius: 8,
+              padding: "4px 8px",
+              marginRight: 4,
+              background: "#fff",
+              color: "#5e35b1",
+            }}
+          />
+          <span style={{ color: "#5e35b1" }}>-</span>
+          <input
+            type="number"
+            min="0"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            placeholder="Máx"
+            style={{
+              width: 70,
+              border: "1px solid #d1c4e9",
+              borderRadius: 8,
+              padding: "4px 8px",
+              marginLeft: 4,
+              background: "#fff",
+              color: "#5e35b1",
+            }}
+          />
+          <span style={{ color: "#5e35b1", marginLeft: 4 }}>€</span>
+        </div>
         {/* Filtro por texto */}
         <div>
           <input
@@ -192,7 +203,11 @@ const ProductListPage = () => {
             placeholder="Buscar producto..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #d1c4e9" }}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid #d1c4e9",
+            }}
           />
         </div>
       </div>
