@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "../styles/Products.css"; // Import your CSS file for styling
+import "../styles/Products.css";
 import { useCart } from "../context/CartContext"; // Importa el contexto del carrito
 
 const ProductCard = ({ id, title, description, price, image, linkDetails }) => {
