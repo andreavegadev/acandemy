@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import "../../styles/PetListPage.css";
+import "../../styles/PetList.css";
 import PetDetailPanel from "./PetDetailPanel";
 
-const PetListPage = () => {
+const PetList = () => {
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -256,4 +256,4 @@ const PetListPage = () => {
   );
 };
 
-export default PetListPage;
+export default PetList;
