@@ -41,7 +41,7 @@ const UserMenuPage = () => {
 
       const { data: userData, error: userDataError } = await supabase
         .from("users")
-        .select("full_name")
+        .select("*")
         .eq("id", userId)
         .single();
 
@@ -51,7 +51,12 @@ const UserMenuPage = () => {
           userDataError.message
         );
       } else {
-        setUserData((prev) => ({ ...prev, full_name: userData.full_name }));
+        setUserData((prev) => ({
+          ...prev,
+          full_name: userData.full_name,
+          id_number: userData.id_number,
+          phone: userData.phone,
+        }));
       }
 
       const { data: ordersData, error: ordersError } = await supabase

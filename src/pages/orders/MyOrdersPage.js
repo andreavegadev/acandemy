@@ -147,7 +147,7 @@ const MyOrdersPage = () => {
                 </div>
                 <div>
                   <b>Total:</b>{" "}
-                  {order.total ? `€${order.total.toFixed(2)}` : "-"}
+                  {order.total_amount ? `€${order.total_amount.toFixed(2)}` : "-"}
                 </div>
               </div>
             </div>
