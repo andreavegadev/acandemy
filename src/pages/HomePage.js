@@ -7,7 +7,6 @@ import "../styles/Common.css"; // Asegúrate de tener un archivo CSS para estilo
 
 const HomePage = () => {
   const [featuredCategories, setFeaturedCategories] = useState([]);
-  const [bestSellers, setBestSellers] = useState([]);
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,43 +51,6 @@ const HomePage = () => {
         );
       }
 
-      const { data: bestSellersData, error: bestSellersError } =
-        await supabase.rpc("get_best_sellers", { limit: 5 }); // Llama a una función RPC en Supabase
-
-      if (bestSellersError || bestSellersData.length === 0) {
-        // Si no hay Best Sellers, obtener los primeros 5 productos
-        const { data: fallbackProducts, error: fallbackError } = await supabase
-          .from("products")
-          .select("id, name, price")
-          .order("id", { ascending: true })
-          .limit(5);
-
-        if (fallbackError) {
-          console.error(
-            "Error al obtener los productos:",
-            fallbackError.message
-          );
-        } else {
-          setBestSellers(
-            fallbackProducts.map((product) => ({
-              title: product.name,
-              price: `$${product.price.toFixed(2)}`,
-              linkDetails: `/product/${encodeURIComponent(product.name)}`,
-              linkBuy: `/cart/add/${encodeURIComponent(product.name)}`,
-            }))
-          );
-        }
-      } else {
-        setBestSellers(
-          bestSellersData.map((product) => ({
-            title: product.name,
-            price: `$${product.price.toFixed(2)}`,
-            linkDetails: `/product/${product.id}`,
-            linkBuy: `/cart/add/${product.id}`,
-          }))
-        );
-      }
-
       setLoading(false);
     };
 
@@ -111,21 +73,6 @@ const HomePage = () => {
               title={category.title}
               description={category.description}
               link={category.link}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="best-sellers-section">
-        <h2>Best Sellers</h2>
-        <div className="best-sellers-cards">
-          {bestSellers.map((product, index) => (
-            <ProductCard
-              key={index}
-              title={product.title}
-              price={product.price}
-              linkDetails={product.linkDetails}
-              linkBuy={product.linkBuy}
             />
           ))}
         </div>

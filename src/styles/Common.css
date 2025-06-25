@@ -35,18 +35,6 @@ a {
   justify-content: center;
 }
 
-/* Best Sellers Section */
-.best-sellers-section {
-  margin-bottom: 40px;
-}
-
-.best-sellers-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
 .product-card {
   background-color: #ffffff; /* Blanco */
   border: 1px solid #ddd;
