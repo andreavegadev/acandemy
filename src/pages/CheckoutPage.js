@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
@@ -6,65 +6,175 @@ import { supabase } from "../supabaseClient";
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    full_name: "",
-    email: "",
-    address: "",
-    phone: "",
-  });
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountValue, setDiscountValue] = useState(0);
+  const [discountType, setDiscountType] = useState(null); // "percentage" o "amount"
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // NUEVO: Precargar datos de usuario
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        // Carga email de auth
-        let newForm = { ...form, email: user.email || "" };
-
-        // Carga datos extra de la tabla public.user
-        const { data: userData } = await supabase
-          .from("user")
-          .select("full_name, address, phone")
-          .eq("id", user.id)
-          .single();
-
-        if (userData) {
-          newForm = {
-            ...newForm,
-            full_name: userData.full_name || "",
-            address: userData.address || "",
-            phone: userData.phone || "",
-          };
-        }
-        setForm(newForm);
-      }
-    };
-    fetchUserData();
-    // eslint-disable-next-line
-  }, []);
-
-  const getTotal = () =>
-    cart.reduce(
+  const getTotal = () => {
+    const subtotal = cart.reduce(
       (sum, item) => sum + Number(item.price) * (item.quantity || 1),
       0
     );
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    if (discountApplied && discountValue > 0) {
+      if (discountType === "Percentage") {
+        return subtotal - (subtotal * discountValue) / 100;
+      } else if (discountType === "Amount") {
+        return Math.max(0, subtotal - discountValue);
+      }
+    }
+    return subtotal;
   };
 
-  const handleSubmit = (e) => {
+  const handleApplyDiscount = async (e) => {
     e.preventDefault();
-    // Validación simple
-    if (!form.full_name || !form.email || !form.address || !form.phone) {
-      setError("Por favor, completa todos los campos.");
+    setError("");
+    setDiscountApplied(false);
+    setDiscountValue(0);
+    setDiscountType(null);
+
+    const code = discountCode.trim().toUpperCase();
+    if (!code) {
+      setError("Introduce un código de descuento.");
       return;
     }
+
+    // Consulta a la tabla discounts
+    const { data, error: dbError } = await supabase
+      .from("discounts")
+      .select("*")
+      .eq("code", code)
+      .eq("active", true)
+      .limit(1)
+      .single();
+
+    if (dbError || !data) {
+      setError("Código de descuento no válido o inactivo.");
+      return;
+    }
+
+    // Validaciones adicionales
+    const now = new Date();
+    if (data.start_date && new Date(data.start_date) > now) {
+      setError("Este código aún no está activo.");
+      return;
+    }
+    if (data.end_date && new Date(data.end_date) < now) {
+      setError("Este código ya ha expirado.");
+      return;
+    }
+    if (data.min_order && getTotal() < Number(data.min_order)) {
+      setError(
+        `El pedido mínimo para este descuento es de €${Number(
+          data.min_order
+        ).toFixed(2)}.`
+      );
+      return;
+    }
+    if (data.max_uses !== null && data.max_uses <= 0) {
+      setError("Este código ya ha alcanzado el número máximo de usos.");
+      return;
+    }
+
+    // Aplica el descuento
+    if (data.type === "Percentage" && data.percentage) {
+      setDiscountValue(data.percentage);
+      setDiscountType("Percentage");
+      setDiscountApplied(true);
+      setError("");
+    } else if (data.type === "Amount" && data.amount) {
+      setDiscountValue(data.amount);
+      setDiscountType("Amount");
+      setDiscountApplied(true);
+      setError("");
+    } else {
+      setError("El código de descuento no es válido.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError("");
+    setSuccess(false);
+
+    // 1. Obtener usuario autenticado
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user) {
+      setError("Debes iniciar sesión para finalizar la compra.");
+      return;
+    }
+
+    // 2. Insertar pedido en orders
+    let discountId = null;
+    if (discountApplied && discountCode) {
+      // Busca el id del descuento aplicado
+      const { data: discountData } = await supabase
+        .from("discounts")
+        .select("id")
+        .eq("code", discountCode.trim().toUpperCase())
+        .single();
+      discountId = discountData?.id || null;
+    }
+
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .insert([
+        {
+          user_id: userData.user.id,
+          total_amount: getTotal(),
+          discount_id: discountId,
+          status: "pending",
+          // NO pongas id aquí
+        },
+      ])
+      .select()
+      .single();
+
+    if (orderError || !order) {
+      setError("No se pudo crear el pedido.");
+      return;
+    }
+
+    // 3. Insertar los items en order_items y actualizar stock
+    for (const item of cart) {
+      // Insertar en order_items
+      const { error: itemError } = await supabase.from("order_items").insert([
+        {
+          order_id: order.id,
+          product_id: item.id,
+          quantity: item.quantity,
+          unit_price: item.price,
+          total_price: Number(item.price) * item.quantity,
+          // customizations: item.customizations, // solo si lo usas
+        },
+      ]);
+      if (itemError) {
+        setError("No se pudo añadir un producto al pedido.");
+        return;
+      }
+
+      // Actualizar stock del producto
+      // const { error: stockError } = await supabase
+      //   .from("products")
+      //   .update({
+      //     stock: supabase.rpc("decrement_stock", {
+      //       product_id: item.id,
+      //       qty: item.quantity,
+      //     }),
+      //   })
+      //   .eq("id", item.id);
+
+      // Si no tienes una función RPC, usa este update:
+      // .update({ stock: (item.stock || 0) - item.quantity })
+
+      // if (stockError) {
+      //   setError("No se pudo actualizar el stock de un producto.");
+      //   return;
+      // }
+    }
+
     setSuccess(true);
     clearCart();
     setTimeout(() => navigate("/"), 3000);
@@ -108,52 +218,58 @@ const CheckoutPage = () => {
           </li>
         ))}
       </ul>
-      <h3>Total: €{getTotal().toFixed(2)}</h3>
-      <form onSubmit={handleSubmit} style={{ marginTop: 32 }}>
-        <h2>Datos de envío</h2>
-        <div style={{ marginBottom: 12 }}>
+      <form
+        onSubmit={handleApplyDiscount}
+        style={{ marginTop: 24, marginBottom: 12 }}
+      >
+        <label style={{ fontWeight: 500, color: "#5e35b1" }}>
+          Código de descuento:
+        </label>
+        <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
           <input
             type="text"
-            name="full_name"
-            placeholder="Nombre completo"
-            value={form.full_name}
-            onChange={handleChange}
+            value={discountCode}
+            onChange={(e) => setDiscountCode(e.target.value)}
+            placeholder="Introduce tu código"
             style={inputStyle}
+            disabled={discountApplied}
           />
+          <button
+            type="submit"
+            style={{
+              background: discountApplied ? "#bdbdbd" : "#5e35b1",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              padding: "8px 18px",
+              fontWeight: 600,
+              cursor: discountApplied ? "not-allowed" : "pointer",
+            }}
+            disabled={discountApplied}
+          >
+            {discountApplied ? "Aplicado" : "Aplicar"}
+          </button>
         </div>
-        <div style={{ marginBottom: 12 }}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            value={form.email}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <input
-            type="text"
-            name="address"
-            placeholder="Dirección de envío"
-            value={form.address}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-        </div>
-        <div style={{ marginBottom: 12 }}>
-          <input
-            type="tel"
-            name="phone"
-            placeholder="Teléfono"
-            value={form.phone}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-        </div>
-        {error && (
-          <div style={{ color: "#e53935", marginBottom: 12 }}>{error}</div>
+        {discountApplied && (
+          <div style={{ color: "#43a047", marginTop: 8 }}>
+            ¡Descuento{" "}
+            {discountType === "Percentage"
+              ? `${discountValue}%`
+              : `de €${discountValue}`}{" "}
+            aplicado!
+          </div>
         )}
+        {error && <div style={{ color: "#e53935", marginTop: 8 }}>{error}</div>}
+      </form>
+      <h3>
+        Total: €{getTotal().toFixed(2)}
+        {discountApplied && (
+          <span style={{ color: "#43a047", fontSize: 15, marginLeft: 8 }}>
+            (descuento incluido)
+          </span>
+        )}
+      </h3>
+      <form onSubmit={handleSubmit} style={{ marginTop: 32 }}>
         <button
           type="submit"
           style={{
