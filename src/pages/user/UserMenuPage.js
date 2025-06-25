@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import UserOrdersPage from "./UserOrdersPage";
 import UserMainData from "../../components/UserMainData";
 import LastOrdersList from "../../components/LastOrdersList";
-import PetListPage from "../pets/PetList"; // Asegúrate de tener este componente creado
+import PetList from "../pets/PetList";
 
 import "../../styles/UserMenuPage.css";
 
@@ -174,7 +174,7 @@ const UserMenuPage = () => {
         {view === "petlist" && (
           <div>
             <h3>Listado completo de mascotas</h3>
-            <PetListPage
+            <PetList
               userId={userData.id}
               pets={pets}
               onViewPet={handleViewPetDetails}
