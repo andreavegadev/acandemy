@@ -1,6 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import { supabase } from "../../supabaseClient";
 
-const DiscountDetailPanel = ({ discount, onClose }) => {
+const DiscountDetailPanel = ({ discount, onClose, onEdit, onReloadDiscounts }) => {
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleDelete = async () => {
+    if (!window.confirm("¿Seguro que quieres eliminar este código descuento?")) return;
+    setDeleting(true);
+    setError("");
+    const { error } = await supabase
+      .from("discounts")
+      .delete()
+      .eq("id", discount.id);
+    setDeleting(false);
+    if (error) {
+      setError("Error al eliminar el descuento: " + error.message);
+    } else {
+      if (onReloadDiscounts) onReloadDiscounts();
+      if (onClose) onClose();
+    }
+  };
+
   if (!discount) return null;
   return (
     <div>
@@ -30,25 +51,7 @@ const DiscountDetailPanel = ({ discount, onClose }) => {
           margin: 8px 0;
           line-height: 1.5;
         }
-        .detail-panel table {
-          margin-top: 10px;
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 15px;
-        }
-        .detail-panel th, .detail-panel td {
-          border: 1px solid #d1c4e9;
-          padding: 4px 8px;
-          text-align: left;
-        }
-        .detail-panel th {
-          background: #ede7f6;
-          color: #5e35b1;
-        }
         .detail-panel button {
-          position: absolute;
-          top: 12px;
-          right: 12px;
           background: #ede7f6;
           border: none;
           color: #5e35b1;
@@ -61,52 +64,59 @@ const DiscountDetailPanel = ({ discount, onClose }) => {
         .detail-panel button:hover {
           background: #d1c4e9;
         }
-        @keyframes fadeInDetail {
-          from { opacity: 0; transform: translateY(20px);}
-          to { opacity: 1; transform: translateY(0);}
-        }
       `}</style>
       <div className="detail-panel">
-        <button onClick={onClose} style={{ float: "right" }}>
-          Cerrar
-        </button>
-        <h3>Detalle código: {discount.code}</h3>
+        <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+          <button onClick={onClose}>Cerrar</button>
+          <button onClick={() => onEdit(discount)}>Editar</button>
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            style={{
+              background: "#e53935",
+              color: "#fff",
+              border: "none",
+              borderRadius: 6,
+              padding: "4px 10px",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
+            {deleting ? "Eliminando..." : "Eliminar"}
+          </button>
+        </div>
+        <h3>Detalle código descuento #{discount.id}</h3>
         <p>
-          <b>Descripción:</b> {discount.description || "-"}
+          <b>Código:</b> {discount.code}
         </p>
         <p>
-          <b>Tipo:</b>{" "}
-          {discount.type === "Percentage" ? "Porcentaje" : "Importe fijo"}
+          <b>Tipo:</b> {discount.type}
         </p>
         <p>
-          <b>Valor:</b>{" "}
-          {discount.type === "Percentage"
-            ? `${discount.percentage}%`
-            : `${discount.amount} €`}
+          <b>Valor:</b> {discount.value}
         </p>
         <p>
-          <b>Pedido mínimo:</b>{" "}
-          {discount.min_order ? `${discount.min_order} €` : "-"}
+          <b>Porcentaje:</b> {discount.percentage ? `${discount.percentage}%` : "-"}
         </p>
         <p>
-          <b>Máx. usos:</b> {discount.max_uses || "-"}
+          <b>Monto fijo:</b> {discount.fixed_amount ? `${discount.fixed_amount} €` : "-"}
         </p>
         <p>
-          <b>Válido desde:</b>{" "}
-          {discount.start_date
-            ? new Date(discount.start_date).toLocaleString()
-            : "-"}
+          <b>Fecha inicio:</b> {discount.start_date ? new Date(discount.start_date).toLocaleDateString() : "-"}
         </p>
         <p>
-          <b>Válido hasta:</b>{" "}
-          {discount.end_date ? new Date(discount.end_date).toLocaleString() : "-"}
+          <b>Fecha fin:</b> {discount.end_date ? new Date(discount.end_date).toLocaleDateString() : "-"}
+        </p>
+        <p>
+          <b>Usos máximos:</b> {discount.max_uses ?? "-"}
+        </p>
+        <p>
+          <b>Usos realizados:</b> {discount.times_used ?? "-"}
         </p>
         <p>
           <b>Activo:</b> {discount.active ? "Sí" : "No"}
         </p>
-        <p>
-          <b>Usuario asignado:</b> {discount.user_id || "General"}
-        </p>
+        {error && <p style={{ color: "#e53935" }}>{error}</p>}
       </div>
     </div>
   );

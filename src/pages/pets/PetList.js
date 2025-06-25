@@ -16,9 +16,6 @@ const PetListPage = () => {
   const [saving, setSaving] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
-  const [searchParams] = useSearchParams();
-  const startEditing = searchParams.get("edit") === "1";
-  const [isEditing, setIsEditing] = useState(startEditing);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,7 +53,7 @@ const PetListPage = () => {
     setSaving(true);
     const speciesEnum = form.species.trim().toLowerCase();
     const { name, breed } = form;
-    const { data, error } = await supabase.from("pets").insert([
+    const { error } = await supabase.from("pets").insert([
       {
         name,
         species: speciesEnum,
@@ -162,7 +159,7 @@ const PetListPage = () => {
           background: #d1c4e9;
         }
       `}</style>
-      <h2>Mis Mascotas</h2>
+      <h2>Mis mascotas</h2>
       <div className="pet-list-grid">
         {pets.map((pet) => (
           <div

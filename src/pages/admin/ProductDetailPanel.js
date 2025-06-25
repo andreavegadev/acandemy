@@ -1,6 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import { supabase } from "../../supabaseClient";
 
-const ProductDetailPanel = ({ product, onClose, onEdit }) => {
+const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleDelete = async () => {
+    if (!window.confirm("¿Seguro que quieres eliminar este producto?")) return;
+    setDeleting(true);
+    setError("");
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", product.id);
+    setDeleting(false);
+    if (error) {
+      setError("Error al eliminar el producto: " + error.message);
+    } else {
+      if (onReloadProducts) onReloadProducts();
+      if (onClose) onClose();
+    }
+  };
+
   if (!product) return null;
   return (
     <div className="detail-panel">
@@ -51,20 +72,48 @@ const ProductDetailPanel = ({ product, onClose, onEdit }) => {
         .detail-panel .edit-btn {
           right: 90px;
         }
+        .detail-panel .delete-btn {
+          right: 180px;
+          background: #e53935;
+          color: #fff;
+        }
+        .detail-panel .delete-btn:hover {
+          background: #b71c1c;
+        }
         @keyframes fadeInDetail {
           from { opacity: 0; transform: translateY(20px);}
           to { opacity: 1; transform: translateY(0);}
         }
       `}</style>
-      <button className="close-btn" onClick={onClose}>Cerrar</button>
-      <button className="edit-btn" onClick={() => onEdit(product)}>Editar</button>
+      <button className="close-btn" onClick={onClose}>
+        Cerrar
+      </button>
+      <button className="edit-btn" onClick={() => onEdit(product)}>
+        Editar
+      </button>
+      <button className="delete-btn" onClick={handleDelete} disabled={deleting}>
+        {deleting ? "Eliminando..." : "Eliminar"}
+      </button>
       <h3>Detalle producto #{product.id}</h3>
-      <p><b>Nombre:</b> {product.name}</p>
-      <p><b>Precio:</b> {Number(product.price).toFixed(2)} €</p>
-      <p><b>Stock:</b> {product.stock}</p>
-      <p><b>Ventas:</b> {product.sales_count ?? 0}</p>
-      <p><b>Activo:</b> {product.active ? "Sí" : "No"}</p>
-      <p><b>Hecho a mano:</b> {product.handmade ? "Sí" : "No"}</p>
+      <p>
+        <b>Nombre:</b> {product.name}
+      </p>
+      <p>
+        <b>Precio:</b> {Number(product.price).toFixed(2)} €
+      </p>
+      <p>
+        <b>Stock:</b> {product.stock}
+      </p>
+      <p>
+        <b>Ventas:</b> {product.sales_count ?? 0}
+      </p>
+      <p>
+        <b>Activo:</b> {product.active ? "Sí" : "No"}
+      </p>
+      <p>
+        <b>Hecho a mano:</b> {product.handmade ? "Sí" : "No"}
+      </p>
+      {error && <p style={{ color: "#e53935" }}>{error}</p>}
     </div>
   );
 };
