@@ -137,6 +137,17 @@ const CheckoutPage = () => {
       return;
     }
 
+    // Aquí va el insert en user_discount_uses si discountId existe
+    if (discountId) {
+      await supabase.from("user_discount_uses").insert([
+        {
+          user_id: userData.user.id,
+          discount_id: discountId,
+          order_id: order.id,
+        },
+      ]);
+    }
+
     // 3. Insertar los items en order_items y actualizar stock
     for (const item of cart) {
       // Insertar en order_items
