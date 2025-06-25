@@ -72,7 +72,7 @@
 }
 
 /* General Styles for Product Cards */
-.product-card, .featured-card {
+.product-card {
   background-color: #ffffff; /* Fondo blanco */
   border: 1px solid #ddd; /* Borde sutil */
   border-radius: 10px; /* Bordes redondeados */
@@ -83,12 +83,13 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animación */
 }
 
-.product-card:hover, .featured-card:hover {
+.product-card:hover {
   transform: translateY(-5px); /* Elevar al pasar el cursor */
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Sombra más fuerte */
 }
 
-.product-card img, .featured-card img {
+.product-card img,
+.featured-card img {
   width: 100%;
   height: 150px;
   object-fit: cover; /* Ajustar imagen */
@@ -96,25 +97,29 @@
   margin-bottom: 10px;
 }
 
-.product-card h3, .featured-card h3 {
+.product-card h3,
+.featured-card h3 {
   color: #4a148c; /* Lila oscuro */
   margin-bottom: 10px;
   font-size: 18px;
 }
 
-.product-card p, .featured-card p {
+.product-card p,
+.featured-card p {
   color: #555; /* Texto gris */
   margin-bottom: 10px;
 }
 
-.product-card .product-price, .featured-card .product-price {
+.product-card .product-price,
+.featured-card .product-price {
   color: #00897b; /* Aguamarina */
   font-weight: bold;
   margin-bottom: 15px;
 }
 
 /* Buttons */
-.product-card .details-button, .featured-card .details-button {
+.product-card .details-button,
+.featured-card .details-button {
   display: inline-block;
   padding: 10px 15px;
   background-color: #4db6ac; /* Aguamarina */
@@ -125,7 +130,8 @@
   transition: background-color 0.3s ease;
 }
 
-.product-card .details-button:hover, .featured-card .details-button:hover {
+.product-card .details-button:hover,
+.featured-card .details-button:hover {
   background-color: #00897b; /* Aguamarina más oscuro */
 }
 
@@ -146,7 +152,8 @@
 }
 
 /* Layout for Product Cards */
-.best-sellers-cards, .featured-cards {
+.best-sellers-cards,
+.featured-cards {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
