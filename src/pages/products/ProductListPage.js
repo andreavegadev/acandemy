@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import ProductCard from "../../components/ProductCard";
 
 const ProductListPage = () => {
   const { category } = useParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([{ id: null, name: "Todos" }]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [selectedCategory, setSelectedCategory] = useState(category || "Todos");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [search, setSearch] = useState("");
@@ -85,6 +86,11 @@ const ProductListPage = () => {
     // eslint-disable-next-line
   }, [category, selectedCategory, categories]);
 
+  // Efecto para actualizar la categoría seleccionada cuando cambia la URL
+  useEffect(() => {
+    setSelectedCategory(category || "Todos");
+  }, [category]);
+
   // Filtro combinado
   const filteredProducts = products
     .filter((p) =>
@@ -121,7 +127,13 @@ const ProductListPage = () => {
           {categories.map((cat) => (
             <button
               key={cat.id ?? "todos"}
-              onClick={() => setSelectedCategory(cat.name)}
+              onClick={() => {
+                if (cat.name === "Todos") {
+                  navigate("/products");
+                } else {
+                  navigate(`/products/${encodeURIComponent(cat.name)}`);
+                }
+              }}
               style={{
                 display: "inline-block",
                 marginRight: 10,
