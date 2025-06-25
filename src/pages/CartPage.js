@@ -1,10 +1,12 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 import "../styles/CartPage.css";
 
 const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, getTotal, clearCart } =
     useCart();
+  const navigate = useNavigate();
 
   return (
     <div className="cart-page">
@@ -52,7 +54,9 @@ const CartPage = () => {
           <div className="cart-summary">
             <h2>Total: €{getTotal().toFixed(2)}</h2>
             <button onClick={clearCart}>Vaciar Carrito</button>
-            <button>Proceder al Pago</button>
+            <button onClick={() => navigate("/checkout")}>
+              Proceder al Pago
+            </button>
           </div>
         </>
       )}
