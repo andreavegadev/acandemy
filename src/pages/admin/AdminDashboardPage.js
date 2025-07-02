@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import AddProductPage from "./AddProductPage";
 import AddCategoryPage from "./AddCategoryPage";
 import AddDiscountPage from "./AddDiscountPage";
+import AddShippingPage from "./AddShippingPage";
 import AdminProductsTable from "./AdminProductsTable";
 import AdminOrdersTable from "./AdminOrdersTable";
 import AdminDiscountsTable from "./AdminDiscountsTable";
 import AdminCategoriesTable from "./AdminCategoriesTable";
+import AdminShippingTable from "./AdminShippingTable";
 import OrderDetailPanel from "./OrderDetailPanel";
 import ProductDetailPanel from "./ProductDetailPanel";
 import DiscountDetailPanel from "./DiscountDetailPanel";
 import CategoryDetailPanel from "./CategoryDetailPanel";
+import ShippingDetailPanel from "./ShippingDetailPanel";
 import { supabase } from "../../supabaseClient";
 
 const AdminDashboardPage = () => {
@@ -18,6 +21,7 @@ const AdminDashboardPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedShipping, setSelectedShipping] = useState(null);
   const [reloadFlag, setReloadFlag] = useState(false);
 
   // Nueva función para cambiar la vista y limpiar detalles
@@ -26,6 +30,7 @@ const AdminDashboardPage = () => {
     setSelectedProduct(null);
     setSelectedDiscount(null);
     setSelectedCategory(null);
+    setSelectedShipping(null);
     setView(newView);
   };
 
@@ -87,6 +92,12 @@ const AdminDashboardPage = () => {
           />
         </div>
         <div>
+          <AdminShippingTable
+            onAddShipping={() => handleSetView("add-shipping")}
+            onShippingSelect={setSelectedShipping}
+          />
+        </div>
+        <div>
           <AdminCategoriesTable
             onAddCategory={() => handleSetView("add-category")}
             onCategorySelect={setSelectedCategory}
@@ -109,8 +120,6 @@ const AdminDashboardPage = () => {
             onEdit={(product) => {
               setSelectedProduct(null);
               setView("edit-product");
-              // Si usas un estado para el producto a editar, puedes guardarlo aquí
-              //setEditProduct(product);
             }}
           />
         ) : selectedDiscount ? (
@@ -120,8 +129,6 @@ const AdminDashboardPage = () => {
             onEdit={(discount) => {
               setSelectedDiscount(null);
               setView("edit-discount");
-              // Si tienes un estado para el descuento a editar, puedes guardarlo aquí
-              //setEditDiscount(discount);
             }}
             onReloadDiscounts={reloadDiscounts}
           />
@@ -132,9 +139,13 @@ const AdminDashboardPage = () => {
             onEdit={(category) => {
               setSelectedCategory(null);
               setView("edit-category");
-              // setEditCategory(category);
             }}
             onReloadCategories={reloadCategories}
+          />
+        ) : selectedShipping ? (
+          <ShippingDetailPanel
+            shipping={selectedShipping}
+            onClose={() => setSelectedShipping(null)}
           />
         ) : view === "add-product" ? (
           <AddProductPage />
@@ -142,6 +153,8 @@ const AdminDashboardPage = () => {
           <AddCategoryPage />
         ) : view === "add-discount" ? (
           <AddDiscountPage />
+        ) : view === "add-shipping" ? (
+          <AddShippingPage />
         ) : (
           <p style={{ color: "#aaa" }}>Selecciona una acción o un pedido.</p>
         )}
