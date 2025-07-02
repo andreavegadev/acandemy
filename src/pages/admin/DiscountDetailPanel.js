@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 
-const DiscountDetailPanel = ({ discount, onClose, onEdit, onReloadDiscounts }) => {
+const DiscountDetailPanel = ({
+  discount,
+  onClose,
+  onEdit,
+  onReloadDiscounts,
+}) => {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
   const handleDelete = async () => {
-    if (!window.confirm("¿Seguro que quieres eliminar este código descuento?")) return;
+    if (!window.confirm("¿Seguro que quieres eliminar este código descuento?"))
+      return;
     setDeleting(true);
     setError("");
     const { error } = await supabase
@@ -27,7 +33,6 @@ const DiscountDetailPanel = ({ discount, onClose, onEdit, onReloadDiscounts }) =
     <div>
       <style>{`
         .detail-panel {
-          background: #f8f6ff;
           border: 1px solid #d1c4e9;
           border-radius: 12px;
           padding: 24px 20px 20px 20px;
@@ -96,16 +101,24 @@ const DiscountDetailPanel = ({ discount, onClose, onEdit, onReloadDiscounts }) =
           <b>Valor:</b> {discount.value}
         </p>
         <p>
-          <b>Porcentaje:</b> {discount.percentage ? `${discount.percentage}%` : "-"}
+          <b>Porcentaje:</b>{" "}
+          {discount.percentage ? `${discount.percentage}%` : "-"}
         </p>
         <p>
-          <b>Monto fijo:</b> {discount.fixed_amount ? `${discount.fixed_amount} €` : "-"}
+          <b>Monto fijo:</b>{" "}
+          {discount.fixed_amount ? `${discount.fixed_amount} €` : "-"}
         </p>
         <p>
-          <b>Fecha inicio:</b> {discount.start_date ? new Date(discount.start_date).toLocaleDateString() : "-"}
+          <b>Fecha inicio:</b>{" "}
+          {discount.start_date
+            ? new Date(discount.start_date).toLocaleDateString()
+            : "-"}
         </p>
         <p>
-          <b>Fecha fin:</b> {discount.end_date ? new Date(discount.end_date).toLocaleDateString() : "-"}
+          <b>Fecha fin:</b>{" "}
+          {discount.end_date
+            ? new Date(discount.end_date).toLocaleDateString()
+            : "-"}
         </p>
         <p>
           <b>Usos máximos:</b> {discount.max_uses ?? "-"}

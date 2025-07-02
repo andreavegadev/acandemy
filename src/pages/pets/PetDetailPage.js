@@ -4,7 +4,6 @@ import { supabase } from "../../supabaseClient";
 import "../../styles/PetDetailPage.css";
 
 const cardStyle = {
-  background: "#f8f6ff",
   border: "1px solid #d1c4e9",
   borderRadius: 16,
   boxShadow: "0 2px 12px #ede7f6",
@@ -152,7 +151,11 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   };
 
   if (loading) {
-    return <p style={{ textAlign: "center", marginTop: 40 }}>Cargando datos de la mascota...</p>;
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Cargando datos de la mascota...
+      </p>
+    );
   }
 
   if (error) {
@@ -161,12 +164,16 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
 
   return (
     <div style={cardStyle}>
-      <h2 style={{ color: "#5e35b1", marginBottom: 24 }}>Detalles de la Mascota</h2>
+      <h2 style={{ color: "#5e35b1", marginBottom: 24 }}>
+        Detalles de la Mascota
+      </h2>
       {isEditing ? (
         <form className="pet-detail-form">
           <div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="name">Nombre:</label>
+              <label style={labelStyle} htmlFor="name">
+                Nombre:
+              </label>
               <input
                 type="text"
                 id="name"
@@ -177,7 +184,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="species">Especie:</label>
+              <label style={labelStyle} htmlFor="species">
+                Especie:
+              </label>
               <input
                 type="text"
                 id="species"
@@ -187,7 +196,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="breed">Raza:</label>
+              <label style={labelStyle} htmlFor="breed">
+                Raza:
+              </label>
               <input
                 type="text"
                 id="breed"
@@ -197,7 +208,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="birth_date">Fecha de Nacimiento:</label>
+              <label style={labelStyle} htmlFor="birth_date">
+                Fecha de Nacimiento:
+              </label>
               <input
                 type="date"
                 id="birth_date"
@@ -207,7 +220,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="neck_size">Medida del Cuello (cm):</label>
+              <label style={labelStyle} htmlFor="neck_size">
+                Medida del Cuello (cm):
+              </label>
               <input
                 type="number"
                 id="neck_size"
@@ -218,7 +233,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="chest_size">Medida del Pecho (cm):</label>
+              <label style={labelStyle} htmlFor="chest_size">
+                Medida del Pecho (cm):
+              </label>
               <input
                 type="number"
                 id="chest_size"
@@ -229,7 +246,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="weight">Peso (kg):</label>
+              <label style={labelStyle} htmlFor="weight">
+                Peso (kg):
+              </label>
               <input
                 type="number"
                 id="weight"
@@ -240,7 +259,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               />
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="active">Estado:</label>
+              <label style={labelStyle} htmlFor="active">
+                Estado:
+              </label>
               <select
                 id="active"
                 name="active"
@@ -256,7 +277,11 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
             <button type="button" style={buttonStyle} onClick={handleSave}>
               {pet && pet.id ? "Guardar cambios" : "Crear mascota"}
             </button>
-            <button type="button" style={buttonStyle} onClick={() => setIsEditing(false)}>
+            <button
+              type="button"
+              style={buttonStyle}
+              onClick={() => setIsEditing(false)}
+            >
               Cancelar
             </button>
           </div>
@@ -265,37 +290,61 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
         <div>
           <div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Nombre:</strong></span> {pet.name}
+              <span style={labelStyle}>
+                <strong>Nombre:</strong>
+              </span>{" "}
+              {pet.name}
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Especie:</strong></span> {pet.species}
+              <span style={labelStyle}>
+                <strong>Especie:</strong>
+              </span>{" "}
+              {pet.species}
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Raza:</strong></span> {pet.breed || "Sin raza"}
+              <span style={labelStyle}>
+                <strong>Raza:</strong>
+              </span>{" "}
+              {pet.breed || "Sin raza"}
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Fecha de nacimiento:</strong></span>{" "}
+              <span style={labelStyle}>
+                <strong>Fecha de nacimiento:</strong>
+              </span>{" "}
               {pet.birth_date || "No especificada"}
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Medida del cuello:</strong></span>{" "}
+              <span style={labelStyle}>
+                <strong>Medida del cuello:</strong>
+              </span>{" "}
               {pet.neck_size ? `${pet.neck_size} cm` : "No especificada"}
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Medida del pecho:</strong></span>{" "}
+              <span style={labelStyle}>
+                <strong>Medida del pecho:</strong>
+              </span>{" "}
               {pet.chest_size ? `${pet.chest_size} cm` : "No especificada"}
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Peso:</strong></span>{" "}
+              <span style={labelStyle}>
+                <strong>Peso:</strong>
+              </span>{" "}
               {pet.weight ? `${pet.weight} kg` : "No especificado"}
             </div>
             <div style={fieldStyle}>
-              <span style={labelStyle}><strong>Estado:</strong></span> {pet.active ? "Activo" : "Inactivo"}
+              <span style={labelStyle}>
+                <strong>Estado:</strong>
+              </span>{" "}
+              {pet.active ? "Activo" : "Inactivo"}
             </div>
           </div>
           <div style={actionsStyle}>
-            <button style={buttonStyle} onClick={() => setIsEditing(true)}>Editar Mascota</button>
-            <button style={buttonStyle} onClick={() => navigate("/profile")}>Volver</button>
+            <button style={buttonStyle} onClick={() => setIsEditing(true)}>
+              Editar Mascota
+            </button>
+            <button style={buttonStyle} onClick={() => navigate("/profile")}>
+              Volver
+            </button>
           </div>
         </div>
       )}

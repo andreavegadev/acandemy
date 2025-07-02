@@ -3,17 +3,19 @@ import { supabase } from "../supabaseClient";
 import FeaturedCard from "../components/FeaturedCard";
 import ProductCard from "../components/ProductCard";
 import ValueCard from "../components/ValueCard";
-import "../styles/Common.css"; // Asegúrate de tener un archivo CSS para estilos
+import "../styles/Common.css";
 
 const HomePage = () => {
   const [featuredCategories, setFeaturedCategories] = useState([]);
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categoriesWithProducts, setCategoriesWithProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
 
+      // Categorías destacadas
       const { data: categoriesData, error: categoriesError } = await supabase
         .from("categories")
         .select("id, name, description, icon")
@@ -31,10 +33,13 @@ const HomePage = () => {
             title: category.name,
             description: category.description,
             link: `/products/${encodeURIComponent(category.name)}`,
+            id: category.id,
+            name: category.name,
           }))
         );
       }
 
+      // Valores
       const { data: valuesData, error: valuesError } = await supabase
         .from("values")
         .select("id, title, description, icon");
@@ -49,6 +54,37 @@ const HomePage = () => {
             subtitle: value.description,
           }))
         );
+      }
+
+      // Todas las categorías para la sección de productos por categoría
+      const { data: allCategories, error: allCategoriesError } = await supabase
+        .from("categories")
+        .select("id, name");
+
+      if (allCategoriesError) {
+        console.error(
+          "Error al obtener todas las categorías:",
+          allCategoriesError.message
+        );
+        setCategoriesWithProducts([]);
+      } else {
+        // Para cada categoría, obtener los últimos 5 productos
+        const categoriesWithProds = await Promise.all(
+          allCategories.map(async (cat) => {
+            const { data: products, error: productsError } = await supabase
+              .from("products")
+              .select("id, name, description, price, photo_url")
+              .eq("category_id", cat.id)
+              .order("created_at", { ascending: false })
+              .limit(5);
+
+            if (productsError) {
+              return { ...cat, products: [] };
+            }
+            return { ...cat, products };
+          })
+        );
+        setCategoriesWithProducts(categoriesWithProds);
       }
 
       setLoading(false);
@@ -76,6 +112,32 @@ const HomePage = () => {
             />
           ))}
         </div>
+      </section>
+
+      <section className="categories-products-section">
+        {categoriesWithProducts.map((cat) =>
+          cat.products && cat.products.length > 0 ? (
+            <div key={cat.id} style={{ marginBottom: 32 }}>
+              <h2 style={{ color: "#5e35b1", marginBottom: 12 }}>{cat.name}</h2>
+              <div
+                className="product-cards"
+                style={{ display: "flex", gap: 18, flexWrap: "wrap" }}
+              >
+                {cat.products.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    title={product.name}
+                    description={product.description}
+                    price={product.price}
+                    image={product.photo_url}
+                    linkDetails={`/product/${encodeURIComponent(product.name)}`}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null
+        )}
       </section>
 
       <section className="values-section">

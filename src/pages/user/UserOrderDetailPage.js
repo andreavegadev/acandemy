@@ -42,15 +42,25 @@ const UserOrderDetailPage = () => {
     fetchOrder();
   }, [orderId]);
 
-  if (loading) return <p style={{ textAlign: "center", marginTop: 40 }}>Cargando detalle del pedido...</p>;
-  if (!order) return <p style={{ textAlign: "center", marginTop: 40 }}>No se encontró el pedido.</p>;
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Cargando detalle del pedido...
+      </p>
+    );
+  if (!order)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        No se encontró el pedido.
+      </p>
+    );
 
   return (
     <div
       style={{
         maxWidth: 600,
         margin: "40px auto",
-        background: "#f8f6ff",
+
         border: "1px solid #d1c4e9",
         borderRadius: 16,
         boxShadow: "0 2px 12px #ede7f6",
@@ -72,8 +82,8 @@ const UserOrderDetailPage = () => {
           cursor: "pointer",
           transition: "background 0.2s",
         }}
-        onMouseOver={e => (e.target.style.background = "#d1c4e9")}
-        onMouseOut={e => (e.target.style.background = "#ede7f6")}
+        onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
+        onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
       >
         ← Volver
       </button>
@@ -86,7 +96,10 @@ const UserOrderDetailPage = () => {
           {order.order_date ? new Date(order.order_date).toLocaleString() : "-"}
         </p>
         <p>
-          <b>Total:</b> <span style={{ color: "#43a047" }}>{Number(order.total_amount).toFixed(2)} €</span>
+          <b>Total:</b>{" "}
+          <span style={{ color: "#43a047" }}>
+            {Number(order.total_amount).toFixed(2)} €
+          </span>
         </p>
         <p>
           <b>Estado:</b>{" "}
@@ -129,9 +142,15 @@ const UserOrderDetailPage = () => {
         >
           <thead>
             <tr style={{ background: "#ede7f6" }}>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Producto</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Cantidad</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Precio ud.</th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                Producto
+              </th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                Cantidad
+              </th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                Precio ud.
+              </th>
               <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Total</th>
             </tr>
           </thead>

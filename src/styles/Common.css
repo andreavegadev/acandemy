@@ -3,8 +3,6 @@ body {
   font-family: "Arial", sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa; /* Fondo blanco suave */
-  color: #333; /* Texto oscuro */
 }
 
 h2 {
@@ -20,19 +18,28 @@ a {
 
 /* Home Page Layout */
 .home-page {
-  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 16px 64px 16px;
 }
 
 /* Featured Section */
 .featured-section {
-  margin-bottom: 40px;
+  margin-bottom: 48px;
+}
+
+.featured-section h2 {
+  color: #5e35b1;
+  margin-bottom: 24px;
+  font-size: 2em;
+  text-align: center;
 }
 
 .featured-cards {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  gap: 32px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .product-card {
@@ -77,16 +84,54 @@ a {
   background-color: #00897b; /* Aguamarina más oscuro */
 }
 
+/* Categories & Products Section */
+.categories-products-section {
+  margin-bottom: 48px;
+}
+
+.categories-products-section h2 {
+  color: #5e35b1;
+  margin-bottom: 24px;
+  font-size: 1.7em;
+  text-align: center;
+}
+
+.categories-products-section h3 {
+  color: #7e57c2;
+  margin-bottom: 12px;
+  font-size: 1.2em;
+  margin-left: 8px;
+}
+
+.product-cards {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+
 /* Values Section */
 .values-section {
-  margin-bottom: 40px;
+  margin-top: 48px;
+  padding: 32px 0;
+  background: #ede7f6;
+  border-radius: 24px;
+  box-shadow: 0 2px 12px #ede7f6;
+}
+
+.values-section h2 {
+  color: #5e35b1;
+  margin-bottom: 24px;
+  font-size: 1.5em;
+  text-align: center;
 }
 
 .values-cards {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  gap: 32px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .value-card {
@@ -116,4 +161,18 @@ a {
 
 .value-card p {
   color: #555;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .featured-cards,
+  .values-cards,
+  .product-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .home-page {
+    padding: 16px 4px 32px 4px;
+  }
 }

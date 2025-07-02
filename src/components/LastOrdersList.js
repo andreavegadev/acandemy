@@ -2,7 +2,6 @@ import React from "react";
 import { STATUS_LABELS } from "../constants/order";
 
 const cardStyle = {
-  background: "#f8f6ff",
   border: "1px solid #d1c4e9",
   borderRadius: 12,
   boxShadow: "0 1px 6px #ede7f6",
@@ -46,7 +45,13 @@ const LastOrdersList = ({
       <div>
         {orders.slice(0, limit).map((order) => (
           <div key={order.id} style={cardStyle}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <span style={{ fontWeight: 600 }}>Pedido #{order.id}</span>
               <span
                 style={{
@@ -82,8 +87,8 @@ const LastOrdersList = ({
             </div>
             <button
               style={buttonStyle}
-              onMouseOver={e => (e.target.style.background = "#d1c4e9")}
-              onMouseOut={e => (e.target.style.background = "#ede7f6")}
+              onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
+              onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
               onClick={() => onViewOrder(order.id)}
             >
               Ver Detalles

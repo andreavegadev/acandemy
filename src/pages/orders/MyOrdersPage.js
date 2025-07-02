@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 
 const cardStyle = {
-  background: "#f8f6ff",
   border: "1px solid #d1c4e9",
   borderRadius: 12,
   boxShadow: "0 1px 6px #ede7f6",
@@ -147,7 +146,9 @@ const MyOrdersPage = () => {
                 </div>
                 <div>
                   <b>Total:</b>{" "}
-                  {order.total_amount ? `€${order.total_amount.toFixed(2)}` : "-"}
+                  {order.total_amount
+                    ? `€${order.total_amount.toFixed(2)}`
+                    : "-"}
                 </div>
               </div>
             </div>

@@ -27,7 +27,6 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
     <div className="detail-panel">
       <style>{`
         .detail-panel {
-          background: #f8f6ff;
           border: 1px solid #d1c4e9;
           border-radius: 12px;
           padding: 24px 20px 20px 20px;

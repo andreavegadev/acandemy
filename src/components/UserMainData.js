@@ -1,7 +1,6 @@
 import React from "react";
 
 const cardStyle = {
-  background: "#f8f6ff",
   border: "1px solid #d1c4e9",
   borderRadius: 16,
   boxShadow: "0 2px 12px #ede7f6",
@@ -50,12 +49,13 @@ const UserMainData = ({ user, onViewAllUserData }) => (
       <span style={labelStyle}>Email:</span> {user.email}
     </p>
     <p>
-      <span style={labelStyle}>Teléfono:</span> {user.phone || "No proporcionado"}
+      <span style={labelStyle}>Teléfono:</span>{" "}
+      {user.phone || "No proporcionado"}
     </p>
     <button
       style={buttonStyle}
-      onMouseOver={e => (e.target.style.background = "#d1c4e9")}
-      onMouseOut={e => (e.target.style.background = "#ede7f6")}
+      onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
+      onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
       onClick={onViewAllUserData}
     >
       Ver todos mis datos

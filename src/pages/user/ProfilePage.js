@@ -161,7 +161,6 @@ const ProfilePage = () => {
           border-radius: 8px;
           font-size: 1em;
           margin-bottom: 8px;
-          background: #f8f6ff;
           color: #3a2e5c;
           transition: border 0.2s;
         }

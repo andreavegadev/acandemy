@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { STATUS_LABELS } from "../../constants/order";
 
 const cardStyle = {
-  background: "#f8f6ff",
   border: "1px solid #d1c4e9",
   borderRadius: 12,
   boxShadow: "0 1px 6px #ede7f6",
@@ -87,7 +86,9 @@ const UserOrdersPage = () => {
         Mis pedidos
       </h2>
       {orders.length === 0 ? (
-        <div style={{ textAlign: "center", color: "#888" }}>No tienes pedidos.</div>
+        <div style={{ textAlign: "center", color: "#888" }}>
+          No tienes pedidos.
+        </div>
       ) : (
         <div>
           {orders.map((order) => (
@@ -126,7 +127,8 @@ const UserOrdersPage = () => {
               </div>
               <div style={{ fontSize: 15, color: "#3a2e5c" }}>
                 <div>
-                  <b>Fecha:</b> {new Date(order.order_date).toLocaleDateString()}
+                  <b>Fecha:</b>{" "}
+                  {new Date(order.order_date).toLocaleDateString()}
                 </div>
                 <div>
                   <b>Total:</b> {Number(order.total_amount).toFixed(2)} €
