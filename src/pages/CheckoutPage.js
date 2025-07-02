@@ -28,11 +28,17 @@ const CheckoutPage = () => {
         .order("price", { ascending: true });
       if (!error && data && data.length > 0) {
         setShippingOptions(data);
-        setSelectedShipping(data[0].id); // Selecciona la primera opción por defecto
+        setSelectedShipping(data[0].id);
       }
     };
     fetchShipping();
   }, []);
+
+  useEffect(() => {
+    if (cart.length === 0 && !success) {
+      navigate("/cart", { replace: true });
+    }
+  }, [cart, success, navigate]);
 
   const getTotal = () => {
     const subtotal = cart.reduce(
