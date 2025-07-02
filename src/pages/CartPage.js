@@ -55,7 +55,7 @@ const CartPage = () => {
             <h2>Total: €{getTotal().toFixed(2)}</h2>
             <button onClick={clearCart}>Vaciar Carrito</button>
             <button onClick={() => navigate("/checkout")}>
-              Proceder al Pago
+              Resumen del pedido
             </button>
           </div>
         </>
