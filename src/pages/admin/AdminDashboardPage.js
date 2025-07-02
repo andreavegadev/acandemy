@@ -3,6 +3,7 @@ import AddProductPage from "./AddProductPage";
 import AddCategoryPage from "./AddCategoryPage";
 import AddDiscountPage from "./AddDiscountPage";
 import AddShippingPage from "./AddShippingPage";
+import AddPersonalizationTypePage from "./AddPersonalizationTypePage";
 import AdminProductsTable from "./AdminProductsTable";
 import AdminOrdersTable from "./AdminOrdersTable";
 import AdminDiscountsTable from "./AdminDiscountsTable";
@@ -13,6 +14,8 @@ import ProductDetailPanel from "./ProductDetailPanel";
 import DiscountDetailPanel from "./DiscountDetailPanel";
 import CategoryDetailPanel from "./CategoryDetailPanel";
 import ShippingDetailPanel from "./ShippingDetailPanel";
+import AdminPersonalizationTypesTable from "./AdminPersonalizationTypesTable";
+import PersonalizationTypeDetailPanel from "./PersonalizationTypeDetailPanel";
 import { supabase } from "../../supabaseClient";
 
 const AdminDashboardPage = () => {
@@ -22,7 +25,9 @@ const AdminDashboardPage = () => {
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedShipping, setSelectedShipping] = useState(null);
+  const [selectedType, setSelectedType] = useState(null);
   const [reloadFlag, setReloadFlag] = useState(false);
+  const [reloadTypesFlag, setReloadTypesFlag] = useState(false);
 
   // Nueva función para cambiar la vista y limpiar detalles
   const handleSetView = (newView) => {
@@ -31,6 +36,7 @@ const AdminDashboardPage = () => {
     setSelectedDiscount(null);
     setSelectedCategory(null);
     setSelectedShipping(null);
+    setSelectedType(null);
     setView(newView);
   };
 
@@ -58,6 +64,7 @@ const AdminDashboardPage = () => {
   const reloadOrders = () => setReloadFlag((flag) => !flag);
   const reloadDiscounts = () => setReloadFlag((flag) => !flag);
   const reloadCategories = () => setReloadFlag((flag) => !flag);
+  const reloadTypes = () => setReloadTypesFlag((f) => !f);
 
   return (
     <div
@@ -103,6 +110,12 @@ const AdminDashboardPage = () => {
             onCategorySelect={setSelectedCategory}
           />
         </div>
+        <div>
+          <AdminPersonalizationTypesTable
+            onAddType={() => setView("add-personalization-type")}
+            onTypeSelect={setSelectedType}
+          />
+        </div>
       </div>
       <div
         style={{ flex: 1.2, padding: "32px", borderLeft: "1px solid #d1c4e9" }}
@@ -116,10 +129,14 @@ const AdminDashboardPage = () => {
         ) : selectedProduct ? (
           <ProductDetailPanel
             product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
             onEdit={(product) => {
               setSelectedProduct(null);
               setView("edit-product");
+            }}
+            onClose={() => setSelectedProduct(null)}
+            onListPersonalization={(product) => {
+              setSelectedProduct(product);
+              setView("add-product-personalization");
             }}
           />
         ) : selectedDiscount ? (
@@ -147,6 +164,12 @@ const AdminDashboardPage = () => {
             shipping={selectedShipping}
             onClose={() => setSelectedShipping(null)}
           />
+        ) : selectedType ? (
+          <PersonalizationTypeDetailPanel
+            type={selectedType}
+            onClose={() => setSelectedType(null)}
+            onReloadTypes={reloadTypes}
+          />
         ) : view === "add-product" ? (
           <AddProductPage />
         ) : view === "add-category" ? (
@@ -155,6 +178,11 @@ const AdminDashboardPage = () => {
           <AddDiscountPage />
         ) : view === "add-shipping" ? (
           <AddShippingPage />
+        ) : view === "add-personalization-type" ? (
+          <AddPersonalizationTypePage
+            onCreated={reloadTypes}
+            onCancel={() => setView("")}
+          />
         ) : (
           <p style={{ color: "#aaa" }}>Selecciona una acción o un pedido.</p>
         )}
