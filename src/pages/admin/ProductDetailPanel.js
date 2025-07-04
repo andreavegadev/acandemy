@@ -1,105 +1,90 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 
-const ProductDetailPanel = ({
-  product,
-  onClose,
-  onEdit,
-  onReloadProducts,
-  onAddPersonalization,
-}) => {
+const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
-  const [personalizations, setPersonalizations] = useState([]);
-  const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({});
-  const [types, setTypes] = useState([]);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newPers, setNewPers] = useState({
-    name: "",
-    description: "",
-    additional_price: 0,
-    personalization_type_id: "",
-    active: true,
+  const [editMode, setEditMode] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Estado para edición de producto
+  const [editForm, setEditForm] = useState({
+    name: product?.name || "",
+    description: product?.description || "",
+    price: product?.price || 0,
+    stock: product?.stock || 0,
+    photo_url: product?.photo_url || "",
+    handmade: product?.handmade ?? true,
+    active: product?.active ?? true,
+    featured: product?.featured ?? false,
+    category_id: product?.category_id || "",
+    availability: product?.availability || "stock",
   });
 
-  // Cargar personalizaciones y tipos
+  // Cargar categorías para el select
+  const [categories, setCategories] = useState([]);
   useEffect(() => {
-    if (!product) return;
-    const fetchData = async () => {
-      const { data: pers } = await supabase
-        .from("personalizations")
-        .select("*, personalization_types(name)")
-        .eq("product_id", product.id)
-        .order("id", { ascending: true });
-      setPersonalizations(pers || []);
-      const { data: tps } = await supabase
-        .from("personalization_types")
-        .select("*");
-      setTypes(tps || []);
+    const fetchCategories = async () => {
+      const { data, error } = await supabase.from("categories").select("id, name").order("name");
+      if (!error) setCategories(data || []);
     };
-    fetchData();
-  }, [product]);
+    fetchCategories();
+  }, []);
 
-  const handleDeletePersonalization = async (id) => {
-    if (!window.confirm("¿Seguro que quieres eliminar esta personalización?"))
-      return;
-    await supabase.from("personalizations").delete().eq("id", id);
-    setPersonalizations((prev) => prev.filter((p) => p.id !== id));
-  };
+  // Personalizaciones y tipos
+  const [personalizations, setPersonalizations] = useState([]);
+  const [loadingPersonalizations, setLoadingPersonalizations] = useState(true);
+  const [personalizationTypes, setPersonalizationTypes] = useState([]);
+  const [loadingTypes, setLoadingTypes] = useState(true);
 
-  const handleEditPersonalization = (pers) => {
-    setEditingId(pers.id);
-    setEditForm({
-      name: pers.name,
-      description: pers.description || "",
-      additional_price: pers.additional_price,
-      personalization_type_id: pers.personalization_type_id || "",
-      active: pers.active,
-    });
-  };
+  // Para añadir/editar personalización
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [persoForm, setPersoForm] = useState({
+    name: "",
+    personalization_type_id: "",
+    required: false,
+    additional_price: 0,
+    description: "",
+    active: true,
+  });
+  const [editingPersoId, setEditingPersoId] = useState(null);
 
-  const handleSavePersonalization = async (id) => {
-    if (!editForm.name.trim()) {
-      setError("El nombre es obligatorio.");
-      return;
-    }
-    if (
-      isNaN(editForm.additional_price) ||
-      Number(editForm.additional_price) < 0
-    ) {
-      setError("El precio adicional debe ser mayor o igual a 0.");
-      return;
-    }
-    setError("");
-    await supabase
-      .from("personalizations")
-      .update({
-        name: editForm.name,
-        description: editForm.description,
-        additional_price: Number(editForm.additional_price),
-        personalization_type_id: editForm.personalization_type_id || null,
-        active: editForm.active,
-      })
-      .eq("id", id);
-    setEditingId(null);
-    // Refresca la lista
-    const { data: pers } = await supabase
-      .from("personalizations")
-      .select("*, personalization_types(name)")
-      .eq("product_id", product.id)
-      .order("id", { ascending: true });
-    setPersonalizations(pers || []);
-  };
+  // Cargar tipos de personalización
+  useEffect(() => {
+    const fetchTypes = async () => {
+      setLoadingTypes(true);
+      const { data, error } = await supabase
+        .from("personalization_types")
+        .select("*")
+        .order("name", { ascending: true });
+      if (!error) setPersonalizationTypes(data || []);
+      setLoadingTypes(false);
+    };
+    fetchTypes();
+  }, []);
 
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditForm({});
-    setError("");
-  };
+  // Cargar personalizaciones del producto
+  useEffect(() => {
+    const fetchPersonalizations = async () => {
+      setLoadingPersonalizations(true);
+      const { data, error } = await supabase
+        .from("personalizations")
+        .select("*, personalization_type:personalization_types(*)")
+        .eq("product_id", product.id);
+      if (!error) setPersonalizations(data || []);
+      setLoadingPersonalizations(false);
+    };
+    if (product?.id) fetchPersonalizations();
+  }, [product?.id]);
 
+  // Eliminar producto
   const handleDelete = async () => {
-    if (!window.confirm("¿Seguro que quieres eliminar este producto?")) return;
+    if (
+      !window.confirm(
+        "¿Seguro que quieres eliminar este producto? Esta acción no se puede deshacer."
+      )
+    )
+      return;
     setDeleting(true);
     setError("");
     const { error } = await supabase
@@ -115,50 +100,145 @@ const ProductDetailPanel = ({
     }
   };
 
-  const handleAddPersonalization = async () => {
-    if (!newPers.name.trim()) {
+  // Guardar edición de producto
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    // Validaciones mínimas
+    if (!editForm.name.trim()) {
+      setError("El nombre es obligatorio.");
+      setSaving(false);
+      return;
+    }
+    if (!editForm.price || isNaN(editForm.price)) {
+      setError("El precio debe ser un número.");
+      setSaving(false);
+      return;
+    }
+    if (!editForm.stock || isNaN(editForm.stock)) {
+      setError("El stock debe ser un número.");
+      setSaving(false);
+      return;
+    }
+    // Actualizar producto
+    const { error } = await supabase
+      .from("products")
+      .update({
+        name: editForm.name,
+        description: editForm.description,
+        price: Number(editForm.price),
+        stock: Number(editForm.stock),
+        photo_url: editForm.photo_url,
+        handmade: editForm.handmade,
+        active: editForm.active,
+        featured: editForm.featured,
+        category_id: editForm.category_id || null,
+        availability: editForm.availability,
+      })
+      .eq("id", product.id);
+    setSaving(false);
+    if (error) {
+      setError("Error al guardar los cambios: " + error.message);
+    } else {
+      setEditMode(false);
+      if (onReloadProducts) onReloadProducts();
+    }
+  };
+
+  // Añadir o editar personalización
+  const handleSavePersonalization = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (!persoForm.name.trim()) {
       setError("El nombre es obligatorio.");
       return;
     }
-    if (
-      isNaN(newPers.additional_price) ||
-      Number(newPers.additional_price) < 0
-    ) {
-      setError("El precio adicional debe ser mayor o igual a 0.");
+    if (!persoForm.personalization_type_id) {
+      setError("Selecciona un tipo.");
       return;
     }
-    setError("");
-    const { error: insertError } = await supabase
-      .from("personalizations")
-      .insert([
+    if (editingPersoId) {
+      // Editar
+      const { error } = await supabase
+        .from("personalizations")
+        .update({
+          name: persoForm.name,
+          personalization_type_id: persoForm.personalization_type_id,
+          additional_price: Number(persoForm.additional_price) || 0,
+          description: persoForm.description,
+          active: persoForm.active,
+        })
+        .eq("id", editingPersoId);
+      if (error) {
+        setError("Error al editar la personalización.");
+        return;
+      }
+    } else {
+      // Añadir
+      const { error } = await supabase.from("personalizations").insert([
         {
-          name: newPers.name,
-          description: newPers.description,
-          additional_price: Number(newPers.additional_price),
-          personalization_type_id: newPers.personalization_type_id || null,
-          active: newPers.active,
           product_id: product.id,
+          name: persoForm.name,
+          personalization_type_id: persoForm.personalization_type_id,
+          additional_price: Number(persoForm.additional_price) || 0,
+          description: persoForm.description,
+          active: persoForm.active,
         },
       ]);
-    if (insertError) {
-      setError("Error al crear la personalización: " + insertError.message);
-      return;
+      if (error) {
+        setError("Error al añadir la personalización.");
+        return;
+      }
     }
     setShowAddForm(false);
-    setNewPers({
+    setEditingPersoId(null);
+    setPersoForm({
       name: "",
-      description: "",
-      additional_price: 0,
       personalization_type_id: "",
+      required: false,
+      additional_price: 0,
+      description: "",
       active: true,
     });
-    // Refresca la lista
-    const { data: pers } = await supabase
+    // Refrescar lista
+    const { data } = await supabase
       .from("personalizations")
-      .select("*, personalization_types(name)")
-      .eq("product_id", product.id)
-      .order("id", { ascending: true });
-    setPersonalizations(pers || []);
+      .select("*, personalization_type:personalization_types(*)")
+      .eq("product_id", product.id);
+    setPersonalizations(data || []);
+  };
+
+  // Eliminar personalización
+  const handleDeletePersonalization = async (id) => {
+    const confirm = window.confirm(
+      "¿Seguro que quieres eliminar esta personalización? Esta acción no se puede deshacer."
+    );
+    if (!confirm) return;
+    const { error } = await supabase
+      .from("personalizations")
+      .delete()
+      .eq("id", id);
+    if (error) {
+      setError("Error al eliminar la personalización.");
+      return;
+    }
+    setPersonalizations((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  // Editar personalización
+  const handleEditPersonalization = (perso) => {
+    setShowAddForm(true);
+    setEditingPersoId(perso.id);
+    setPersoForm({
+      name: perso.name,
+      personalization_type_id: perso.personalization_type_id,
+      required: false,
+      additional_price: perso.additional_price ?? 0,
+      description: perso.description ?? "",
+      active: perso.active ?? true,
+    });
+    setError("");
   };
 
   if (!product) return null;
@@ -200,64 +280,68 @@ const ProductDetailPanel = ({
         .personalizations-table {
           width: 100%;
           border-collapse: collapse;
-          margin-top: 18px;
-          margin-bottom: 10px;
+          margin-top: 12px;
         }
         .personalizations-table th, .personalizations-table td {
           border: 1px solid #d1c4e9;
-          padding: 6px 8px;
+          padding: 6px 10px;
           text-align: left;
         }
         .personalizations-table th {
           background: #ede7f6;
           color: #5e35b1;
         }
-        .personalizations-table td {
-          background: #fff;
+        .personalizations-table tr:nth-child(even) {
+          background: #f8f6ff;
         }
-        .personalizations-table input, .personalizations-table select {
-          font-size: 15px;
-          padding: 3px 6px;
-          border-radius: 5px;
-          border: 1px solid #d1c4e9;
-        }
-        .personalizations-table textarea {
-          font-size: 15px;
-          padding: 3px 6px;
-          border-radius: 5px;
-          border: 1px solid #d1c4e9;
-          min-width: 120px;
-        }
-        .personalizations-table .actions {
+        .perso-actions {
           display: flex;
-          gap: 6px;
+          gap: 8px;
         }
-        .personalizations-table .delete-btn {
-          background: #e53935;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          padding: 3px 10px;
-          cursor: pointer;
-        }
-        .personalizations-table .delete-btn:hover {
-          background: #b71c1c;
-        }
-        .personalizations-table .save-btn {
-          background: #5e35b1;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          padding: 3px 10px;
-          cursor: pointer;
-        }
-        .personalizations-table .cancel-btn {
+        .perso-actions button {
           background: #ede7f6;
           color: #5e35b1;
           border: none;
-          border-radius: 5px;
-          padding: 3px 10px;
+          border-radius: 6px;
+          padding: 4px 10px;
           cursor: pointer;
+        }
+        .perso-actions .delete-btn {
+          background: #e53935;
+          color: #fff;
+        }
+        .add-perso-form {
+          margin-top: 16px;
+          background: #fff;
+          border: 1px solid #d1c4e9;
+          border-radius: 8px;
+          padding: 14px 10px;
+        }
+        .add-perso-form label {
+          display: block;
+          margin-bottom: 8px;
+        }
+        .add-perso-form input[type="text"], .add-perso-form select {
+          width: 100%;
+          padding: 6px;
+          border-radius: 5px;
+          border: 1px solid #d1c4e9;
+        }
+        .add-perso-form input[type="number"] {
+          width: 100px;
+          margin-left: 8px;
+        }
+        .add-perso-form textarea {
+          width: 100%;
+          border-radius: 5px;
+          border: 1px solid #d1c4e9;
+          padding: 6px;
+        }
+        .add-perso-form input[type="checkbox"] {
+          margin-left: 8px;
+        }
+        .add-perso-form button {
+          margin-top: 10px;
         }
         @keyframes fadeInDetail {
           from { opacity: 0; transform: translateY(20px);}
@@ -266,18 +350,9 @@ const ProductDetailPanel = ({
       `}</style>
       <div className="panel-actions">
         <button onClick={onClose}>Cerrar</button>
-        <button onClick={() => onEdit(product)}>Editar</button>
-        <button
-          onClick={() => {
-            setShowAddForm((v) => !v);
-            setEditingId(null);
-            setEditForm({});
-            setError("");
-          }}
-          className="save-btn"
-        >
-          {showAddForm ? "Cancelar" : "Añadir personalización"}
-        </button>
+        {!editMode && (
+          <button onClick={() => setEditMode(true)}>Editar producto</button>
+        )}
         <button
           onClick={handleDelete}
           className="delete-btn"
@@ -286,238 +361,323 @@ const ProductDetailPanel = ({
           {deleting ? "Eliminando..." : "Eliminar"}
         </button>
       </div>
-      <h3>Detalle producto #{product.id}</h3>
-      <p>
-        <b>Nombre:</b> {product.name}
-      </p>
-      <p>
-        <b>Precio:</b> {Number(product.price).toFixed(2)} €
-      </p>
-      <p>
-        <b>Stock:</b> {product.stock}
-      </p>
-      <p>
-        <b>Ventas:</b> {product.sales_count ?? 0}
-      </p>
-      <p>
-        <b>Activo:</b> {product.active ? "Sí" : "No"}
-      </p>
-      <p>
-        <b>Hecho a mano:</b> {product.handmade ? "Sí" : "No"}
-      </p>
 
-      {/* Personalizaciones */}
-      <h4 style={{ marginTop: 24, color: "#7e57c2" }}>Personalizaciones</h4>
-      {personalizations.length === 0 ? (
-        <p style={{ color: "#888" }}>
-          Este producto no tiene personalizaciones.
-        </p>
-      ) : (
-        <table className="personalizations-table">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Tipo</th>
-              <th>Descripción</th>
-              <th>Precio adicional</th>
-              <th>Activo</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {personalizations.map((pers) =>
-              editingId === pers.id ? (
-                <tr key={pers.id}>
-                  <td>
-                    <input
-                      type="text"
-                      value={editForm.name}
-                      onChange={(e) =>
-                        setEditForm((f) => ({ ...f, name: e.target.value }))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <select
-                      value={editForm.personalization_type_id || ""}
-                      onChange={(e) =>
-                        setEditForm((f) => ({
-                          ...f,
-                          personalization_type_id: e.target.value,
-                        }))
-                      }
-                    >
-                      <option value="">Sin tipo</option>
-                      {types.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <textarea
-                      value={editForm.description}
-                      onChange={(e) =>
-                        setEditForm((f) => ({
-                          ...f,
-                          description: e.target.value,
-                        }))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={editForm.additional_price}
-                      onChange={(e) =>
-                        setEditForm((f) => ({
-                          ...f,
-                          additional_price: e.target.value,
-                        }))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={editForm.active}
-                      onChange={(e) =>
-                        setEditForm((f) => ({ ...f, active: e.target.checked }))
-                      }
-                    />
-                  </td>
-                  <td className="actions">
-                    <button
-                      className="save-btn"
-                      onClick={() => handleSavePersonalization(pers.id)}
-                    >
-                      Guardar
-                    </button>
-                    <button className="cancel-btn" onClick={handleCancelEdit}>
-                      Cancelar
-                    </button>
-                  </td>
-                </tr>
-              ) : (
-                <tr key={pers.id}>
-                  <td>{pers.name}</td>
-                  <td>{pers.personalization_types?.name || "-"}</td>
-                  <td>{pers.description}</td>
-                  <td>{Number(pers.additional_price).toFixed(2)} €</td>
-                  <td>
-                    <input type="checkbox" checked={pers.active} readOnly />
-                  </td>
-                  <td className="actions">
-                    <button
-                      className="save-btn"
-                      onClick={() => handleEditPersonalization(pers)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDeletePersonalization(pers.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
-      )}
-      {error && <p style={{ color: "#e53935" }}>{error}</p>}
-
-      {/* Nuevo formulario de personalización */}
-      {showAddForm && editingId === null && (
-        <div
-          className="add-personalization-form"
-          style={{
-            marginTop: 16,
-            padding: 16,
-            borderRadius: 8,
-            background: "#fff",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h4 style={{ margin: 0, color: "#7e57c2", fontSize: "1.2em" }}>
-            Añadir personalización
-          </h4>
-          <div style={{ marginTop: 12 }}>
-            <label>Nombre</label>
-            <input
-              type="text"
-              value={newPers.name}
-              onChange={(e) => setNewPers({ ...newPers, name: e.target.value })}
-              style={{ width: "100%", marginTop: 4 }}
-            />
+      {/* Modo edición de producto */}
+      {editMode ? (
+        <form onSubmit={handleSaveEdit} style={{ marginBottom: 24 }}>
+          <h3>Editar producto #{product.id}</h3>
+          <div style={{ display: "grid", gap: 14 }}>
+            <label>
+              Nombre:
+              <input
+                type="text"
+                value={editForm.name}
+                onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                required
+              />
+            </label>
+            <label>
+              Descripción:
+              <textarea
+                value={editForm.description || ""}
+                onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                rows={2}
+              />
+            </label>
+            <label>
+              Precio:
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={editForm.price}
+                onChange={e => setEditForm(f => ({ ...f, price: e.target.value }))}
+                required
+              /> €
+            </label>
+            <label>
+              Stock:
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={editForm.stock}
+                onChange={e => setEditForm(f => ({ ...f, stock: e.target.value }))}
+                required
+              />
+            </label>
+            <label>
+              Foto (URL):
+              <input
+                type="text"
+                value={editForm.photo_url}
+                onChange={e => setEditForm(f => ({ ...f, photo_url: e.target.value }))}
+              />
+            </label>
+            <label>
+              Categoría:
+              <select
+                value={editForm.category_id || ""}
+                onChange={e => setEditForm(f => ({ ...f, category_id: e.target.value }))}
+              >
+                <option value="">Sin categoría</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </label>
+            <div style={{ display: "flex", gap: 18 }}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={!!editForm.handmade}
+                  onChange={e => setEditForm(f => ({ ...f, handmade: e.target.checked }))}
+                />
+                Hecho a mano
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={!!editForm.active}
+                  onChange={e => setEditForm(f => ({ ...f, active: e.target.checked }))}
+                />
+                Activo
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={!!editForm.featured}
+                  onChange={e => setEditForm(f => ({ ...f, featured: e.target.checked }))}
+                />
+                Destacado
+              </label>
+            </div>
+            <label>
+              Disponibilidad:
+              <select
+                value={editForm.availability}
+                onChange={e => setEditForm(f => ({ ...f, availability: e.target.value }))}
+              >
+                <option value="stock">Stock</option>
+                <option value="preorder">Preventa</option>
+                <option value="unavailable">No disponible</option>
+              </select>
+            </label>
           </div>
-          <div style={{ marginTop: 12 }}>
-            <label>Descripción</label>
-            <textarea
-              value={newPers.description}
-              onChange={(e) =>
-                setNewPers({ ...newPers, description: e.target.value })
-              }
-              style={{ width: "100%", marginTop: 4, minHeight: 60 }}
-            />
-          </div>
-          <div style={{ marginTop: 12 }}>
-            <label>Precio adicional (€)</label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={newPers.additional_price}
-              onChange={(e) =>
-                setNewPers({ ...newPers, additional_price: e.target.value })
-              }
-              style={{ width: "100%", marginTop: 4 }}
-            />
-          </div>
-          <div style={{ marginTop: 12 }}>
-            <label>Tipo de personalización</label>
-            <select
-              value={newPers.personalization_type_id}
-              onChange={(e) =>
-                setNewPers({
-                  ...newPers,
-                  personalization_type_id: e.target.value,
-                })
-              }
-              style={{ width: "100%", marginTop: 4 }}
-            >
-              <option value="">Sin tipo</option>
-              {types.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-            <button
-              onClick={handleAddPersonalization}
-              className="save-btn"
-              style={{ flex: 1 }}
-            >
-              Guardar personalización
+          <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
+            <button type="submit" className="save-btn" disabled={saving}>
+              {saving ? "Guardando..." : "Guardar"}
             </button>
             <button
-              onClick={() => setShowAddForm(false)}
-              className="cancel-btn"
-              style={{ flex: 1 }}
+              type="button"
+              onClick={() => {
+                setEditMode(false);
+                setEditForm({
+                  name: product?.name || "",
+                  description: product?.description || "",
+                  price: product?.price || 0,
+                  stock: product?.stock || 0,
+                  photo_url: product?.photo_url || "",
+                  handmade: product?.handmade ?? true,
+                  active: product?.active ?? true,
+                  featured: product?.featured ?? false,
+                  category_id: product?.category_id || "",
+                  availability: product?.availability || "stock",
+                });
+                setError("");
+              }}
             >
               Cancelar
             </button>
           </div>
-          {error && <p style={{ color: "#e53935", marginTop: 12 }}>{error}</p>}
-        </div>
+        </form>
+      ) : (
+        <>
+          <h3>Detalle producto #{product.id}</h3>
+          <p><b>Nombre:</b> {product.name}</p>
+          <p><b>Descripción:</b> {product.description || "-"}</p>
+          <p><b>Precio:</b> {Number(product.price).toFixed(2)} €</p>
+          <p><b>Stock:</b> {product.stock}</p>
+          <p><b>Ventas:</b> {product.sales_count ?? 0}</p>
+          <p><b>Activo:</b> {product.active ? "Sí" : "No"}</p>
+          <p><b>Hecho a mano:</b> {product.handmade ? "Sí" : "No"}</p>
+          <p><b>Destacado:</b> {product.featured ? "Sí" : "No"}</p>
+          <p><b>Categoría:</b> {categories.find(c => c.id === product.category_id)?.name || "-"}</p>
+          <p><b>Disponibilidad:</b> {product.availability || "-"}</p>
+          <p><b>Foto:</b> {product.photo_url ? <a href={product.photo_url} target="_blank" rel="noopener noreferrer">Ver imagen</a> : "-"}</p>
+        </>
       )}
+
+      {/* Personalizaciones */}
+      <div style={{ marginTop: 24 }}>
+        <b>Personalizaciones:</b>
+        {loadingPersonalizations ? (
+          <div style={{ color: "#888", marginTop: 8 }}>Cargando...</div>
+        ) : personalizations.length === 0 ? (
+          <div style={{ color: "#888", marginTop: 8 }}>
+            Este producto no tiene personalizaciones.
+          </div>
+        ) : (
+          <table className="personalizations-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Precio extra</th>
+                <th>Descripción</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {personalizations.map((perso) => (
+                <tr key={perso.id}>
+                  <td>{perso.name}</td>
+                  <td>
+                    {perso.personalization_type
+                      ? perso.personalization_type.name
+                      : "-"}
+                  </td>
+                  <td>
+                    {perso.additional_price
+                      ? Number(perso.additional_price).toFixed(2) + " €"
+                      : "0.00 €"}
+                  </td>
+                  <td>{perso.description || "-"}</td>
+                  <td>{perso.active ? "Sí" : "No"}</td>
+                  <td>
+                    <div className="perso-actions">
+                      <button onClick={() => handleEditPersonalization(perso)}>
+                        Editar
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDeletePersonalization(perso.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {/* Formulario añadir/editar */}
+        <div style={{ marginTop: 12, width: "100%" }}>
+          <button
+            onClick={() => {
+              setShowAddForm((v) => !v);
+              setEditingPersoId(null);
+              setPersoForm({
+                name: "",
+                personalization_type_id: "",
+                required: false,
+                additional_price: 0,
+                description: "",
+                active: true,
+              });
+              setError("");
+            }}
+            className="save-btn"
+            style={{
+              width: "100%",
+              padding: "10px 0",
+              fontSize: 16,
+              marginTop: 0,
+              marginBottom: 0,
+              borderRadius: 6,
+            }}
+          >
+            {showAddForm ? "Cancelar" : "Añadir personalización"}
+          </button>
+        </div>
+        {showAddForm && (
+          <form className="add-perso-form" onSubmit={handleSavePersonalization}>
+            <label>
+              Nombre:
+              <input
+                type="text"
+                value={persoForm.name}
+                onChange={(e) =>
+                  setPersoForm((f) => ({ ...f, name: e.target.value }))
+                }
+                required
+              />
+            </label>
+            <label>
+              Tipo:
+              <select
+                value={persoForm.personalization_type_id}
+                onChange={(e) =>
+                  setPersoForm((f) => ({
+                    ...f,
+                    personalization_type_id: e.target.value,
+                  }))
+                }
+                required
+              >
+                <option value="">Selecciona tipo</option>
+                {personalizationTypes.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Precio extra:
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={persoForm.additional_price}
+                onChange={(e) =>
+                  setPersoForm((f) => ({
+                    ...f,
+                    additional_price: e.target.value,
+                  }))
+                }
+              />{" "}
+              €
+            </label>
+            <label>
+              Descripción:
+              <textarea
+                value={persoForm.description}
+                onChange={(e) =>
+                  setPersoForm((f) => ({
+                    ...f,
+                    description: e.target.value,
+                  }))
+                }
+                rows={2}
+              />
+            </label>
+            <label>
+              Activo:
+              <input
+                type="checkbox"
+                checked={!!persoForm.active}
+                onChange={(e) =>
+                  setPersoForm((f) => ({
+                    ...f,
+                    active: e.target.checked,
+                  }))
+                }
+              />
+            </label>
+            <button
+              type="submit"
+              className="save-btn"
+              style={{ width: "100%" }}
+            >
+              {editingPersoId ? "Guardar cambios" : "Añadir"}
+            </button>
+          </form>
+        )}
+      </div>
+      {error && <p style={{ color: "#e53935" }}>{error}</p>}
     </div>
   );
 };

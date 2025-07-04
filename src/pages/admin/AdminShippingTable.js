@@ -80,14 +80,29 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 12,
+        }}
+      >
         <h2>Tipos de Envío</h2>
         <button onClick={onAddShipping}>Crear tipo de envío</button>
       </div>
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
+      <div
+        style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
+      >
         <label>
           Estado:&nbsp;
-          <select value={filterActive} onChange={e => { setFilterActive(e.target.value); setPage(1); }}>
+          <select
+            value={filterActive}
+            onChange={(e) => {
+              setFilterActive(e.target.value);
+              setPage(1);
+            }}
+          >
             <option value="all">Todos</option>
             <option value="active">Activos</option>
             <option value="inactive">Inactivos</option>
@@ -97,17 +112,25 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
           type="text"
           placeholder="Buscar nombre"
           value={search}
-          onChange={e => { setSearch(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           style={{ minWidth: 180 }}
         />
         <label>
           Ver&nbsp;
           <select
             value={pageSize}
-            onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
           >
-            {[5, 10, 20, 50].map(n => (
-              <option key={n} value={n}>{n}</option>
+            {[5, 10, 20, 50].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
             ))}
           </select>
           &nbsp;por página
@@ -126,7 +149,7 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
           {shippingTypes.map((shipping) => (
             <tr
               key={shipping.id}
-              onDoubleClick={() => onShippingSelect && onShippingSelect(shipping)}
+              onClick={() => onShippingSelect && onShippingSelect(shipping)}
               style={{ cursor: "pointer" }}
             >
               <td>{shipping.name}</td>
