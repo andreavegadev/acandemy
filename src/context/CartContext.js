@@ -1,41 +1,74 @@
 // src/context/CartContext.js
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  // Lee el carrito de localStorage al iniciar
+  const [cart, setCart] = useState(() => {
+    try {
+      const stored = localStorage.getItem("cart");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
+  // Guarda el carrito en localStorage cada vez que cambie
+  useEffect(() => {
+    try {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } catch {}
+  }, [cart]);
+
+  // Añadir al carrito usando cartLineId para distinguir producto+personalizaciones
   const addToCart = (product) => {
     setCart((prevCart) => {
-      // Busca el producto por id
-      const existingProduct = prevCart.find((item) => item.id === product.id);
+      const idx = prevCart.findIndex(
+        (item) => item.cartLineId === product.cartLineId
+      );
       const quantityToAdd = product.quantity || 1;
       const stock = product.stock || Infinity;
 
-      if (existingProduct) {
-        // Si ya existe, suma la cantidad pero nunca más que el stock
-        const newQuantity = existingProduct.quantity + quantityToAdd;
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: newQuantity > stock ? stock : newQuantity }
-            : item
-        );
+      // Suma la cantidad actual en el carrito para este cartLineId
+      const currentQty = idx !== -1 ? prevCart[idx].quantity : 0;
+      if (currentQty + quantityToAdd > stock) {
+        alert("No puedes añadir más unidades, no hay suficiente stock.");
+        return prevCart;
       }
-      // Si no existe, añade el producto con la cantidad indicada
+
+      if (idx !== -1) {
+        const updated = [...prevCart];
+        updated[idx].quantity = currentQty + quantityToAdd;
+        return updated;
+      }
+
       return [...prevCart, { ...product, quantity: quantityToAdd }];
     });
   };
 
-  const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  // Eliminar usando cartLineId (no id)
+  const removeFromCart = (cartLineId) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.cartLineId !== cartLineId)
+    );
   };
 
-  const updateQuantity = (productId, quantity) => {
+  // Actualizar cantidad usando cartLineId (no id)
+  const updateQuantity = (cartLineId, quantity) => {
     setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      )
+      prevCart.map((item) => {
+        if (item.cartLineId === cartLineId) {
+          const stock = Number(item.stock) || Infinity;
+          // No permitir superar el stock ni bajar de 1
+          let newQty = Math.max(1, Math.min(quantity, stock));
+          if (quantity > stock) {
+            alert("No puedes añadir más unidades, no hay suficiente stock.");
+          }
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      })
     );
   };
 
@@ -43,8 +76,19 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
+  // Total sumando personalizaciones
   const getTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cart.reduce((total, item) => {
+      let base = Number(item.price) || 0;
+      if (item.personalizations && Array.isArray(item.personalizations)) {
+        item.personalizations.forEach((p) => {
+          if (p && p.additional_price) {
+            base += Number(p.additional_price);
+          }
+        });
+      }
+      return total + base * (item.quantity || 1);
+    }, 0);
   };
 
   return (
