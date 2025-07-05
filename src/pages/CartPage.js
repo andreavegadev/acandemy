@@ -4,9 +4,23 @@ import { useNavigate } from "react-router-dom";
 import "../styles/CartPage.css";
 
 const CartPage = () => {
-  const { cart, removeFromCart, updateQuantity, getTotal, clearCart } =
-    useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const navigate = useNavigate();
+
+  // Calcula el total sumando producto base y personalizaciones
+  const getTotal = () => {
+    return cart.reduce((acc, item) => {
+      let itemTotal = Number(item.price) || 0;
+      if (item.personalizations && Array.isArray(item.personalizations)) {
+        item.personalizations.forEach((p) => {
+          if (p && p.additional_price) {
+            itemTotal += Number(p.additional_price);
+          }
+        });
+      }
+      return acc + itemTotal * (item.quantity || 1);
+    }, 0);
+  };
 
   return (
     <div className="cart-page">
@@ -17,7 +31,7 @@ const CartPage = () => {
         <>
           <ul className="cart-items">
             {cart.map((item) => (
-              <li key={item.id} className="cart-item">
+              <li key={item.cartLineId || item.id} className="cart-item">
                 <img
                   src={item.image || item.photo_url}
                   alt={item.title || item.name}
@@ -26,25 +40,54 @@ const CartPage = () => {
                 <div className="cart-item-details">
                   <h3>{item.title || item.name}</h3>
                   <p>
-                    Precio:{" "}
-                    {isNaN(Number(item.price))
-                      ? "0.00"
-                      : Number(item.price).toFixed(2)}{" "}
+                    Precio unitario:{" "}
+                    {(() => {
+                      let base = Number(item.price) || 0;
+                      if (
+                        item.personalizations &&
+                        Array.isArray(item.personalizations)
+                      ) {
+                        item.personalizations.forEach((p) => {
+                          if (p && p.additional_price) {
+                            base += Number(p.additional_price);
+                          }
+                        });
+                      }
+                      return base.toFixed(2);
+                    })()}{" "}
                     €
                   </p>
+                  {item.personalizations &&
+                    item.personalizations.length > 0 && (
+                      <div className="cart-item-personalizations">
+                        <strong>Personalizaciones:</strong>
+                        <ul>
+                          {item.personalizations.map((p, idx) => (
+                            <li key={idx}>
+                              {p.type ? <b>{p.type}:</b> : null} {p.name}
+                              {p.additional_price > 0
+                                ? ` (+${Number(p.additional_price).toFixed(
+                                    2
+                                  )}€)`
+                                : ""}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   <div className="cart-item-quantity">
                     <label htmlFor={`quantity-${item.id}`}>Cantidad:</label>
                     <input
                       type="number"
-                      id={`quantity-${item.id}`}
+                      id={`quantity-${item.cartLineId}`}
                       value={item.quantity}
                       min="1"
                       onChange={(e) =>
-                        updateQuantity(item.id, parseInt(e.target.value, 10))
+                        updateQuantity(item.cartLineId, parseInt(e.target.value, 10))
                       }
                     />
                   </div>
-                  <button onClick={() => removeFromCart(item.id)}>
+                  <button onClick={() => removeFromCart(item.cartLineId)}>
                     Eliminar
                   </button>
                 </div>
@@ -55,7 +98,7 @@ const CartPage = () => {
             <h2>Total: €{getTotal().toFixed(2)}</h2>
             <button onClick={clearCart}>Vaciar Carrito</button>
             <button onClick={() => navigate("/checkout")}>
-              Proceder al Pago
+              Resumen del pedido
             </button>
           </div>
         </>

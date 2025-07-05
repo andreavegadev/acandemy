@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 
-const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
-  const [categories, setCategories] = useState([]);
+const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
+  const [types, setTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchTypes = async () => {
       setLoading(true);
       let query = supabase
-        .from("categories")
-        .select("*", { count: "exact" })
-        .order("name", { ascending: true });
+        .from("personalization_types")
+        .select("*")
+        .order("id", { ascending: false });
 
       if (search.length > 1) {
         query = query.ilike("name", `%${search}%`);
@@ -23,22 +22,23 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
 
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
-      const { data, count } = await query.range(from, to);
+      let { data } = await query.range(from, to);
 
-      setCategories(data || []);
-      setTotal(count || 0);
+      setTypes(data || []);
       setLoading(false);
     };
-    fetchCategories();
+    fetchTypes();
   }, [search, page, pageSize]);
 
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const totalPages = Math.ceil(types.length / pageSize);
 
   const handleClearFilters = () => {
     setSearch("");
     setPage(1);
     setPageSize(10);
   };
+
+  if (loading) return <div>Cargando tipos de personalización...</div>;
 
   return (
     <div>
@@ -50,20 +50,15 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
           marginBottom: 12,
         }}
       >
-        <h2>Categorías</h2>
-        <button onClick={onAddCategory}>Añadir categoría</button>
+        <h2>Tipos de Personalización</h2>
+        <button onClick={onAddType}>Crear tipo</button>
       </div>
       <div
-        style={{
-          display: "flex",
-          gap: 16,
-          alignItems: "center",
-          marginBottom: 16,
-        }}
+        style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
       >
         <input
           type="text"
-          placeholder="Buscar categoría"
+          placeholder="Buscar nombre"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -93,31 +88,21 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
       <table className="admin-products-table">
         <thead>
           <tr>
-            <th>Icono</th>
             <th>Nombre</th>
             <th>Descripción</th>
-            <th>Destacada</th>
           </tr>
         </thead>
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={4}>Cargando...</td>
+          {types.map((type) => (
+            <tr
+              key={type.id}
+              onClick={() => onTypeSelect && onTypeSelect(type)}
+              style={{ cursor: "pointer" }}
+            >
+              <td>{type.name}</td>
+              <td>{type.description}</td>
             </tr>
-          ) : categories.length === 0 ? (
-            <tr>
-              <td colSpan={4}>Sin categorías</td>
-            </tr>
-          ) : (
-            categories.map((cat) => (
-              <tr key={cat.id} onClick={() => onCategorySelect(cat)}>
-                <td>{cat.icon || "-"}</td>
-                <td>{cat.name}</td>
-                <td>{cat.description || "-"}</td>
-                <td>{cat.featured ? "Sí" : "No"}</td>
-              </tr>
-            ))
-          )}
+          ))}
         </tbody>
       </table>
       <div
@@ -143,9 +128,25 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
         >
           Siguiente
         </button>
+        <span>
+          Ir a página:&nbsp;
+          <input
+            type="number"
+            min={1}
+            max={totalPages}
+            value={page}
+            onChange={(e) => {
+              let val = Number(e.target.value);
+              if (val > totalPages) val = totalPages;
+              if (val < 1) val = 1;
+              setPage(val);
+            }}
+            style={{ width: 60 }}
+          />
+        </span>
       </div>
     </div>
   );
 };
 
-export default AdminCategoriesTable;
+export default AdminPersonalizationTypesTable;

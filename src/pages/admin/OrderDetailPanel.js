@@ -231,6 +231,7 @@ const OrderDetailPanel = ({
             <thead>
               <tr>
                 <th>Producto</th>
+                <th>Personalizaciones</th>
                 <th>Cantidad</th>
                 <th>Precio ud.</th>
                 <th>Total</th>
@@ -240,6 +241,22 @@ const OrderDetailPanel = ({
               {order.items.map((item) => (
                 <tr key={item.id}>
                   <td>{item.product?.name || item.product_id}</td>
+                  <td>
+                    {item.customizations && item.customizations.length > 0 ? (
+                      <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13 }}>
+                        {item.customizations.map((p, idx) => (
+                          <li key={idx}>
+                            {p.type ? <b>{p.type}:</b> : null} {p.name}
+                            {p.additional_price > 0
+                              ? ` (+${Number(p.additional_price).toFixed(2)}€)`
+                              : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span style={{ color: "#aaa" }}>—</span>
+                    )}
+                  </td>
                   <td>{item.quantity}</td>
                   <td>{Number(item.unit_price).toFixed(2)} €</td>
                   <td>{Number(item.total_price).toFixed(2)} €</td>

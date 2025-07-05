@@ -27,6 +27,7 @@ const UserOrderDetailPage = () => {
               quantity,
               unit_price,
               total_price,
+              customizations,
               product:products (
                 id,
                 name
@@ -142,15 +143,10 @@ const UserOrderDetailPage = () => {
         >
           <thead>
             <tr style={{ background: "#ede7f6" }}>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                Producto
-              </th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                Cantidad
-              </th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                Precio ud.
-              </th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Producto</th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Personalizaciones</th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Cantidad</th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Precio ud.</th>
               <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Total</th>
             </tr>
           </thead>
@@ -159,6 +155,22 @@ const UserOrderDetailPage = () => {
               <tr key={item.id}>
                 <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
                   {item.product?.name || item.product_id}
+                </td>
+                <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                  {item.customizations && item.customizations.length > 0 ? (
+                    <ul style={{ margin: 0, paddingLeft: 18, fontSize: 14 }}>
+                      {item.customizations.map((p, idx) => (
+                        <li key={idx}>
+                          {p.type ? <b>{p.type}:</b> : null} {p.name}
+                          {p.additional_price > 0
+                            ? ` (+${Number(p.additional_price).toFixed(2)}€)`
+                            : ""}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span style={{ color: "#aaa" }}>—</span>
+                  )}
                 </td>
                 <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
                   {item.quantity}

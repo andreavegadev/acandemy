@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import "../styles/CheckoutPage.css";
 
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
@@ -13,19 +14,59 @@ const CheckoutPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  // Opciones de envío
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [selectedShipping, setSelectedShipping] = useState(null);
+
+  // Cargar opciones de envío activas
+  useEffect(() => {
+    const fetchShipping = async () => {
+      const { data, error } = await supabase
+        .from("shipping")
+        .select("*")
+        .eq("active", true)
+        .order("price", { ascending: true });
+      if (!error && data && data.length > 0) {
+        setShippingOptions(data);
+        setSelectedShipping(data[0].id);
+      }
+    };
+    fetchShipping();
+  }, []);
+
+  useEffect(() => {
+    if (cart.length === 0 && !success) {
+      navigate("/cart", { replace: true });
+    }
+  }, [cart, success, navigate]);
+
   const getTotal = () => {
-    const subtotal = cart.reduce(
-      (sum, item) => sum + Number(item.price) * (item.quantity || 1),
-      0
-    );
+    const subtotal = cart.reduce((sum, item) => {
+      let base = Number(item.price) || 0;
+      if (item.personalizations && Array.isArray(item.personalizations)) {
+        item.personalizations.forEach((p) => {
+          if (p && p.additional_price) {
+            base += Number(p.additional_price);
+          }
+        });
+      }
+      return sum + base * (item.quantity || 1);
+    }, 0);
+
+    let total = subtotal;
     if (discountApplied && discountValue > 0) {
       if (discountType === "Percentage") {
-        return subtotal - (subtotal * discountValue) / 100;
+        total = subtotal - (subtotal * discountValue) / 100;
       } else if (discountType === "Amount") {
-        return Math.max(0, subtotal - discountValue);
+        total = Math.max(0, subtotal - discountValue);
       }
     }
-    return subtotal;
+    // Suma el precio del envío seleccionado
+    const shipping = shippingOptions.find((s) => s.id === selectedShipping);
+    if (shipping && shipping.price) {
+      total += Number(shipping.price);
+    }
+    return total;
   };
 
   const handleApplyDiscount = async (e) => {
@@ -118,6 +159,9 @@ const CheckoutPage = () => {
       discountId = discountData?.id || null;
     }
 
+    // Busca el precio del envío seleccionado
+    const shipping = shippingOptions.find((s) => s.id === selectedShipping);
+
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert([
@@ -126,7 +170,9 @@ const CheckoutPage = () => {
           total_amount: getTotal(),
           discount_id: discountId,
           status: "pending",
-          // NO pongas id aquí
+          shipping_address: "", // Si tienes dirección, ponla aquí
+          shipping_type: selectedShipping,
+          // Puedes guardar el id o nombre del envío en otra columna si lo necesitas
         },
       ])
       .select()
@@ -150,40 +196,41 @@ const CheckoutPage = () => {
 
     // 3. Insertar los items en order_items y actualizar stock
     for (const item of cart) {
-      // Insertar en order_items
+      // Calcula el precio total sumando unit_price y el precio de las personalizaciones por cada unidad
+      let unit_price = Number(item.price) || 0;
+      let customizations_price = 0;
+
+      if (item.personalizations && Array.isArray(item.personalizations)) {
+        item.personalizations.forEach((p) => {
+          if (p && p.additional_price) {
+            customizations_price += Number(p.additional_price);
+          }
+        });
+      }
+
+      const customizations =
+        item.personalizations && item.personalizations.length > 0
+          ? item.personalizations.map((p) => ({
+              type: p.type,
+              name: p.name,
+              additional_price: p.additional_price,
+            }))
+          : null;
+
       const { error: itemError } = await supabase.from("order_items").insert([
         {
           order_id: order.id,
           product_id: item.id,
           quantity: item.quantity,
-          unit_price: item.price,
-          total_price: Number(item.price) * item.quantity,
-          // customizations: item.customizations, // solo si lo usas
+          unit_price: unit_price,
+          total_price: (unit_price + customizations_price) * item.quantity,
+          customizations,
         },
       ]);
       if (itemError) {
         setError("No se pudo añadir un producto al pedido.");
         return;
       }
-
-      // Actualizar stock del producto
-      // const { error: stockError } = await supabase
-      //   .from("products")
-      //   .update({
-      //     stock: supabase.rpc("decrement_stock", {
-      //       product_id: item.id,
-      //       qty: item.quantity,
-      //     }),
-      //   })
-      //   .eq("id", item.id);
-
-      // Si no tienes una función RPC, usa este update:
-      // .update({ stock: (item.stock || 0) - item.quantity })
-
-      // if (stockError) {
-      //   setError("No se pudo actualizar el stock de un producto.");
-      //   return;
-      // }
     }
 
     setSuccess(true);
@@ -196,7 +243,7 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto" }}>
+    <div className="checkout-page-container">
       <button
         onClick={() => navigate("/cart")}
         style={{
@@ -217,7 +264,7 @@ const CheckoutPage = () => {
       <ul style={{ padding: 0, listStyle: "none" }}>
         {cart.map((item) => (
           <li
-            key={item.id}
+            key={item.cartLineId || item.id}
             style={{
               marginBottom: 12,
               borderBottom: "1px solid #eee",
@@ -226,12 +273,58 @@ const CheckoutPage = () => {
           >
             <strong>{item.title || item.name}</strong> x{item.quantity} — €{" "}
             {Number(item.price).toFixed(2)}
+            {item.personalizations && item.personalizations.length > 0 && (
+              <ul style={{ margin: "6px 0 0 12px", padding: 0, fontSize: 15 }}>
+                {item.personalizations.map((p, idx) => (
+                  <li key={idx}>
+                    {p.type ? <b>{p.type}:</b> : null} {p.name}
+                    {p.additional_price > 0
+                      ? ` (+${Number(p.additional_price).toFixed(2)}€)`
+                      : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))}
       </ul>
+
+      {/* Opciones de envío */}
+      <form style={{ marginTop: 24, marginBottom: 12 }}>
+        <label
+          style={{
+            fontWeight: 500,
+            color: "#5e35b1",
+            marginBottom: 8,
+            display: "block",
+          }}
+        >
+          Método de envío:
+        </label>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {shippingOptions.map((option) => (
+            <label
+              key={option.id}
+              style={{ display: "flex", alignItems: "center", gap: 8 }}
+            >
+              <input
+                type="radio"
+                name="shipping"
+                value={option.id}
+                checked={selectedShipping === option.id}
+                onChange={() => setSelectedShipping(option.id)}
+              />
+              <span>
+                {option.name} — €{Number(option.price).toFixed(2)}
+              </span>
+            </label>
+          ))}
+        </div>
+      </form>
+
       <form
         onSubmit={handleApplyDiscount}
-        style={{ marginTop: 24, marginBottom: 12 }}
+        style={{ marginTop: 12, marginBottom: 12 }}
       >
         <label style={{ fontWeight: 500, color: "#5e35b1" }}>
           Código de descuento:
