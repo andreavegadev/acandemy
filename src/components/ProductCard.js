@@ -1,10 +1,9 @@
-import React from "react";
 import PropTypes from "prop-types";
 import "../styles/Products.css";
 import { useCart } from "../context/CartContext";
 import WishlistButton from "../components/WishlistButton";
 
-const ProductCard = ({ id, title, description, price, image, linkDetails }) => {
+const ProductCard = ({ id, title, description, price, image, stock, linkDetails }) => {
   const { addToCart } = useCart(); // Obtén la función para añadir productos al carrito
 
   const handleAddToCart = () => {
@@ -14,6 +13,8 @@ const ProductCard = ({ id, title, description, price, image, linkDetails }) => {
       price: Number(price),
       image,
       quantity: 1,
+      stock,
+      cartLineId: id,
     });
   };
 

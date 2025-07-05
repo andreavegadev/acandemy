@@ -53,10 +53,7 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
           const start = d.start_date ? new Date(d.start_date) : null;
           const end = d.end_date ? new Date(d.end_date) : null;
           if (filterValidity === "vigente") {
-            return (
-              (!start || start <= now) &&
-              (!end || end >= now)
-            );
+            return (!start || start <= now) && (!end || end >= now);
           }
           if (filterValidity === "caducado") {
             return end && end < now;
@@ -72,7 +69,15 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
       setLoading(false);
     };
     fetchDiscounts();
-  }, [filterActive, filterType, filterValidity, filterUser, search, page, pageSize]);
+  }, [
+    filterActive,
+    filterType,
+    filterValidity,
+    filterUser,
+    search,
+    page,
+    pageSize,
+  ]);
 
   const totalPages = Math.ceil(discounts.length / pageSize);
 
@@ -94,7 +99,8 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
     const updateData = {
       code: editForm.code,
       type: editForm.type,
-      percentage: editForm.type === "Percentage" ? Number(editForm.percentage) : null,
+      percentage:
+        editForm.type === "Percentage" ? Number(editForm.percentage) : null,
       amount: editForm.type === "Amount" ? Number(editForm.amount) : null,
       min_order: editForm.min_order ? Number(editForm.min_order) : null,
       max_uses: editForm.max_uses ? Number(editForm.max_uses) : null,
@@ -124,7 +130,7 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
     setPageSize(10); // o el valor por defecto que prefieras
   };
 
-  const handleDoubleClick = (discount) => {
+  const handleClick = (discount) => {
     if (onDiscountSelect) onDiscountSelect(discount);
   };
 
@@ -132,14 +138,29 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 12,
+        }}
+      >
         <h2>Códigos Descuento</h2>
         <button onClick={onAddDiscount}>Crear código descuento</button>
       </div>
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
+      <div
+        style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
+      >
         <label>
           Estado:&nbsp;
-          <select value={filterActive} onChange={e => { setFilterActive(e.target.value); setPage(1); }}>
+          <select
+            value={filterActive}
+            onChange={(e) => {
+              setFilterActive(e.target.value);
+              setPage(1);
+            }}
+          >
             <option value="all">Todos</option>
             <option value="active">Activos</option>
             <option value="inactive">Inactivos</option>
@@ -147,7 +168,13 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
         </label>
         <label>
           Tipo:&nbsp;
-          <select value={filterType} onChange={e => { setFilterType(e.target.value); setPage(1); }}>
+          <select
+            value={filterType}
+            onChange={(e) => {
+              setFilterType(e.target.value);
+              setPage(1);
+            }}
+          >
             <option value="all">Todos</option>
             <option value="Percentage">Porcentaje</option>
             <option value="Amount">Importe fijo</option>
@@ -155,7 +182,13 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
         </label>
         <label>
           Vigencia:&nbsp;
-          <select value={filterValidity} onChange={e => { setFilterValidity(e.target.value); setPage(1); }}>
+          <select
+            value={filterValidity}
+            onChange={(e) => {
+              setFilterValidity(e.target.value);
+              setPage(1);
+            }}
+          >
             <option value="all">Todas</option>
             <option value="vigente">Vigentes</option>
             <option value="caducado">Caducados</option>
@@ -164,7 +197,13 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
         </label>
         <label>
           Usuario:&nbsp;
-          <select value={filterUser} onChange={e => { setFilterUser(e.target.value); setPage(1); }}>
+          <select
+            value={filterUser}
+            onChange={(e) => {
+              setFilterUser(e.target.value);
+              setPage(1);
+            }}
+          >
             <option value="all">Todos</option>
             <option value="assigned">Solo asignados</option>
             <option value="general">Solo generales</option>
@@ -174,17 +213,25 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
           type="text"
           placeholder="Buscar código o descripción"
           value={search}
-          onChange={e => { setSearch(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           style={{ minWidth: 180 }}
         />
         <label>
           Ver&nbsp;
           <select
             value={pageSize}
-            onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
           >
-            {[5, 10, 20, 50].map(n => (
-              <option key={n} value={n}>{n}</option>
+            {[5, 10, 20, 50].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
             ))}
           </select>
           &nbsp;por página
@@ -297,7 +344,7 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
                 </td>
               </tr>
             ) : (
-              <tr key={discount.id} onDoubleClick={() => handleDoubleClick(discount)}>
+              <tr key={discount.id} onClick={() => handleClick(discount)}>
                 <td>{discount.code}</td>
                 <td>
                   {discount.type === "Percentage"

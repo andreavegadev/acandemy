@@ -41,10 +41,18 @@ const CheckoutPage = () => {
   }, [cart, success, navigate]);
 
   const getTotal = () => {
-    const subtotal = cart.reduce(
-      (sum, item) => sum + Number(item.price) * (item.quantity || 1),
-      0
-    );
+    const subtotal = cart.reduce((sum, item) => {
+      let base = Number(item.price) || 0;
+      if (item.personalizations && Array.isArray(item.personalizations)) {
+        item.personalizations.forEach((p) => {
+          if (p && p.additional_price) {
+            base += Number(p.additional_price);
+          }
+        });
+      }
+      return sum + base * (item.quantity || 1);
+    }, 0);
+
     let total = subtotal;
     if (discountApplied && discountValue > 0) {
       if (discountType === "Percentage") {
@@ -188,21 +196,41 @@ const CheckoutPage = () => {
 
     // 3. Insertar los items en order_items y actualizar stock
     for (const item of cart) {
-      // Insertar en order_items
+      // Calcula el precio total sumando unit_price y el precio de las personalizaciones por cada unidad
+      let unit_price = Number(item.price) || 0;
+      let customizations_price = 0;
+
+      if (item.personalizations && Array.isArray(item.personalizations)) {
+        item.personalizations.forEach((p) => {
+          if (p && p.additional_price) {
+            customizations_price += Number(p.additional_price);
+          }
+        });
+      }
+
+      const customizations =
+        item.personalizations && item.personalizations.length > 0
+          ? item.personalizations.map((p) => ({
+              type: p.type,
+              name: p.name,
+              additional_price: p.additional_price,
+            }))
+          : null;
+
       const { error: itemError } = await supabase.from("order_items").insert([
         {
           order_id: order.id,
           product_id: item.id,
           quantity: item.quantity,
-          unit_price: item.price,
-          total_price: Number(item.price) * item.quantity,
+          unit_price: unit_price,
+          total_price: (unit_price + customizations_price) * item.quantity,
+          customizations,
         },
       ]);
       if (itemError) {
         setError("No se pudo añadir un producto al pedido.");
         return;
       }
-      // Actualizar stock del producto (puedes implementar aquí si lo necesitas)
     }
 
     setSuccess(true);
@@ -236,7 +264,7 @@ const CheckoutPage = () => {
       <ul style={{ padding: 0, listStyle: "none" }}>
         {cart.map((item) => (
           <li
-            key={item.id}
+            key={item.cartLineId || item.id}
             style={{
               marginBottom: 12,
               borderBottom: "1px solid #eee",
@@ -245,6 +273,18 @@ const CheckoutPage = () => {
           >
             <strong>{item.title || item.name}</strong> x{item.quantity} — €{" "}
             {Number(item.price).toFixed(2)}
+            {item.personalizations && item.personalizations.length > 0 && (
+              <ul style={{ margin: "6px 0 0 12px", padding: 0, fontSize: 15 }}>
+                {item.personalizations.map((p, idx) => (
+                  <li key={idx}>
+                    {p.type ? <b>{p.type}:</b> : null} {p.name}
+                    {p.additional_price > 0
+                      ? ` (+${Number(p.additional_price).toFixed(2)}€)`
+                      : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))}
       </ul>

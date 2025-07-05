@@ -21,6 +21,8 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
   const [orderDetailLoading, setOrderDetailLoading] = useState(false);
   const [orderUser, setOrderUser] = useState(null);
   const [reloadFlagState, setReloadFlag] = useState(false);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -35,6 +37,12 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
           `id::text.ilike.%${search}%,user_id.ilike.%${search}%,tracking_number.ilike.%${search}%,shipping_address.ilike.%${search}%,billing_address.ilike.%${search}%`
         );
       }
+      if (dateFrom) countQuery = countQuery.gte("order_date", dateFrom);
+      if (dateTo)
+        countQuery = countQuery.lte(
+          "order_date",
+          new Date(dateTo + "T23:59:59.999Z").toISOString()
+        );
       const { count } = await countQuery;
       setTotal(count || 0);
 
@@ -67,6 +75,12 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
           `id::text.ilike.%${search}%,user_id.ilike.%${search}%,tracking_number.ilike.%${search}%,shipping_address.ilike.%${search}%,billing_address.ilike.%${search}%`
         );
       }
+      if (dateFrom) dataQuery = dataQuery.gte("order_date", dateFrom);
+      if (dateTo)
+        dataQuery = dataQuery.lte(
+          "order_date",
+          new Date(dateTo + "T23:59:59.999Z").toISOString()
+        );
 
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
@@ -84,6 +98,8 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
     paymentStatusFilter,
     search,
     reloadFlag,
+    dateFrom,
+    dateTo,
   ]);
 
   const handleHeaderClick = (col) => {
@@ -95,7 +111,7 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
     }
   };
 
-  const handleDoubleClick = async (order) => {
+  const handleClick = async (order) => {
     // Carga el detalle del pedido y los items como antes
     setOrderDetailLoading(true);
     setSelectedOrder(order);
@@ -137,6 +153,8 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
     setStatusFilter([]);
     setPaymentStatusFilter("all");
     setSearch("");
+    setDateFrom("");
+    setDateTo("");
   };
 
   // Calcula el total y el conteo por estado
@@ -170,6 +188,7 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
             ))}
           </span>
         </div>
+        {/* Filtro por fechas */}
         <div
           style={{
             marginBottom: 8,
@@ -215,6 +234,39 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
               <option value="failed">Fallido</option>
               <option value="refunded">Reembolsado</option>
             </select>
+          </label>
+          {/* Filtros de fecha */}
+          <label>
+            Desde:&nbsp;
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => {
+                setDateFrom(e.target.value);
+                setPage(1);
+              }}
+              style={{
+                border: "1px solid #d1c4e9",
+                borderRadius: 6,
+                padding: "4px 8px",
+              }}
+            />
+          </label>
+          <label>
+            Hasta:&nbsp;
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => {
+                setDateTo(e.target.value);
+                setPage(1);
+              }}
+              style={{
+                border: "1px solid #d1c4e9",
+                borderRadius: 6,
+                padding: "4px 8px",
+              }}
+            />
           </label>
           <input
             type="text"
@@ -277,7 +329,7 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} onDoubleClick={() => handleDoubleClick(order)}>
+              <tr key={order.id} onClick={() => handleClick(order)}>
                 <td>{order.id}</td>
                 <td>
                   {order.user

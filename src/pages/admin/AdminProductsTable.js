@@ -81,7 +81,7 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
     }
   };
 
-  const handleDoubleClick = (product) => {
+  const handleClick = (product) => {
     if (onProductSelect) onProductSelect(product);
   };
 
@@ -211,44 +211,128 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
           display: "flex",
           flexWrap: "wrap",
           gap: 24,
-          alignItems: "center",
+          alignItems: "flex-start",
         }}
       >
         <span>
           <b>Total productos:</b> {total}
         </span>
         <span>
-          <b>Sin stock:</b> {noStock}
-        </span>
-        <span>
-          <b>Poco stock (≤5):</b> {lowStock}
-        </span>
-        <span>
           <b>Activos:</b> {active}
         </span>
-        <span>
-          <b>Top ventas:</b>{" "}
-          {topVentas.map((p, i) => (
-            <span key={p.id}>
-              {i > 0 && ", "}
-              <a
-                href="#"
-                style={{
-                  color: "#5e35b1",
-                  textDecoration: "underline",
-                  cursor: "pointer",
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(`/product/${encodeURIComponent(p.name)}`);
-                }}
-              >
-                {p.name}
-              </a>{" "}
-              ({p.sales_count ?? 0})
-            </span>
-          ))}
-        </span>
+        {/* Cards para Sin stock */}
+        {products.filter((p) => p.stock === 0).length > 0 && (
+          <div>
+            <b>Sin stock:</b>
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                marginTop: 6,
+                flexWrap: "wrap",
+              }}
+            >
+              {products
+                .filter((p) => p.stock === 0)
+                .map((p) => (
+                  <div
+                    key={p.id}
+                    style={{
+                      background: "#fff",
+                      border: "1px solid #e53935",
+                      color: "#e53935",
+                      borderRadius: 8,
+                      padding: "8px 14px",
+                      minWidth: 120,
+                      boxShadow: "0 2px 8px #e5393533",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      textAlign: "center",
+                    }}
+                    onClick={() => handleClick(p)}
+                    title="Ver producto"
+                  >
+                    {p.name}
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+        {/* Cards para Poco stock */}
+        {products.filter((p) => p.stock > 0 && p.stock <= 5).length > 0 && (
+          <div>
+            <b>Poco stock (≤5):</b>
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                marginTop: 6,
+                flexWrap: "wrap",
+              }}
+            >
+              {products
+                .filter((p) => p.stock > 0 && p.stock <= 5)
+                .map((p) => (
+                  <div
+                    key={p.id}
+                    style={{
+                      background: "#fffde7",
+                      border: "1px solid #fbc02d",
+                      color: "#b28900",
+                      borderRadius: 8,
+                      padding: "8px 14px",
+                      minWidth: 120,
+                      boxShadow: "0 2px 8px #fbc02d33",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      textAlign: "center",
+                    }}
+                    onClick={() => handleClick(p)}
+                    title="Ver producto"
+                  >
+                    {p.name}
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+        {/* Cards para Top ventas */}
+        {topVentas.length > 0 && (
+          <div>
+            <b>Top ventas:</b>
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                marginTop: 6,
+                flexWrap: "wrap",
+              }}
+            >
+              {topVentas.map((p) => (
+                <div
+                  key={p.id}
+                  style={{
+                    background: "#ede7f6",
+                    border: "1.5px solid #5e35b1",
+                    color: "#5e35b1",
+                    borderRadius: 8,
+                    padding: "8px 14px",
+                    minWidth: 120,
+                    boxShadow: "0 2px 8px #5e35b133",
+                    cursor: "pointer",
+                    fontWeight: 500,
+                    textAlign: "center",
+                  }}
+                  onClick={() => handleClick(p)}
+                  title={`Ventas: ${p.sales_count ?? 0}`}
+                >
+                  {p.name}{" "}
+                  <span style={{ fontSize: 13 }}>({p.sales_count ?? 0})</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <table className="admin-products-table">
         <thead>
@@ -334,7 +418,7 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
                 </td>
               </tr>
             ) : (
-              <tr key={prod.id} onDoubleClick={() => handleDoubleClick(prod)}>
+              <tr key={prod.id} onClick={() => handleClick(prod)}>
                 <td>{prod.name}</td>
                 <td>{Number(prod.price).toFixed(2)} €</td>
                 <td>{prod.stock}</td>
