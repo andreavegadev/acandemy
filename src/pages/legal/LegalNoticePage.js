@@ -1,4 +1,3 @@
-import React from "react";
 import "../../styles/LegalPages.css";
 
 const LegalNoticePage = () => {

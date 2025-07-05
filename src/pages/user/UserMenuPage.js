@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import UserOrdersPage from "./UserOrdersPage";
@@ -7,25 +7,21 @@ import LastOrdersList from "../../components/LastOrdersList";
 import PetList from "../pets/PetList";
 
 import "../../styles/UserMenuPage.css";
-import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import { ButtonSecondary } from "../../components/Button";
 
 const UserMenuPage = () => {
   const [userData, setUserData] = useState({ full_name: "", email: "" });
   const [orders, setOrders] = useState([]);
   const [pets, setPets] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [view, setView] = useState("profile");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-
       const { data: sessionData, error: sessionError } =
         await supabase.auth.getSession();
       if (sessionError) {
         console.error("Error al obtener la sesión:", sessionError.message);
-        setLoading(false);
         return;
       }
 
@@ -34,7 +30,6 @@ const UserMenuPage = () => {
 
       if (!userId) {
         console.error("No se pudo obtener el ID del usuario.");
-        setLoading(false);
         return;
       }
 
@@ -83,8 +78,6 @@ const UserMenuPage = () => {
       } else {
         setPets(petsData);
       }
-
-      setLoading(false);
     };
 
     fetchData();

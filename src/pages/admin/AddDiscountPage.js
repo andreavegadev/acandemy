@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../styles/AddDiscountPage.css";
 import { ButtonPrimary } from "../../components/Button";
@@ -326,7 +326,9 @@ const AddDiscountPage = () => {
           </label>
         </div>
         <div className="discount-form-actions">
-          <ButtonPrimary type="submit" aria-label={`Crear código descuento`}>Crear código</ButtonPrimary>
+          <ButtonPrimary type="submit" aria-label={`Crear código descuento`}>
+            Crear código
+          </ButtonPrimary>
         </div>
         {success && <p className="success">{success}</p>}
         {error && <p className="error">{error}</p>}

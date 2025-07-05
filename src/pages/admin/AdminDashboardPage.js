@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AddProductPage from "./AddProductPage";
 import AddCategoryPage from "./AddCategoryPage";
 import AddDiscountPage from "./AddDiscountPage";
@@ -170,7 +170,10 @@ const AdminDashboardPage = () => {
             />
           </Modal>
         ) : selectedProduct ? (
-          <Modal open={!!selectedProduct} onClose={() => setSelectedProduct(null)}>
+          <Modal
+            open={!!selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+          >
             <ProductDetailPanel
               product={selectedProduct}
               onClose={() => setSelectedProduct(null)}
@@ -178,7 +181,10 @@ const AdminDashboardPage = () => {
             />
           </Modal>
         ) : selectedDiscount ? (
-          <Modal open={!!selectedDiscount} onClose={() => setSelectedDiscount(null)}>
+          <Modal
+            open={!!selectedDiscount}
+            onClose={() => setSelectedDiscount(null)}
+          >
             <DiscountDetailPanel
               discount={selectedDiscount}
               onClose={() => setSelectedDiscount(null)}
@@ -190,7 +196,10 @@ const AdminDashboardPage = () => {
             />
           </Modal>
         ) : selectedCategory ? (
-          <Modal open={!!selectedCategory} onClose={() => setSelectedCategory(null)}>
+          <Modal
+            open={!!selectedCategory}
+            onClose={() => setSelectedCategory(null)}
+          >
             <CategoryDetailPanel
               category={selectedCategory}
               onClose={() => setSelectedCategory(null)}
@@ -202,7 +211,10 @@ const AdminDashboardPage = () => {
             />
           </Modal>
         ) : selectedShipping ? (
-          <Modal open={!!selectedShipping} onClose={() => setSelectedShipping(null)}>
+          <Modal
+            open={!!selectedShipping}
+            onClose={() => setSelectedShipping(null)}
+          >
             <ShippingDetailPanel
               shipping={selectedShipping}
               onClose={() => setSelectedShipping(null)}

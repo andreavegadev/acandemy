@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { ButtonLink } from "../../components/Button";
 
@@ -24,13 +23,10 @@ const statusStyle = {
 
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoading(true);
       setError("");
       // Obtén el usuario en sesión
       const {
@@ -38,7 +34,6 @@ const MyOrdersPage = () => {
       } = await supabase.auth.getUser();
       if (!user) {
         setError("No hay sesión activa.");
-        setLoading(false);
         return;
       }
       // Consulta los pedidos del usuario
@@ -49,7 +44,6 @@ const MyOrdersPage = () => {
         .order("created_at", { ascending: false });
       if (error) setError("No se pudieron cargar los pedidos.");
       else setOrders(data);
-      setLoading(false);
     };
     fetchOrders();
   }, []);
@@ -74,7 +68,7 @@ const MyOrdersPage = () => {
       }}
     >
       <ButtonLink href={`/profile`} aria-label={`Volver a mi perfil`} bleedLeft>
-        ← Volver
+        Volver
       </ButtonLink>
       <h2 style={{ color: "#5e35b1", marginBottom: 24, textAlign: "center" }}>
         Mis pedidos

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import {
   ButtonDanger,
@@ -43,7 +43,6 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
   const [personalizations, setPersonalizations] = useState([]);
   const [loadingPersonalizations, setLoadingPersonalizations] = useState(true);
   const [personalizationTypes, setPersonalizationTypes] = useState([]);
-  const [loadingTypes, setLoadingTypes] = useState(true);
 
   // Para añadir/editar personalización
   const [showAddForm, setShowAddForm] = useState(false);
@@ -60,13 +59,11 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
   // Cargar tipos de personalización
   useEffect(() => {
     const fetchTypes = async () => {
-      setLoadingTypes(true);
       const { data, error } = await supabase
         .from("personalization_types")
         .select("*")
         .order("name", { ascending: true });
       if (!error) setPersonalizationTypes(data || []);
-      setLoadingTypes(false);
     };
     fetchTypes();
   }, []);
@@ -266,12 +263,6 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
           color: #3a2e5c;
           margin-bottom: 16px;
           animation: fadeInDetail 0.3s;
-        }
-        .detail-panel h3 {
-          margin-top: 0;
-          margin-bottom: 18px;
-          color: #5e35b1;
-          font-size: 1.3em;
         }
         .detail-panel p {
           margin: 8px 0;

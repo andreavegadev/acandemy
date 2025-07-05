@@ -1,6 +1,4 @@
-import React from "react";
 import { useCart } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
 import {
   ButtonDanger,
   ButtonLinkDanger,
@@ -10,7 +8,6 @@ import "../styles/CartPage.css";
 
 const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
-  const navigate = useNavigate();
 
   // Calcula el total sumando producto base y personalizaciones
   const getTotal = () => {

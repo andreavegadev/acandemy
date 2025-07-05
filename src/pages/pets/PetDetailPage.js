@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "../../styles/PetDetailPage.css";
 import {
@@ -36,22 +36,9 @@ const actionsStyle = {
   marginTop: 24,
 };
 
-const buttonStyle = {
-  background: "#ede7f6",
-  border: "none",
-  color: "#5e35b1",
-  fontWeight: "bold",
-  padding: "8px 20px",
-  borderRadius: 8,
-  cursor: "pointer",
-  transition: "background 0.2s",
-};
-
 const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   const { id } = useParams(); // Obtiene el ID de la mascota desde la URL
-  const navigate = useNavigate();
   const [pet, setPet] = useState(initialPet);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -67,7 +54,6 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
 
   useEffect(() => {
     const fetchPet = async () => {
-      setLoading(true);
       setError("");
 
       const { data, error } = await supabase
@@ -95,8 +81,6 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
           active: data.active,
         });
       }
-
-      setLoading(false);
     };
 
     if (!initialPet) {
@@ -110,8 +94,6 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   };
 
   const handleSave = async () => {
-    setLoading(true);
-
     if (pet && pet.id) {
       // update
       const { error } = await supabase
@@ -151,8 +133,6 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
         if (onSave) onSave();
       }
     }
-
-    setLoading(false);
   };
 
   if (error) {

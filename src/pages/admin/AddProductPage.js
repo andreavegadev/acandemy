@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../styles/AddProductPage.css";
 import { ButtonSecondary } from "../../components/Button";

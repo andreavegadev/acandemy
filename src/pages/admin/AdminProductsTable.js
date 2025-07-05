@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { useNavigate } from "react-router-dom";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 
 const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
@@ -15,7 +14,6 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
   const [filter, setFilter] = useState("all");
   const [handmadeFilter, setHandmadeFilter] = useState("all");
   const [topVentas, setTopVentas] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -131,8 +129,6 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
   const totalPages = Math.ceil(total / pageSize);
 
   // Estadísticas de productos
-  const noStock = products.filter((p) => p.stock === 0).length;
-  const lowStock = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
   const active = products.filter((p) => p.active).length;
 
   return (
@@ -425,7 +421,7 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
                     onClick={handleEditSave}
                     aria-label={`Guardar cambios en producto ${prod.name}`}
                   >
-                    >Guardar
+                    Guardar
                   </ButtonPrimary>
                   <ButtonSecondary
                     onClick={handleEditCancel}

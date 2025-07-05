@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useId } from "react";
+import { useState, useEffect } from "react";
 import styles from "./HomePage.module.css";
 import { supabase } from "../supabaseClient";
-import FeaturedCard from "../components/FeaturedCard";
 import ProductCard from "../components/ProductCard";
 import ValueCard from "../components/ValueCard";
 import "../styles/Common.css";
@@ -18,13 +17,10 @@ import Carousel from "../components/Carousel";
 const HomePage = () => {
   const [featuredCategories, setFeaturedCategories] = useState([]);
   const [values, setValues] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [categoriesWithProducts, setCategoriesWithProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-
       // Categorías destacadas
       const { data: categoriesData, error: categoriesError } = await supabase
         .from("categories")
@@ -96,8 +92,6 @@ const HomePage = () => {
         );
         setCategoriesWithProducts(categoriesWithProds);
       }
-
-      setLoading(false);
     };
 
     fetchData();
@@ -141,7 +135,9 @@ const HomePage = () => {
                 return (
                   <div key={cat.id}>
                     <Stack gap={16}>
-                      <Heading id={headingId} as="h2">{cat.name}</Heading>
+                      <Heading id={headingId} as="h2">
+                        {cat.name}
+                      </Heading>
                       <Carousel aria-labelledby={headingId}>
                         {cat.products.map((product) => (
                           <ProductCard

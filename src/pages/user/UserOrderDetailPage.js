@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import { STATUS_LABELS } from "../../constants/order";
 import { ButtonLink } from "../../components/Button";
 
 const UserOrderDetailPage = () => {
   const { orderId } = useParams();
-  const navigate = useNavigate();
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("orders")
         .select(
           `
@@ -39,7 +36,6 @@ const UserOrderDetailPage = () => {
         .eq("id", orderId)
         .single();
       setOrder(data);
-      setLoading(false);
     };
     fetchOrder();
   }, [orderId]);
@@ -56,7 +52,6 @@ const UserOrderDetailPage = () => {
       style={{
         maxWidth: 600,
         margin: "40px auto",
-
         border: "1px solid #d1c4e9",
         borderRadius: 16,
         boxShadow: "0 2px 12px #ede7f6",
@@ -66,7 +61,7 @@ const UserOrderDetailPage = () => {
       }}
     >
       <ButtonLink href={`/profile`} aria-label={`Volver a mi perfil`} bleedLeft>
-        ← Volver
+        Volver
       </ButtonLink>
       <h2 style={{ color: "#5e35b1", marginBottom: 12 }}>
         Detalle del pedido #{order.id}

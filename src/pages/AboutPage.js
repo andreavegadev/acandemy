@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import ValueCard from "../components/ValueCard";
 import "../styles/AboutPage.css";
@@ -6,12 +6,9 @@ import { ButtonLink } from "../components/Button";
 
 const AboutPage = () => {
   const [values, setValues] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchValues = async () => {
-      setLoading(true);
-
       const { data: valuesData, error: valuesError } = await supabase
         .from("values")
         .select("id, title, description, icon");
@@ -21,8 +18,6 @@ const AboutPage = () => {
       } else {
         setValues(valuesData);
       }
-
-      setLoading(false);
     };
 
     fetchValues();

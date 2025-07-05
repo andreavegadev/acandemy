@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 
 const BestSellersPage = ({ type }) => {
@@ -6,7 +6,10 @@ const BestSellersPage = ({ type }) => {
 
   useEffect(() => {
     const fetch = async () => {
-      let query = supabase.from("products").select("*").order("sold", { ascending: type === "worst" });
+      let query = supabase
+        .from("products")
+        .select("*")
+        .order("sold", { ascending: type === "worst" });
       const { data } = await query.limit(10);
       setProducts(data || []);
     };
@@ -15,7 +18,11 @@ const BestSellersPage = ({ type }) => {
 
   return (
     <div>
-      <h2>{type === "best" ? "Productos más vendidos" : "Productos menos vendidos"}</h2>
+      <h2>
+        {type === "best"
+          ? "Productos más vendidos"
+          : "Productos menos vendidos"}
+      </h2>
       <ul>
         {products.map((p) => (
           <li key={p.id}>

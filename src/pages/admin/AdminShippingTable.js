@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { ButtonSecondary } from "../../components/Button";
 
 const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
   const [shippingTypes, setShippingTypes] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filterActive, setFilterActive] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({});
 
   useEffect(() => {
     const fetchShipping = async () => {
-      setLoading(true);
       let query = supabase
         .from("shipping")
         .select("*")
@@ -34,41 +30,11 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
       let { data } = await query.range(from, to);
 
       setShippingTypes(data || []);
-      setLoading(false);
     };
     fetchShipping();
   }, [filterActive, search, page, pageSize]);
 
   const totalPages = Math.ceil(shippingTypes.length / pageSize);
-
-  const handleEdit = (shipping) => {
-    setEditingId(shipping.id);
-    setEditForm({ ...shipping });
-  };
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setEditForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSave = async () => {
-    const updateData = {
-      name: editForm.name,
-      price: Number(editForm.price),
-      active: editForm.active,
-    };
-    await supabase.from("shipping").update(updateData).eq("id", editingId);
-    setEditingId(null);
-    window.location.reload();
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditForm({});
-  };
 
   const handleClearFilters = () => {
     setFilterActive("all");

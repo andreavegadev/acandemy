@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../styles/AddProductPage.css"; // Puedes reutilizar el CSS del producto
 import { ButtonPrimary } from "../../components/Button";

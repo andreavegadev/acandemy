@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 import { Link, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";

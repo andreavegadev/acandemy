@@ -1,4 +1,3 @@
-import React from "react";
 import "../../styles/LegalPages.css";
 
 const CookiesPolicyPage = () => {
@@ -7,9 +6,9 @@ const CookiesPolicyPage = () => {
       <div className="legal-card">
         <h1>Política de Cookies</h1>
         <p>
-          Este sitio web utiliza cookies para mejorar la experiencia del usuario.
-          Al continuar navegando, aceptas el uso de cookies de acuerdo con esta
-          política.
+          Este sitio web utiliza cookies para mejorar la experiencia del
+          usuario. Al continuar navegando, aceptas el uso de cookies de acuerdo
+          con esta política.
         </p>
         <h2>¿Qué son las cookies?</h2>
         <p>
@@ -24,8 +23,8 @@ const CookiesPolicyPage = () => {
             del sitio web.
           </li>
           <li>
-            <strong>Cookies de análisis:</strong> Utilizadas para recopilar datos
-            sobre el uso del sitio web.
+            <strong>Cookies de análisis:</strong> Utilizadas para recopilar
+            datos sobre el uso del sitio web.
           </li>
           <li>
             <strong>Cookies de terceros:</strong> Proporcionadas por servicios

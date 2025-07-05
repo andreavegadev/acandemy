@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import ProductCard from "../../components/ProductCard";
@@ -18,7 +18,6 @@ const ProductListPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([{ id: null, name: "Todos" }]);
-  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(category || "Todos");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -43,7 +42,6 @@ const ProductListPage = () => {
   // Cargar productos según la categoría seleccionada o URL
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
       try {
         let categoryId = null;
 
@@ -58,7 +56,6 @@ const ProductListPage = () => {
           if (categoryError) {
             console.error("Error fetching category:", categoryError.message);
             setProducts([]);
-            setLoading(false);
             return;
           }
           categoryId = categoryData?.id;
@@ -89,7 +86,6 @@ const ProductListPage = () => {
         console.error("Unexpected error:", error);
         setProducts([]);
       }
-      setLoading(false);
     };
 
     fetchProducts();

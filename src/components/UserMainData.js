@@ -1,4 +1,3 @@
-import React from "react";
 import { ButtonSecondary } from "./Button";
 
 const cardStyle = {
@@ -22,18 +21,6 @@ const labelStyle = {
   color: "#5e35b1",
   minWidth: 120,
   display: "inline-block",
-};
-
-const buttonStyle = {
-  marginTop: 18,
-  background: "#ede7f6",
-  border: "none",
-  color: "#5e35b1",
-  fontWeight: "bold",
-  padding: "8px 20px",
-  borderRadius: 8,
-  cursor: "pointer",
-  transition: "background 0.2s",
 };
 
 const UserMainData = ({ user, onViewAllUserData }) => (

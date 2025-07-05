@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 
 const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
   const [discounts, setDiscounts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filterActive, setFilterActive] = useState("all");
   const [filterType, setFilterType] = useState("all");
   const [filterValidity, setFilterValidity] = useState("all");
@@ -17,7 +16,6 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
 
   useEffect(() => {
     const fetchDiscounts = async () => {
-      setLoading(true);
       let query = supabase
         .from("discounts")
         .select("*")
@@ -67,7 +65,6 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
       }
 
       setDiscounts(data || []);
-      setLoading(false);
     };
     fetchDiscounts();
   }, [

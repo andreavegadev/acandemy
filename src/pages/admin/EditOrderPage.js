@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import { ButtonSecondary } from "../../components/Button";
@@ -8,7 +8,6 @@ const EditOrderPage = () => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -34,7 +33,6 @@ const EditOrderPage = () => {
         setOrder(orderData);
         setItems(itemsData || []);
       }
-      setLoading(false);
     };
     fetchOrder();
   }, [id]);

@@ -1,4 +1,3 @@
-import React from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { ButtonLink } from "./Button";

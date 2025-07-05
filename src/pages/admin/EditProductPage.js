@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import { ButtonPrimary } from "../../components/Button";
@@ -16,7 +16,6 @@ const EditProductPage = () => {
     category_id: "",
   });
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
@@ -36,7 +35,6 @@ const EditProductPage = () => {
         setForm(product);
       }
       setCategories(cats || []);
-      setLoading(false);
     };
     fetchData();
   }, [id]);

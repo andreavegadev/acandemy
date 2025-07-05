@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import {
-  ButtonLink,
-  ButtonPrimary,
-  ButtonSecondary,
-} from "../../components/Button";
+import { ButtonPrimary } from "../../components/Button";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Añade este import
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../styles/ProfilePage.css";
 import {
@@ -9,7 +8,6 @@ import {
 } from "../../components/Button";
 
 const ProfilePage = () => {
-  const navigate = useNavigate(); // Hook para navegar
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
   const [form, setForm] = useState({
@@ -232,7 +230,7 @@ const ProfilePage = () => {
           aria-label={`Volver a mi perfil`}
           bleedLeft
         >
-          ← Volver
+          Volver
         </ButtonLink>
         <h2>Mi perfil</h2>
         <form onSubmit={handleSave} autoComplete="off">

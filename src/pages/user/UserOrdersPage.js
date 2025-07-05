@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { useNavigate } from "react-router-dom";
 import { STATUS_LABELS } from "../../constants/order";
 import { ButtonLink } from "../../components/Button";
 
@@ -23,52 +22,29 @@ const statusStyle = {
   display: "inline-block",
 };
 
-const buttonStyle = {
-  background: "#ede7f6",
-  border: "none",
-  color: "#5e35b1",
-  fontWeight: "bold",
-  padding: "6px 16px",
-  borderRadius: 8,
-  cursor: "pointer",
-  marginTop: 8,
-  alignSelf: "flex-start",
-  transition: "background 0.2s",
-};
-
 const UserOrdersPage = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoading(true);
       const { data: sessionData, error: sessionError } =
         await supabase.auth.getSession();
       if (sessionError) {
-        setLoading(false);
         return;
       }
       const userId = sessionData?.session?.user?.id;
       if (!userId) {
-        setLoading(false);
         return;
       }
-      const { data: ordersData, error: ordersError } = await supabase
+      const { data: ordersData } = await supabase
         .from("orders")
         .select("id, order_date, total_amount, status")
         .eq("user_id", userId)
         .order("order_date", { ascending: false });
       setOrders(ordersData || []);
-      setLoading(false);
     };
     fetchOrders();
   }, []);
-
-  const handleViewOrderDetails = (orderId) => {
-    navigate(`/orders/${orderId}`);
-  };
 
   return (
     <div style={{ maxWidth: 700, margin: "40px auto" }}>

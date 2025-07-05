@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { ButtonSecondary } from "../../components/Button";
 
 const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
   const [types, setTypes] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     const fetchTypes = async () => {
-      setLoading(true);
       let query = supabase
         .from("personalization_types")
         .select("*")
@@ -26,7 +24,6 @@ const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
       let { data } = await query.range(from, to);
 
       setTypes(data || []);
-      setLoading(false);
     };
     fetchTypes();
   }, [search, page, pageSize]);

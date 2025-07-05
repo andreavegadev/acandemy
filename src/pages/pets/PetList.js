@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "../../styles/PetList.css";
 import PetDetailPanel from "./PetDetailPanel";
-import {
-  ButtonDanger,
-  ButtonPrimary,
-  ButtonSecondary,
-} from "../../components/Button";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 
 const PetList = () => {
   const [pets, setPets] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -25,13 +20,11 @@ const PetList = () => {
 
   useEffect(() => {
     const fetchPets = async () => {
-      setLoading(true);
       const { data } = await supabase
         .from("pets")
         .select("*")
         .order("name", { ascending: true });
       setPets(data || []);
-      setLoading(false);
     };
     fetchPets();
   }, []);

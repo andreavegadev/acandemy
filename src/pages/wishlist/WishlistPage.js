@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getWishlist } from "../../utils/wishlist";
 import { getProductById } from "../../api/products";
 import ProductCard from "../../components/ProductCard";
@@ -23,7 +23,10 @@ const WishlistPage = () => {
           {products
             .filter((product) => product)
             .map((product) => (
-              <div key={product.id} style={{ position: "relative", marginBottom: 24 }}>
+              <div
+                key={product.id}
+                style={{ position: "relative", marginBottom: 24 }}
+              >
                 <ProductCard
                   id={product.id}
                   title={product.name}

@@ -84,7 +84,7 @@ const Carousel = ({
               width="64"
               height="64"
               viewBox="0 0 24 24"
-              class="eva eva-chevron-left-outline"
+              className="eva eva-chevron-left-outline"
               fill="inherit"
             >
               <g data-name="Layer 2">
@@ -111,7 +111,7 @@ const Carousel = ({
               width="64"
               height="64"
               viewBox="0 0 24 24"
-              class="eva eva-chevron-right-outline"
+              className="eva eva-chevron-right-outline"
               fill="inherit"
             >
               <g data-name="Layer 2">

@@ -1,4 +1,3 @@
-import React from "react";
 import { STATUS_LABELS } from "../constants/order";
 import { ButtonLink } from "./Button";
 
@@ -21,25 +20,7 @@ const statusStyle = {
   display: "inline-block",
 };
 
-const buttonStyle = {
-  background: "#ede7f6",
-  border: "none",
-  color: "#5e35b1",
-  fontWeight: "bold",
-  padding: "6px 16px",
-  borderRadius: 8,
-  cursor: "pointer",
-  marginTop: 8,
-  alignSelf: "flex-start",
-  transition: "background 0.2s",
-};
-
-const LastOrdersList = ({
-  orders = [],
-  onViewOrder,
-  onViewAllOrders,
-  limit = 5,
-}) => (
+const LastOrdersList = ({ orders = [], limit = 5 }) => (
   <section>
     <h2 style={{ color: "#5e35b1", marginBottom: 16 }}>Últimos pedidos</h2>
     {orders.length > 0 ? (
