@@ -1,7 +1,11 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { ButtonLinkDanger } from "../components/Button";
+import {
+  ButtonDanger,
+  ButtonLinkDanger,
+  ButtonPrimary,
+} from "../components/Button";
 import "../styles/CartPage.css";
 
 const CartPage = () => {
@@ -104,10 +108,10 @@ const CartPage = () => {
           </ul>
           <div className="cart-summary">
             <h2>Total: €{getTotal().toFixed(2)}</h2>
-            <button onClick={clearCart}>Vaciar Carrito</button>
-            <button onClick={() => navigate("/checkout")}>
-              Resumen del pedido
-            </button>
+            <ButtonDanger onClick={clearCart} aria-label={`Vaciar carrito`}>
+              Vaciar Carrito
+            </ButtonDanger>
+            <ButtonPrimary href={`/checkout`}>Resumen del pedido</ButtonPrimary>
           </div>
         </>
       )}

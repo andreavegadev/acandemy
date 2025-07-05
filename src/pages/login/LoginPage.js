@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import "../../styles/AuthPages.css";
+import { ButtonLink, ButtonPrimary } from "../../components/Button";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -55,15 +56,24 @@ const LoginPage = () => {
             onChange={handleChange}
             required
           />
-          <button type="submit">Iniciar Sesión</button>
+          <ButtonPrimary type="submit" aria-label={`Iniciar sesión con correo`}>
+            Iniciar Sesión
+          </ButtonPrimary>
         </form>
         {error && <p className="error">{error}</p>}
         <div className="links">
           <p>
-            <a href="/forgot-password">¿Olvidaste tu contraseña?</a>
+            <ButtonLink
+              href={`/forgot-password`}
+              aria-label={`¿Olvisate tu contraseña?`}
+            >
+              ¿Olvidaste tu contraseña?
+            </ButtonLink>
           </p>
           <p>
-            <a href="/register">Registrarse</a>
+            <ButtonPrimary href={`/register`} aria-label={`Registrase`}>
+              Registrarse
+            </ButtonPrimary>
           </p>
         </div>
       </div>

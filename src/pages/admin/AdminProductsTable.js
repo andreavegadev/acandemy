@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 
 const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
   const [products, setProducts] = useState([]);
@@ -145,7 +146,9 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
         }}
       >
         <h2>Productos</h2>
-        <button onClick={onAddProduct}>Añadir producto</button>
+        <ButtonSecondary onClick={onAddProduct} aria-label={`Añadir producto`}>
+          Añadir producto
+        </ButtonSecondary>
       </div>
       <div
         style={{
@@ -200,7 +203,12 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
           </select>
           &nbsp;por página
         </label>
-        <button onClick={handleClearFilters}>Limpiar filtros</button>
+        <ButtonSecondary
+          onClick={handleClearFilters}
+          aria-label={`Limpiar filtros`}
+        >
+          Limpiar filtros
+        </ButtonSecondary>
       </div>
       <div
         style={{
@@ -413,8 +421,18 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
                   />
                 </td>
                 <td>
-                  <button onClick={handleEditSave}>Guardar</button>
-                  <button onClick={handleEditCancel}>Cancelar</button>
+                  <ButtonPrimary
+                    onClick={handleEditSave}
+                    aria-label={`Guardar cambios en producto ${prod.name}`}
+                  >
+                    >Guardar
+                  </ButtonPrimary>
+                  <ButtonSecondary
+                    onClick={handleEditCancel}
+                    aria-label={`Cancelar edición de producto ${prod.name}`}
+                  >
+                    Cancelar
+                  </ButtonSecondary>
                 </td>
               </tr>
             ) : (
@@ -438,21 +456,23 @@ const AdminProductsTable = ({ onProductSelect, onAddProduct }) => {
           gap: "1em",
         }}
       >
-        <button
+        <ButtonSecondary
+          aria-label={`Volver a la página anterior`}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
         >
           Anterior
-        </button>
+        </ButtonSecondary>
         <span>
           Página {page} de {totalPages}
         </span>
-        <button
+        <ButtonSecondary
+          aria-label={`Ir a la siguiente página`}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
         >
           Siguiente
-        </button>
+        </ButtonSecondary>
         <span>
           Ir a página:&nbsp;
           <input

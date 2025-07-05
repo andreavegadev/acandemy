@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Añade este import
 import { supabase } from "../../supabaseClient";
 import "../../styles/ProfilePage.css";
+import {
+  ButtonDanger,
+  ButtonLink,
+  ButtonPrimary,
+} from "../../components/Button";
 
 const ProfilePage = () => {
   const navigate = useNavigate(); // Hook para navegar
@@ -178,21 +183,6 @@ const ProfilePage = () => {
           gap: 14px;
           justify-content: flex-end;
         }
-        .profile-card button {
-          background: #5e35b1;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          padding: 10px 22px;
-          font-size: 1em;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .profile-card button:disabled {
-          background: #b39ddb;
-          cursor: not-allowed;
-        }
         .profile-card .cancel-btn {
           background: #ede7f6;
           color: #5e35b1;
@@ -237,13 +227,13 @@ const ProfilePage = () => {
         }
       `}</style>
       <div className="profile-card" style={{ position: "relative" }}>
-        <button
-          className="back-btn"
-          onClick={() => navigate("/profile")}
-          type="button"
+        <ButtonLink
+          href={`/profile`}
+          aria-label={`Volver a mi perfil`}
+          bleedLeft
         >
           ← Volver
-        </button>
+        </ButtonLink>
         <h2>Mi perfil</h2>
         <form onSubmit={handleSave} autoComplete="off">
           <label>Correo electrónico</label>
@@ -293,9 +283,7 @@ const ProfilePage = () => {
           <div className="profile-actions">
             {editing ? (
               <>
-                <button
-                  type="button"
-                  className="cancel-btn"
+                <ButtonDanger
                   onClick={() => {
                     setEditing(false);
                     setEmail(user.email || "");
@@ -311,19 +299,15 @@ const ProfilePage = () => {
                   disabled={saving}
                 >
                   Cancelar
-                </button>
-                <button type="submit" className="edit-btn" disabled={saving}>
+                </ButtonDanger>
+                <ButtonPrimary type="submit" disabled={saving}>
                   {saving ? "Guardando..." : "Guardar"}
-                </button>
+                </ButtonPrimary>
               </>
             ) : (
-              <button
-                type="button"
-                className="edit-btn"
-                onClick={() => setEditing(true)}
-              >
+              <ButtonPrimary onClick={() => setEditing(true)}>
                 Editar perfil
-              </button>
+              </ButtonPrimary>
             )}
           </div>
           {success && <div className="success-msg">{success}</div>}

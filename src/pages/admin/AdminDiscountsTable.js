@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 
 const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
   const [discounts, setDiscounts] = useState([]);
@@ -145,7 +146,12 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
         }}
       >
         <h2>Códigos Descuento</h2>
-        <button onClick={onAddDiscount}>Crear código descuento</button>
+        <ButtonSecondary
+          onClick={onAddDiscount}
+          aria-label={`Crear código descuento`}
+        >
+          Crear código descuento
+        </ButtonSecondary>
       </div>
       <div
         style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
@@ -234,7 +240,12 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
           </select>
           &nbsp;por página
         </label>
-        <button onClick={handleClearFilters}>Limpiar filtros</button>
+        <ButtonSecondary
+          onClick={handleClearFilters}
+          aria-label={`Limpiar filtros`}
+        >
+          Limpiar filtros
+        </ButtonSecondary>
       </div>
       <table className="admin-products-table">
         <thead>
@@ -337,8 +348,18 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
                   />
                 </td>
                 <td>
-                  <button onClick={handleSave}>Guardar</button>
-                  <button onClick={handleCancel}>Cancelar</button>
+                  <ButtonPrimary
+                    onClick={handleSave}
+                    aria-label={`Guardar descuentos`}
+                  >
+                    Guardar
+                  </ButtonPrimary>
+                  <ButtonSecondary
+                    onClick={handleCancel}
+                    aria-label={`Cancelar`}
+                  >
+                    Cancelar
+                  </ButtonSecondary>
                 </td>
               </tr>
             ) : (
@@ -362,7 +383,12 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
                   <input type="checkbox" checked={discount.active} readOnly />
                 </td>
                 <td>
-                  <button onClick={() => handleEdit(discount)}>Editar</button>
+                  <ButtonSecondary
+                    onClick={() => handleEdit(discount)}
+                    aria-label={`Editar descuento ${discount.code}`}
+                  >
+                    Editar
+                  </ButtonSecondary>
                 </td>
               </tr>
             )
@@ -377,21 +403,23 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
           gap: "1em",
         }}
       >
-        <button
+        <ButtonSecondary
+          aria-label={`Volver a la página anterior`}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
         >
           Anterior
-        </button>
+        </ButtonSecondary>
         <span>
           Página {page} de {totalPages}
         </span>
-        <button
+        <ButtonSecondary
+          aria-label={`Ir a la siguiente página`}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
         >
           Siguiente
-        </button>
+        </ButtonSecondary>
         <span>
           Ir a página:&nbsp;
           <input

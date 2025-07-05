@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../styles/AddProductPage.css"; // Puedes reutilizar el CSS del producto
+import { ButtonPrimary } from "../../components/Button";
 
 const AddCategoryPage = () => {
   const [form, setForm] = useState({
@@ -86,7 +87,9 @@ const AddCategoryPage = () => {
           />
           Destacada
         </label>
-        <button onClick={onAddCategory}>Añadir categoría</button>
+        <ButtonPrimary onClick={onAddCategory} aria-label={`Añadir categoría`}>
+          Añadir categoría
+        </ButtonPrimary>
       </form>
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}

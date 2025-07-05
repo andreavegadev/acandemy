@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import { ButtonSecondary } from "../../components/Button";
 
 const EditOrderPage = () => {
   const { id } = useParams();
@@ -103,9 +104,7 @@ const EditOrderPage = () => {
           ))}
         </tbody>
       </table>
-      <button style={{ marginTop: 24 }} onClick={() => navigate(-1)}>
-        Volver
-      </button>
+      <ButtonSecondary onClick={() => navigate(-1)}>Volver</ButtonSecondary>
     </div>
   );
 };

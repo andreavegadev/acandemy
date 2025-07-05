@@ -5,6 +5,7 @@ import {
   STATUS_LABELS,
   PAYMENT_LABELS,
 } from "../../constants/order";
+import { ButtonSecondary } from "../../components/Button";
 
 const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
   const [orders, setOrders] = useState([]);
@@ -295,7 +296,12 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
             </select>
             &nbsp;por página
           </label>
-          <button onClick={handleClearFilters}>Limpiar filtros</button>
+          <ButtonSecondary
+            onClick={handleClearFilters}
+            aria-label={`Limpiar filtros`}
+          >
+            Limpiar filtros
+          </ButtonSecondary>
         </div>
         <table className="admin-products-table">
           <thead>
@@ -351,21 +357,39 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
           </tbody>
         </table>
         <div style={{ marginTop: "1em" }}>
-          <button
+          <ButtonSecondary
+            aria-label={`Volver a la página anterior`}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
             Anterior
-          </button>
-          <span style={{ margin: "0 1em" }}>
+          </ButtonSecondary>
+          <span>
             Página {page} de {totalPages}
           </span>
-          <button
+          <ButtonSecondary
+            aria-label={`Ir a la siguiente página`}
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
           >
             Siguiente
-          </button>
+          </ButtonSecondary>
+          <span>
+            Ir a página:&nbsp;
+            <input
+              type="number"
+              min={1}
+              max={totalPages}
+              value={page}
+              onChange={(e) => {
+                let val = Number(e.target.value);
+                if (val > totalPages) val = totalPages;
+                if (val < 1) val = 1;
+                setPage(val);
+              }}
+              style={{ width: 60 }}
+            />
+          </span>
         </div>
         <style>{`
           .admin-products-table {

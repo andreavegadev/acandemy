@@ -19,20 +19,7 @@
 .admin-sidebar li {
   margin-bottom: 12px;
 }
-.admin-sidebar button {
-  width: 100%;
-  background: none;
-  border: none;
-  color: #4a148c;
-  font-size: 1rem;
-  text-align: left;
-  padding: 8px 0;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.admin-sidebar button:hover {
-  color: #6a1b9a;
-}
+
 .admin-content {
   flex: 1;
   padding: 32px;

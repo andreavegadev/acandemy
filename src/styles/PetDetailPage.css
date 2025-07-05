@@ -140,21 +140,6 @@
   margin-top: 12px;
 }
 
-.pet-detail-actions button {
-  background: #6a1b9a;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 22px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.pet-detail-actions button:hover {
-  background: #4a148c;
-}
-
 @media (max-width: 700px) {
   .pet-detail-container {
     padding: 16px 4px;

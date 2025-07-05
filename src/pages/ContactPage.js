@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/ContactPage.css";
+import { ButtonPrimary } from "../components/Button";
 
 const ContactPage = () => {
   return (
@@ -68,10 +69,9 @@ const ContactPage = () => {
             placeholder="Escribe tu mensaje aquí"
           ></textarea>
         </div>
-        <button type="submit" className="submit-button">
-          Enviar
-        </button>
+        <ButtonPrimary type="submit">Enviar</ButtonPrimary>
       </form>
+      {/* TODO enviar correo electrónico al administrador */}
     </div>
   );
 };

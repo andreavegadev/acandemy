@@ -7,6 +7,7 @@ import LastOrdersList from "../../components/LastOrdersList";
 import PetList from "../pets/PetList";
 
 import "../../styles/UserMenuPage.css";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 
 const UserMenuPage = () => {
   const [userData, setUserData] = useState({ full_name: "", email: "" });
@@ -97,14 +98,6 @@ const UserMenuPage = () => {
     navigate("/orders");
   };
 
-  const handleViewPetDetails = (petId) => {
-    navigate(`/pets/${petId}`);
-  };
-
-  const handleAddPet = () => {
-    navigate("/pets/add");
-  };
-
   const handleViewAllUserData = () => {
     navigate("/profile/details");
   };
@@ -116,28 +109,25 @@ const UserMenuPage = () => {
         <nav>
           <ul>
             <li>
-              <button
-                className={view === "profile" ? "active" : ""}
-                onClick={() => setView("profile")}
-              >
+              <ButtonSecondary onClick={() => setView("profile")}>
                 Perfil
-              </button>
+              </ButtonSecondary>
             </li>
             <li>
-              <button
+              <ButtonSecondary
                 className={view === "orders" ? "active" : ""}
                 onClick={() => setView("orders")}
               >
                 Mis pedidos
-              </button>
+              </ButtonSecondary>
             </li>
             <li>
-              <button
+              <ButtonSecondary
                 className={view === "petlist" ? "active" : ""}
                 onClick={() => setView("petlist")}
               >
                 Mis mascotas
-              </button>
+              </ButtonSecondary>
             </li>
             {/* Puedes añadir más opciones aquí */}
           </ul>
@@ -175,12 +165,7 @@ const UserMenuPage = () => {
         {view === "petlist" && (
           <div>
             <h3>Listado completo de mascotas</h3>
-            <PetList
-              userId={userData.id}
-              pets={pets}
-              onViewPet={handleViewPetDetails}
-              onAddPet={handleAddPet}
-            />
+            <PetList userId={userData.id} pets={pets} />
           </div>
         )}
       </main>

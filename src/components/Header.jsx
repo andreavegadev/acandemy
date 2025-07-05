@@ -6,6 +6,7 @@ import { useCart } from "../context/CartContext";
 import TextoTagline from "../assets/images/TextoTagline.png";
 import ResponsiveLayout from "./ResponsiveLayout";
 import { Inline } from "./LayoutUtilities";
+import { ButtonPrimary } from "./Button";
 
 const Header = ({ session }) => {
   const handleLogout = async () => {
@@ -96,9 +97,7 @@ const Header = ({ session }) => {
             </Link>
             {session ? (
               <>
-                <button className="logout-button" onClick={handleLogout}>
-                  Log Out
-                </button>
+                <ButtonPrimary onClick={handleLogout}>Log Out</ButtonPrimary>
               </>
             ) : (
               <>

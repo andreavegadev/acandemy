@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import ValueCard from "../components/ValueCard";
 import "../styles/AboutPage.css";
+import { ButtonLink } from "../components/Button";
 
 const AboutPage = () => {
   const [values, setValues] = useState([]);
@@ -75,7 +76,13 @@ const AboutPage = () => {
         <p>
           Si tienes alguna pregunta o necesitas ayuda, no dudes en ponerte en
           contacto con nosotros a través de nuestra página de{" "}
-          <a href="/contact">Contacto</a>.
+          <ButtonLink
+            href={`/contact`}
+            aria-label={`Ir a la página de contacto`}
+          >
+            Contacto
+          </ButtonLink>
+          .
         </p>
       </div>
     </div>

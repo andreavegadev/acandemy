@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import { ButtonPrimary } from "../../components/Button";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -136,7 +137,12 @@ const EditProductPage = () => {
           />
           Hecho a mano
         </label>
-        <button type="submit">Guardar cambios</button>
+        <ButtonPrimary
+          type="submit"
+          aria-label={`Guardar cambios producto ${form.name}`}
+        >
+          Guardar cambios
+        </ButtonPrimary>
       </form>
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}

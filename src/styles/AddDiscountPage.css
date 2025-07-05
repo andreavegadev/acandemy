@@ -74,21 +74,6 @@
   margin-top: 12px;
 }
 
-.discount-form-actions button {
-  background: #6a1b9a;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 22px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.discount-form-actions button:hover {
-  background: #4a148c;
-}
-
 .discount-user-list {
   background: #fff;
   border: 1px solid #d1c4e9;

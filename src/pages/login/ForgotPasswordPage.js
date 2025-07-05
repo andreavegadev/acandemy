@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonLink, ButtonPrimary } from "../../components/Button";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -41,13 +42,20 @@ const ForgotPasswordPage = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button type="submit">Enviar Enlace de Recuperación</button>
+        <ButtonPrimary
+          type="submit"
+          aria-label={`Enviar enlace de recuperación de contraseña`}
+        >
+          Enviar Enlace de Recuperación
+        </ButtonPrimary>
       </form>
       {message && <p className="success">{message}</p>}
       {error && <p className="error">{error}</p>}
       <div className="links">
         <p>
-          <a href="/login">Volver a Iniciar Sesión</a>
+          <ButtonLink href={`/login`} aria-label={`Volver a iniciar sesión`}>
+            Volver a Iniciar Sesión
+          </ButtonLink>
         </p>
       </div>
     </div>

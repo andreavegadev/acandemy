@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 
 const AddShippingPage = ({ onCreated, onCancel }) => {
   const [name, setName] = useState("");
@@ -85,26 +86,7 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
           gap: 12px;
           margin-top: 10px;
         }
-        .add-panel button {
-          background: #5e35b1;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          padding: 8px 18px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .add-panel button[type="button"] {
-          background: #ede7f6;
-          color: #5e35b1;
-        }
-        .add-panel button[type="button"]:hover {
-          background: #d1c4e9;
-        }
-        .add-panel button[type="submit"]:hover {
-          background: #7e57c2;
-        }
+        
         .add-panel .error {
           color: #e53935;
           margin-top: 8px;
@@ -142,7 +124,14 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
               required
             />
           </label>
-          <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
+          <label
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              marginTop: 10,
+            }}
+          >
             <input
               type="checkbox"
               checked={active}
@@ -151,11 +140,11 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
             Activo
           </label>
           <div className="panel-actions">
-            <button type="submit">Crear</button>
+            <ButtonPrimary type="submit">Crear</ButtonPrimary>
             {onCancel && (
-              <button type="button" onClick={onCancel}>
+              <ButtonSecondary aria-label={`Cancel`} onClick={onCancel}>
                 Cancelar
-              </button>
+              </ButtonSecondary>
             )}
           </div>
           {error && <div className="error">{error}</div>}

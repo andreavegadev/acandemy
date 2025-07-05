@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonDanger, ButtonSecondary } from "../../components/Button";
 
-const CategoryDetailPanel = ({ category, onClose, onEdit, onReloadCategories }) => {
+const CategoryDetailPanel = ({
+  category,
+  onClose,
+  onEdit,
+  onReloadCategories,
+}) => {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,23 +32,25 @@ const CategoryDetailPanel = ({ category, onClose, onEdit, onReloadCategories }) 
   return (
     <div className="detail-panel">
       <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-        <button onClick={onClose}>Cerrar</button>
-        <button onClick={() => onEdit(category)}>Editar</button>
-        <button
+        <ButtonSecondary
+          onClick={onClose}
+          aria-label={`Cerrar categoria ${category.name}`}
+        >
+          Cerrar
+        </ButtonSecondary>
+        <ButtonSecondary
+          onClick={() => onEdit(category)}
+          aria-label={`Editar categoría ${category.name}`}
+        >
+          Editar
+        </ButtonSecondary>
+        <ButtonDanger
           onClick={handleDelete}
           disabled={deleting}
-          style={{
-            background: "#e53935",
-            color: "#fff",
-            border: "none",
-            borderRadius: 6,
-            padding: "4px 10px",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
+          aria-label={`Eliminar categoría ${category.name}`}
         >
           {deleting ? "Eliminando..." : "Eliminar"}
-        </button>
+        </ButtonDanger>
       </div>
       <h3>Detalle categoría #{category.id}</h3>
       <p>

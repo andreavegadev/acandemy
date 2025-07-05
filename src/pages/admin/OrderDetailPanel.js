@@ -6,6 +6,7 @@ import {
   STATUS_LABELS,
   PAYMENT_LABELS,
 } from "../../constants/order";
+import { ButtonSecondary } from "../../components/Button";
 
 const OrderDetailPanel = ({
   order,
@@ -98,31 +99,19 @@ const OrderDetailPanel = ({
           background: #ede7f6;
           color: #5e35b1;
         }
-        .detail-panel button {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          background: #ede7f6;
-          border: none;
-          color: #5e35b1;
-          font-weight: bold;
-          padding: 4px 10px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .detail-panel button:hover {
-          background: #d1c4e9;
-        }
+        
         @keyframes fadeInDetail {
           from { opacity: 0; transform: translateY(20px);}
           to { opacity: 1; transform: translateY(0);}
         }
       `}</style>
       <div className="detail-panel">
-        <button onClick={onClose} style={{ float: "right" }}>
+        <ButtonSecondary
+          onClick={onClose}
+          aria-label={`Cerrar detalle pedido ${order.id}`}
+        >
           Cerrar
-        </button>
+        </ButtonSecondary>
         <h3>Detalle pedido #{order.id}</h3>
         <p>
           <b>Usuario:</b>{" "}

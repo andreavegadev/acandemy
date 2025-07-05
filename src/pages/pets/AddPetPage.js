@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { ButtonPrimary } from "../../components/Button";
 
 const AddPetPage = () => {
   const [formData, setFormData] = useState({
@@ -141,9 +142,13 @@ const AddPetPage = () => {
             onChange={handleInputChange}
           />
         </div>
-        <button type="submit" disabled={loading}>
+        <ButtonPrimary
+          type="submit"
+          disabled={loading}
+          aria-label="Añadir mascota"
+        >
           {loading ? "Añadiendo..." : "Añadir Mascota"}
-        </button>
+        </ButtonPrimary>
       </form>
     </div>
   );

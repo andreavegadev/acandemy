@@ -53,9 +53,9 @@ const Carousel = ({
       aria-labelledby={ariaLabelledby}
       aria-roledescription="Carrusel"
     >
-      <div ref={carouselRef} className={styles.itemsContainer}>
+      <ul ref={carouselRef} className={styles.itemsContainer}>
         {React.Children.map(children, (child, index) => (
-          <div
+          <li
             className={`${styles.itemWrapper} 
              ${
                index === React.Children.count(children) - 1
@@ -69,9 +69,9 @@ const Carousel = ({
                 styles.mobilePeekItem
               }`,
             })}
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
       {(canScrollLeft || canScrollRight) && (
         <Inline gap={16} fullWidth justify="flex-end">
           <IconButton

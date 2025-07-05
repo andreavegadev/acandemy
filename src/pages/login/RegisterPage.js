@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import "../../styles/AuthPages.css";
+import { ButtonLink, ButtonPrimary } from "../../components/Button";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -105,13 +106,20 @@ const RegisterPage = () => {
             value={formData.address}
             onChange={handleChange}
           />
-          <button type="submit">Registrarse</button>
+          <ButtonPrimary type="submit" aria-label={`Registrarse con correo`}>
+            Registrarse
+          </ButtonPrimary>
         </form>
         {error && <p className="error">{error}</p>}
         {success && <p className="success">{success}</p>}
         <div className="links">
           <p>
-            <a href="/login">¿Ya tienes una cuenta? Inicia sesión</a>
+            <ButtonLink
+              href={`/login`}
+              aria-label={`¿Ya tienes una cuenta? Inicia sesión`}
+            >
+              ¿Ya tienes una cuenta? Inicia sesión
+            </ButtonLink>
           </p>
         </div>
       </div>

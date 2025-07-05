@@ -1,4 +1,5 @@
 import React from "react";
+import { ButtonSecondary } from "../../components/Button";
 
 const PetDetailPanel = ({ pet, onClose, onEdit }) => {
   if (!pet) return null;
@@ -84,29 +85,43 @@ const PetDetailPanel = ({ pet, onClose, onEdit }) => {
           to { opacity: 1; transform: translateY(0);}
         }
       `}</style>
-      <div
-        className="pet-detail-panel"
-        onClick={e => e.stopPropagation()}
-      >
-        <button className="close-btn" onClick={onClose}>Cerrar</button>
-        <button
-          className="edit-btn"
+      <div className="pet-detail-panel" onClick={(e) => e.stopPropagation()}>
+        <ButtonSecondary
+          onClick={onClose}
+          aria-label={`Cerrar detalle de mascota ${pet.name}`}
+        >
+          Cerrar
+        </ButtonSecondary>
+        <ButtonSecondary
           onClick={() => onEdit && onEdit(pet)}
+          aria-label={`Editar mascota ${pet.name}`}
         >
           Editar
-        </button>
+        </ButtonSecondary>
         <img
           src={"/img/pet-placeholder.png"}
           alt={pet.name}
           className="pet-img"
         />
         <h3>{pet.name}</h3>
-        <p><b>Especie:</b> {pet.species}</p>
-        <p><b>Raza:</b> {pet.breed || "-"}</p>
-        <p><b>Fecha nacimiento:</b> {pet.birth_date || "-"}</p>
-        <p><b>Peso:</b> {pet.weight ? `${pet.weight} kg` : "-"}</p>
-        <p><b>Cuello:</b> {pet.neck_size ? `${pet.neck_size} cm` : "-"}</p>
-        <p><b>Pecho:</b> {pet.chest_size ? `${pet.chest_size} cm` : "-"}</p>
+        <p>
+          <b>Especie:</b> {pet.species}
+        </p>
+        <p>
+          <b>Raza:</b> {pet.breed || "-"}
+        </p>
+        <p>
+          <b>Fecha nacimiento:</b> {pet.birth_date || "-"}
+        </p>
+        <p>
+          <b>Peso:</b> {pet.weight ? `${pet.weight} kg` : "-"}
+        </p>
+        <p>
+          <b>Cuello:</b> {pet.neck_size ? `${pet.neck_size} cm` : "-"}
+        </p>
+        <p>
+          <b>Pecho:</b> {pet.chest_size ? `${pet.chest_size} cm` : "-"}
+        </p>
         <span className={`pet-status ${pet.active ? "active" : "inactive"}`}>
           {pet.active ? "Activo" : "Inactivo"}
         </span>

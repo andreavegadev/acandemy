@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonDanger, ButtonSecondary } from "../../components/Button";
 
 const DiscountDetailPanel = ({
   discount,
@@ -56,39 +57,28 @@ const DiscountDetailPanel = ({
           margin: 8px 0;
           line-height: 1.5;
         }
-        .detail-panel button {
-          background: #ede7f6;
-          border: none;
-          color: #5e35b1;
-          font-weight: bold;
-          padding: 4px 10px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .detail-panel button:hover {
-          background: #d1c4e9;
-        }
       `}</style>
       <div className="detail-panel">
         <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-          <button onClick={onClose}>Cerrar</button>
-          <button onClick={() => onEdit(discount)}>Editar</button>
-          <button
+          <ButtonSecondary
+            onClick={onClose}
+            aria-label={`Cerrar descuento ${discount.code}`}
+          >
+            Cerrar
+          </ButtonSecondary>
+          <ButtonSecondary
+            onClick={() => onEdit(discount)}
+            aria-label={`Editar descuento ${discount.code}`}
+          >
+            Editar
+          </ButtonSecondary>
+          <ButtonDanger
             onClick={handleDelete}
             disabled={deleting}
-            style={{
-              background: "#e53935",
-              color: "#fff",
-              border: "none",
-              borderRadius: 6,
-              padding: "4px 10px",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
+            aria-label={`Eliminar descuento ${discount.code}`}
           >
             {deleting ? "Eliminando..." : "Eliminar"}
-          </button>
+          </ButtonDanger>
         </div>
         <h3>Detalle código descuento #{discount.id}</h3>
         <p>

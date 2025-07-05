@@ -2,10 +2,11 @@
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: var(--border-radii-button);
-  padding: 12px 16px;
+  padding: 8px 12px;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  max-width: max-content;
 }
 
 .iconButton {
@@ -61,7 +62,7 @@
 
 .button.small {
   font-size: 0.875rem;
-  padding: 8px 12px;
+  padding: 6px 8px;
 }
 
 .iconButton .small {
@@ -70,19 +71,19 @@
 }
 
 .bleedLeft {
-  margin-left: -16px;
+  margin-left: -10px;
 }
 
 .bleedRight {
-  margin-right: -16px;
+  margin-right: -10px;
 }
 
 .bleedLeftSmall {
-  margin-left: -12px;
+  margin-left: -8px;
 }
 
 .bleedRightSmall {
-  margin-right: -12px;
+  margin-right: -8px;
 }
 
 .link {
@@ -124,9 +125,25 @@
   color: white;
 }
 
+.buttonSecondary {
+  background-color: transparent;
+  border: 1px solid var(--purple60);
+  border-radius: var(--border-radii-button);
+  color: var(--purple60);
+}
+
 @media (hover: hover) {
   .buttonPrimary:hover {
     background-color: var(--purple70);
+  }
+
+  .buttonSecondary:hover {
+    background-color: var(--purple20);
+    color: var(--purple60);
+  }
+
+  .buttonDanger:hover {
+    background-color: var(--red70);
   }
 }
 
@@ -138,12 +155,6 @@
   background-color: var(--red60);
   border-radius: var(--border-radii-button);
   color: white;
-}
-
-@media (hover: hover) {
-  .buttonDanger:hover {
-    background-color: var(--red70);
-  }
 }
 
 .buttonDanger:active {

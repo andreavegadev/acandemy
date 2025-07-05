@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import { ButtonLink } from "../../components/Button";
 
 const cardStyle = {
   border: "1px solid #d1c4e9",
@@ -72,25 +73,9 @@ const MyOrdersPage = () => {
         position: "relative",
       }}
     >
-      <button
-        onClick={() => navigate("/profile")}
-        style={{
-          position: "absolute",
-          left: 24,
-          top: 24,
-          background: "#ede7f6",
-          color: "#5e35b1",
-          border: "none",
-          borderRadius: 8,
-          padding: "8px 18px",
-          fontSize: "1em",
-          fontWeight: 500,
-          cursor: "pointer",
-          transition: "background 0.2s",
-        }}
-      >
+      <ButtonLink href={`/profile`} aria-label={`Volver a mi perfil`} bleedLeft>
         ← Volver
-      </button>
+      </ButtonLink>
       <h2 style={{ color: "#5e35b1", marginBottom: 24, textAlign: "center" }}>
         Mis pedidos
       </h2>

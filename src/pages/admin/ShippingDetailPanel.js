@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import {
+  ButtonDanger,
+  ButtonPrimary,
+  ButtonSecondary,
+} from "../../components/Button";
 
 const ShippingDetailPanel = ({ shipping, onClose, onReloadShipping }) => {
   const [editMode, setEditMode] = useState(false);
@@ -46,7 +51,8 @@ const ShippingDetailPanel = ({ shipping, onClose, onReloadShipping }) => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("¿Seguro que quieres eliminar este tipo de envío?")) return;
+    if (!window.confirm("¿Seguro que quieres eliminar este tipo de envío?"))
+      return;
     setDeleting(true);
     setError("");
     const { error } = await supabase
@@ -113,19 +119,6 @@ const ShippingDetailPanel = ({ shipping, onClose, onReloadShipping }) => {
           gap: 12px;
           margin-bottom: 16px;
         }
-        .detail-panel button {
-          background: #ede7f6;
-          border: none;
-          color: #5e35b1;
-          font-weight: bold;
-          padding: 4px 10px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .detail-panel button:hover {
-          background: #d1c4e9;
-        }
         .detail-panel .danger {
           background: #e53935 !important;
           color: #fff !important;
@@ -133,22 +126,32 @@ const ShippingDetailPanel = ({ shipping, onClose, onReloadShipping }) => {
       `}</style>
       <div className="detail-panel">
         <div className="panel-actions">
-          <button onClick={onClose}>Cerrar</button>
+          <ButtonSecondary
+            onClick={onClose}
+            aria-label={`Cerrar tipo de envío ${shipping.name}`}
+          >
+            Cerrar
+          </ButtonSecondary>
           {!editMode && (
-            <button onClick={() => setEditMode(true)}>Editar</button>
+            <ButtonSecondary
+              onClick={() => setEditMode(true)}
+              aria-label={`Editar tipo de envío ${shipping.name}`}
+            >
+              Editar
+            </ButtonSecondary>
           )}
-          <button
-            className="danger"
+          <ButtonDanger
             onClick={handleDelete}
             disabled={deleting}
+            aria-label={`Eliminar tipo de envío ${shipping.name}`}
           >
             {deleting ? "Eliminando..." : "Eliminar"}
-          </button>
+          </ButtonDanger>
         </div>
         <h3>Detalle tipo de envío #{shipping.id}</h3>
         {editMode ? (
           <form
-            onSubmit={e => {
+            onSubmit={(e) => {
               e.preventDefault();
               handleSave();
             }}
@@ -181,11 +184,15 @@ const ShippingDetailPanel = ({ shipping, onClose, onReloadShipping }) => {
               Activo
             </label>
             <div style={{ marginTop: 12 }}>
-              <button type="submit" disabled={saving}>
+              <ButtonPrimary
+                type="submit"
+                disabled={saving}
+                aria-label={`Guardar tipo de envío ${shipping.name}`}
+              >
                 {saving ? "Guardando..." : "Guardar"}
-              </button>
-              <button
-                type="button"
+              </ButtonPrimary>
+              <ButtonSecondary
+                aria-label={`Cancelar edición tipo de envío ${shipping.name}`}
                 onClick={() => {
                   setEditMode(false);
                   setForm({
@@ -197,7 +204,7 @@ const ShippingDetailPanel = ({ shipping, onClose, onReloadShipping }) => {
                 style={{ marginLeft: 8 }}
               >
                 Cancelar
-              </button>
+              </ButtonSecondary>
             </div>
           </form>
         ) : (

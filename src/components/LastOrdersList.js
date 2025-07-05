@@ -1,5 +1,6 @@
 import React from "react";
 import { STATUS_LABELS } from "../constants/order";
+import { ButtonLink } from "./Button";
 
 const cardStyle = {
   border: "1px solid #d1c4e9",
@@ -85,23 +86,22 @@ const LastOrdersList = ({
                 <b>Total:</b> {Number(order.total_amount).toFixed(2)} €
               </div>
             </div>
-            <button
-              style={buttonStyle}
-              onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
-              onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
-              onClick={() => onViewOrder(order.id)}
+            <ButtonLink
+              href={`/orders/${order.id}`}
+              aria-label={`Ver detalle de pedido número ${order.id}`}
+              bleedLeft
             >
-              Ver Detalles
-            </button>
+              Ver detalles
+            </ButtonLink>
           </div>
         ))}
       </div>
     ) : (
       <p>No tienes pedidos recientes.</p>
     )}
-    <button style={{ ...buttonStyle, marginTop: 24 }} onClick={onViewAllOrders}>
+    <ButtonLink href={`/orders`} bleedLeft>
       Ver todos los pedidos
-    </button>
+    </ButtonLink>
   </section>
 );
 

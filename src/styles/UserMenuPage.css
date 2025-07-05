@@ -31,25 +31,6 @@
   margin-bottom: 18px;
 }
 
-.user-menu-sidebar button {
-  width: 100%;
-  background: none;
-  border: none;
-  color: #4a148c;
-  font-size: 1rem;
-  text-align: left;
-  padding: 10px 0;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
-}
-
-.user-menu-sidebar button.active,
-.user-menu-sidebar button:hover {
-  background: #ede7f6;
-  color: #6a1b9a;
-}
-
 .user-menu-content {
   border-radius: 16px;
   box-shadow: 0 2px 12px #ede7f6;
@@ -75,20 +56,4 @@
 
 .user-menu-content ul {
   padding-left: 18px;
-}
-
-.user-menu-content button {
-  background: #ede7f6;
-  color: #5e35b1;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 18px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s;
-}
-
-.user-menu-content button:hover {
-  background: #d1c4e9;
 }

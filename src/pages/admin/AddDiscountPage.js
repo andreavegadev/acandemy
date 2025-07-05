@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../styles/AddDiscountPage.css";
+import { ButtonPrimary } from "../../components/Button";
 
 const AddDiscountPage = () => {
   const now = new Date();
   const pad = (n) => n.toString().padStart(2, "0");
-  const defaultStartDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
-    now.getDate()
-  )}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const defaultStartDate = `${now.getFullYear()}-${pad(
+    now.getMonth() + 1
+  )}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
   const [form, setForm] = useState({
     code: "",
@@ -325,7 +326,7 @@ const AddDiscountPage = () => {
           </label>
         </div>
         <div className="discount-form-actions">
-          <button type="submit">Crear código</button>
+          <ButtonPrimary type="submit" aria-label={`Crear código descuento`}>Crear código</ButtonPrimary>
         </div>
         {success && <p className="success">{success}</p>}
         {error && <p className="error">{error}</p>}

@@ -48,25 +48,6 @@
   outline: none;
 }
 
-.auth-page button {
-  width: 100%;
-  background: #5e35b1;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 0;
-  font-size: 1.1em;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.2s;
-}
-
-.auth-page button:disabled {
-  background: #b39ddb;
-  cursor: not-allowed;
-}
-
 .auth-page .link {
   display: block;
   margin-top: 18px;

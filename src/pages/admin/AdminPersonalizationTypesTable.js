@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonSecondary } from "../../components/Button";
 
 const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
   const [types, setTypes] = useState([]);
@@ -49,7 +50,12 @@ const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
         }}
       >
         <h2>Tipos de Personalización</h2>
-        <button onClick={onAddType}>Crear tipo</button>
+        <ButtonSecondary
+          onClick={onAddType}
+          aria-label={`Crear tipo de personalización`}
+        >
+          Crear tipo de personalización
+        </ButtonSecondary>
       </div>
       <div
         style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
@@ -81,7 +87,12 @@ const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
           </select>
           &nbsp;por página
         </label>
-        <button onClick={handleClearFilters}>Limpiar filtros</button>
+        <ButtonSecondary
+          onClick={handleClearFilters}
+          aria-label={`Limpiar filtros`}
+        >
+          Limpiar filtros
+        </ButtonSecondary>
       </div>
       <table className="admin-products-table">
         <thead>
@@ -111,21 +122,23 @@ const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
           gap: "1em",
         }}
       >
-        <button
+        <ButtonSecondary
+          aria-label={`Volver a la página anterior`}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
         >
           Anterior
-        </button>
+        </ButtonSecondary>
         <span>
           Página {page} de {totalPages}
         </span>
-        <button
+        <ButtonSecondary
+          aria-label={`Ir a la siguiente página`}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
         >
           Siguiente
-        </button>
+        </ButtonSecondary>
         <span>
           Ir a página:&nbsp;
           <input

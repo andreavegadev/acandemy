@@ -3,6 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "../../styles/PetList.css";
 import PetDetailPanel from "./PetDetailPanel";
+import {
+  ButtonDanger,
+  ButtonPrimary,
+  ButtonSecondary,
+} from "../../components/Button";
 
 const PetList = () => {
   const [pets, setPets] = useState([]);
@@ -134,27 +139,6 @@ const PetList = () => {
           gap: 12px;
           justify-content: flex-end;
         }
-        .pet-modal button {
-          background: #5e35b1;
-          color: #fff;
-          border: none;
-          border-radius: 6px;
-          padding: 8px 18px;
-          font-size: 1em;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .pet-modal button:disabled {
-          background: #b39ddb;
-          cursor: not-allowed;
-        }
-        .pet-modal .close-btn {
-          background: #ede7f6;
-          color: #5e35b1;
-        }
-        .pet-modal .close-btn:hover {
-          background: #d1c4e9;
-        }
       `}</style>
       <h2>Mis mascotas</h2>
       <div className="pet-list-grid">
@@ -183,9 +167,12 @@ const PetList = () => {
           </div>
         ))}
       </div>
-      <button className="add-pet-btn" onClick={handleOpenModal}>
+      <ButtonPrimary
+        onClick={handleOpenModal}
+        aria-label={`Añadir nueva mascota`}
+      >
         +
-      </button>
+      </ButtonPrimary>
       {showModal && (
         <div className="pet-modal-bg" onClick={handleCloseModal}>
           <form
@@ -224,17 +211,12 @@ const PetList = () => {
               maxLength={30}
             />
             <div className="modal-actions">
-              <button
-                type="button"
-                className="close-btn"
-                onClick={handleCloseModal}
-                disabled={saving}
-              >
+              <ButtonSecondary onClick={handleCloseModal} disabled={saving}>
                 Cancelar
-              </button>
-              <button type="submit" disabled={saving}>
+              </ButtonSecondary>
+              <ButtonPrimary type="submit" disabled={saving}>
                 {saving ? "Guardando..." : "Guardar"}
-              </button>
+              </ButtonPrimary>
             </div>
           </form>
         </div>

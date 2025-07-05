@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
+import {
+  ButtonDanger,
+  ButtonPrimary,
+  ButtonSecondary,
+} from "../../components/Button";
 
 const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
   const [deleting, setDeleting] = useState(false);
@@ -25,7 +30,10 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data, error } = await supabase.from("categories").select("id, name").order("name");
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, name")
+        .order("name");
       if (!error) setCategories(data || []);
     };
     fetchCategories();
@@ -297,18 +305,6 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
           display: flex;
           gap: 8px;
         }
-        .perso-actions button {
-          background: #ede7f6;
-          color: #5e35b1;
-          border: none;
-          border-radius: 6px;
-          padding: 4px 10px;
-          cursor: pointer;
-        }
-        .perso-actions .delete-btn {
-          background: #e53935;
-          color: #fff;
-        }
         .add-perso-form {
           margin-top: 16px;
           background: #fff;
@@ -339,26 +335,34 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
         .add-perso-form input[type="checkbox"] {
           margin-left: 8px;
         }
-        .add-perso-form button {
-          margin-top: 10px;
-        }
+        
         @keyframes fadeInDetail {
           from { opacity: 0; transform: translateY(20px);}
           to { opacity: 1; transform: translateY(0);}
         }
       `}</style>
       <div className="panel-actions">
-        <button onClick={onClose}>Cerrar</button>
+        <ButtonSecondary
+          onClick={onClose}
+          aria-label={`Cerrar el detalle del producto`}
+        >
+          Cerrar
+        </ButtonSecondary>
         {!editMode && (
-          <button onClick={() => setEditMode(true)}>Editar producto</button>
+          <ButtonSecondary
+            onClick={() => setEditMode(true)}
+            aria-label={`Editar producto`}
+          >
+            Editar producto
+          </ButtonSecondary>
         )}
-        <button
+        <ButtonDanger
           onClick={handleDelete}
-          className="delete-btn"
           disabled={deleting}
+          aria-label={`Eliminar producto`}
         >
           {deleting ? "Eliminando..." : "Eliminar"}
-        </button>
+        </ButtonDanger>
       </div>
 
       {/* Modo edición de producto */}
@@ -371,7 +375,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
               <input
                 type="text"
                 value={editForm.name}
-                onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, name: e.target.value }))
+                }
                 required
               />
             </label>
@@ -379,7 +385,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
               Descripción:
               <textarea
                 value={editForm.description || ""}
-                onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, description: e.target.value }))
+                }
                 rows={2}
               />
             </label>
@@ -390,9 +398,12 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                 min="0"
                 step="0.01"
                 value={editForm.price}
-                onChange={e => setEditForm(f => ({ ...f, price: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, price: e.target.value }))
+                }
                 required
-              /> €
+              />{" "}
+              €
             </label>
             <label>
               Stock:
@@ -401,7 +412,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                 min="0"
                 step="1"
                 value={editForm.stock}
-                onChange={e => setEditForm(f => ({ ...f, stock: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, stock: e.target.value }))
+                }
                 required
               />
             </label>
@@ -410,18 +423,24 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
               <input
                 type="text"
                 value={editForm.photo_url}
-                onChange={e => setEditForm(f => ({ ...f, photo_url: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, photo_url: e.target.value }))
+                }
               />
             </label>
             <label>
               Categoría:
               <select
                 value={editForm.category_id || ""}
-                onChange={e => setEditForm(f => ({ ...f, category_id: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, category_id: e.target.value }))
+                }
               >
                 <option value="">Sin categoría</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
             </label>
@@ -430,7 +449,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                 <input
                   type="checkbox"
                   checked={!!editForm.handmade}
-                  onChange={e => setEditForm(f => ({ ...f, handmade: e.target.checked }))}
+                  onChange={(e) =>
+                    setEditForm((f) => ({ ...f, handmade: e.target.checked }))
+                  }
                 />
                 Hecho a mano
               </label>
@@ -438,7 +459,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                 <input
                   type="checkbox"
                   checked={!!editForm.active}
-                  onChange={e => setEditForm(f => ({ ...f, active: e.target.checked }))}
+                  onChange={(e) =>
+                    setEditForm((f) => ({ ...f, active: e.target.checked }))
+                  }
                 />
                 Activo
               </label>
@@ -446,7 +469,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                 <input
                   type="checkbox"
                   checked={!!editForm.featured}
-                  onChange={e => setEditForm(f => ({ ...f, featured: e.target.checked }))}
+                  onChange={(e) =>
+                    setEditForm((f) => ({ ...f, featured: e.target.checked }))
+                  }
                 />
                 Destacado
               </label>
@@ -455,7 +480,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
               Disponibilidad:
               <select
                 value={editForm.availability}
-                onChange={e => setEditForm(f => ({ ...f, availability: e.target.value }))}
+                onChange={(e) =>
+                  setEditForm((f) => ({ ...f, availability: e.target.value }))
+                }
               >
                 <option value="stock">Stock</option>
                 <option value="preorder">Preventa</option>
@@ -464,10 +491,14 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
             </label>
           </div>
           <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
-            <button type="submit" className="save-btn" disabled={saving}>
+            <ButtonPrimary
+              type="submit"
+              disabled={saving}
+              aria-label={`Guardar cambios producto`}
+            >
               {saving ? "Guardando..." : "Guardar"}
-            </button>
-            <button
+            </ButtonPrimary>
+            <ButtonSecondary
               type="button"
               onClick={() => {
                 setEditMode(false);
@@ -487,23 +518,57 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
               }}
             >
               Cancelar
-            </button>
+            </ButtonSecondary>
           </div>
         </form>
       ) : (
         <>
           <h3>Detalle producto #{product.id}</h3>
-          <p><b>Nombre:</b> {product.name}</p>
-          <p><b>Descripción:</b> {product.description || "-"}</p>
-          <p><b>Precio:</b> {Number(product.price).toFixed(2)} €</p>
-          <p><b>Stock:</b> {product.stock}</p>
-          <p><b>Ventas:</b> {product.sales_count ?? 0}</p>
-          <p><b>Activo:</b> {product.active ? "Sí" : "No"}</p>
-          <p><b>Hecho a mano:</b> {product.handmade ? "Sí" : "No"}</p>
-          <p><b>Destacado:</b> {product.featured ? "Sí" : "No"}</p>
-          <p><b>Categoría:</b> {categories.find(c => c.id === product.category_id)?.name || "-"}</p>
-          <p><b>Disponibilidad:</b> {product.availability || "-"}</p>
-          <p><b>Foto:</b> {product.photo_url ? <a href={product.photo_url} target="_blank" rel="noopener noreferrer">Ver imagen</a> : "-"}</p>
+          <p>
+            <b>Nombre:</b> {product.name}
+          </p>
+          <p>
+            <b>Descripción:</b> {product.description || "-"}
+          </p>
+          <p>
+            <b>Precio:</b> {Number(product.price).toFixed(2)} €
+          </p>
+          <p>
+            <b>Stock:</b> {product.stock}
+          </p>
+          <p>
+            <b>Ventas:</b> {product.sales_count ?? 0}
+          </p>
+          <p>
+            <b>Activo:</b> {product.active ? "Sí" : "No"}
+          </p>
+          <p>
+            <b>Hecho a mano:</b> {product.handmade ? "Sí" : "No"}
+          </p>
+          <p>
+            <b>Destacado:</b> {product.featured ? "Sí" : "No"}
+          </p>
+          <p>
+            <b>Categoría:</b>{" "}
+            {categories.find((c) => c.id === product.category_id)?.name || "-"}
+          </p>
+          <p>
+            <b>Disponibilidad:</b> {product.availability || "-"}
+          </p>
+          <p>
+            <b>Foto:</b>{" "}
+            {product.photo_url ? (
+              <a
+                href={product.photo_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver imagen
+              </a>
+            ) : (
+              "-"
+            )}
+          </p>
         </>
       )}
 
@@ -546,15 +611,19 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                   <td>{perso.active ? "Sí" : "No"}</td>
                   <td>
                     <div className="perso-actions">
-                      <button onClick={() => handleEditPersonalization(perso)}>
+                      <ButtonPrimary
+                        onClick={() => handleEditPersonalization(perso)}
+                        aria-label={`Editar personalización ${perso.name}`}
+                      >
                         Editar
-                      </button>
-                      <button
+                      </ButtonPrimary>
+                      <ButtonDanger
                         className="delete-btn"
                         onClick={() => handleDeletePersonalization(perso.id)}
+                        aria-label={`Eliminar personalización ${perso.name}`}
                       >
                         Eliminar
-                      </button>
+                      </ButtonDanger>
                     </div>
                   </td>
                 </tr>
@@ -564,7 +633,8 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
         )}
         {/* Formulario añadir/editar */}
         <div style={{ marginTop: 12, width: "100%" }}>
-          <button
+          <ButtonPrimary
+            aria-label={`Añadir personalización`}
             onClick={() => {
               setShowAddForm((v) => !v);
               setEditingPersoId(null);
@@ -589,7 +659,7 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
             }}
           >
             {showAddForm ? "Cancelar" : "Añadir personalización"}
-          </button>
+          </ButtonPrimary>
         </div>
         {showAddForm && (
           <form className="add-perso-form" onSubmit={handleSavePersonalization}>
@@ -666,13 +736,14 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                 }
               />
             </label>
-            <button
+            <ButtonPrimary
+              aria-label={`Guardar personalización`}
               type="submit"
               className="save-btn"
               style={{ width: "100%" }}
             >
               {editingPersoId ? "Guardar cambios" : "Añadir"}
-            </button>
+            </ButtonPrimary>
           </form>
         )}
       </div>

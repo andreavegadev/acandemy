@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonSecondary } from "../../components/Button";
 
 const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
   const [shippingTypes, setShippingTypes] = useState([]);
@@ -87,7 +88,12 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
         }}
       >
         <h2>Tipos de Envío</h2>
-        <button onClick={onAddShipping}>Crear tipo de envío</button>
+        <ButtonSecondary
+          onClick={onAddShipping}
+          aria-label={`Crear tipo de envío`}
+        >
+          Crear tipo de envío
+        </ButtonSecondary>
       </div>
       <div
         style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
@@ -133,7 +139,12 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
           </select>
           &nbsp;por página
         </label>
-        <button onClick={handleClearFilters}>Limpiar filtros</button>
+        <ButtonSecondary
+          onClick={handleClearFilters}
+          aria-label={`Limpiar filtros`}
+        >
+          Limpiar filtros
+        </ButtonSecondary>
       </div>
       <table className="admin-products-table">
         <thead>
@@ -167,21 +178,23 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
           gap: "1em",
         }}
       >
-        <button
+        <ButtonSecondary
+          aria-label={`Volver a la página anterior`}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
         >
           Anterior
-        </button>
+        </ButtonSecondary>
         <span>
           Página {page} de {totalPages}
         </span>
-        <button
+        <ButtonSecondary
+          aria-label={`Ir a la siguiente página`}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
         >
           Siguiente
-        </button>
+        </ButtonSecondary>
         <span>
           Ir a página:&nbsp;
           <input

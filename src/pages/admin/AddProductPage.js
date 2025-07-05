@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import "../../styles/AddProductPage.css";
+import { ButtonSecondary } from "../../components/Button";
 
 const AddProductPage = () => {
   const [form, setForm] = useState({
@@ -162,7 +163,9 @@ const AddProductPage = () => {
           />
           Hecho a mano
         </label>
-        <button type="submit">Añadir producto</button>
+        <ButtonSecondary type="submit" aria-label={`Añadir producto`}>
+          Añadir producto
+        </ButtonSecondary>
       </form>
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}

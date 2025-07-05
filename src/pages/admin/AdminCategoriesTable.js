@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
+import { ButtonSecondary } from "../../components/Button";
 
 const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
   const [categories, setCategories] = useState([]);
@@ -51,7 +52,12 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
         }}
       >
         <h2>Categorías</h2>
-        <button onClick={onAddCategory}>Añadir categoría</button>
+        <ButtonSecondary
+          onClick={onAddCategory}
+          aria-label={`Añadir categoría`}
+        >
+          Añadir categoría
+        </ButtonSecondary>
       </div>
       <div
         style={{
@@ -88,7 +94,12 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
           </select>
           &nbsp;por página
         </label>
-        <button onClick={handleClearFilters}>Limpiar filtros</button>
+        <ButtonSecondary
+          onClick={handleClearFilters}
+          aria-label={`Limpiar filtros`}
+        >
+          Limpiar filtros
+        </ButtonSecondary>
       </div>
       <table className="admin-products-table">
         <thead>
@@ -128,21 +139,39 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
           gap: "1em",
         }}
       >
-        <button
+        <ButtonSecondary
+          aria-label={`Volver a la página anterior`}
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
         >
           Anterior
-        </button>
+        </ButtonSecondary>
         <span>
           Página {page} de {totalPages}
         </span>
-        <button
+        <ButtonSecondary
+          aria-label={`Ir a la siguiente página`}
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
         >
           Siguiente
-        </button>
+        </ButtonSecondary>
+        <span>
+          Ir a página:&nbsp;
+          <input
+            type="number"
+            min={1}
+            max={totalPages}
+            value={page}
+            onChange={(e) => {
+              let val = Number(e.target.value);
+              if (val > totalPages) val = totalPages;
+              if (val < 1) val = 1;
+              setPage(val);
+            }}
+            style={{ width: 60 }}
+          />
+        </span>
       </div>
     </div>
   );

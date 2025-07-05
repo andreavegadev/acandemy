@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import {
+  ButtonLink,
+  ButtonPrimary,
+  ButtonSecondary,
+} from "../../components/Button";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
@@ -55,13 +60,15 @@ const ResetPasswordPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit">Restablecer Contraseña</button>
+          <ButtonPrimary type="submit">Restablecer Contraseña</ButtonPrimary>
         </form>
       )}
       {message && <p className="success">{message}</p>}
       <div className="links">
         <p>
-          <a href="/login">Volver a Iniciar Sesión</a>
+          <ButtonPrimary href={`/login`} aria-label={`Volver a iniciar sesión`}>
+            >Volver a iniciar Sesión
+          </ButtonPrimary>
         </p>
       </div>
     </div>

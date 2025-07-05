@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { STATUS_LABELS } from "../../constants/order";
+import { ButtonLink } from "../../components/Button";
 
 const cardStyle = {
   border: "1px solid #d1c4e9",
@@ -129,14 +130,13 @@ const UserOrdersPage = () => {
                   <b>Total:</b> {Number(order.total_amount).toFixed(2)} €
                 </div>
               </div>
-              <button
-                style={buttonStyle}
-                onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
-                onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
-                onClick={() => handleViewOrderDetails(order.id)}
+              <ButtonLink
+                href={`/orders/${order.id}`}
+                aria-label={`Ver detalle de pedido número ${order.id}`}
+                bleedLeft
               >
                 Ver detalles
-              </button>
+              </ButtonLink>
             </div>
           ))}
         </div>

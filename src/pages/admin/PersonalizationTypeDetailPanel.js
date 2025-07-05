@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import {
+  ButtonDanger,
+  ButtonPrimary,
+  ButtonSecondary,
+} from "../../components/Button";
 
 const PersonalizationTypeDetailPanel = ({ type, onClose, onReloadTypes }) => {
   const [editMode, setEditMode] = useState(false);
@@ -111,19 +116,6 @@ const PersonalizationTypeDetailPanel = ({ type, onClose, onReloadTypes }) => {
           gap: 12px;
           margin-bottom: 16px;
         }
-        .detail-panel button {
-          background: #ede7f6;
-          border: none;
-          color: #5e35b1;
-          font-weight: bold;
-          padding: 4px 10px;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .detail-panel button:hover {
-          background: #d1c4e9;
-        }
         .detail-panel .danger {
           background: #e53935 !important;
           color: #fff !important;
@@ -131,22 +123,28 @@ const PersonalizationTypeDetailPanel = ({ type, onClose, onReloadTypes }) => {
       `}</style>
       <div className="detail-panel">
         <div className="panel-actions">
-          <button onClick={onClose}>Cerrar</button>
-          {!editMode && (
-            <button onClick={() => setEditMode(true)}>Editar</button>
-          )}
-          <button
-            className="danger"
-            onClick={handleDelete}
-            disabled={deleting}
+          <ButtonSecondary
+            onClick={onClose}
+            aria-label={`Cerrar tipo de personalizacion ${type.name}`}
           >
+            Cerrar
+          </ButtonSecondary>
+          {!editMode && (
+            <ButtonSecondary
+              onClick={() => setEditMode(true)}
+              aria-label={`Editar personalizacion ${type.name}`}
+            >
+              Editar
+            </ButtonSecondary>
+          )}
+          <ButtonDanger onClick={handleDelete} disabled={deleting}>
             {deleting ? "Eliminando..." : "Eliminar"}
-          </button>
+          </ButtonDanger>
         </div>
         <h3>Detalle tipo de personalización #{type.id}</h3>
         {editMode ? (
           <form
-            onSubmit={e => {
+            onSubmit={(e) => {
               e.preventDefault();
               handleSave();
             }}
@@ -166,10 +164,15 @@ const PersonalizationTypeDetailPanel = ({ type, onClose, onReloadTypes }) => {
               onChange={handleChange}
             />
             <div style={{ marginTop: 12 }}>
-              <button type="submit" disabled={saving}>
+              <ButtonPrimary
+                type="submit"
+                disabled={saving}
+                aria-label={`Guardar personalización ${type.name}`}
+              >
                 {saving ? "Guardando..." : "Guardar"}
-              </button>
-              <button
+              </ButtonPrimary>
+              <ButtonSecondary
+                aria-label={`Cancelar edición personalización ${type.name}`}
                 type="button"
                 onClick={() => {
                   setEditMode(false);
@@ -178,10 +181,9 @@ const PersonalizationTypeDetailPanel = ({ type, onClose, onReloadTypes }) => {
                     description: type.description,
                   });
                 }}
-                style={{ marginLeft: 8 }}
               >
                 Cancelar
-              </button>
+              </ButtonSecondary>
             </div>
           </form>
         ) : (

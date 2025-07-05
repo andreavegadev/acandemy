@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import { STATUS_LABELS } from "../../constants/order";
+import { ButtonLink } from "../../components/Button";
 
 const UserOrderDetailPage = () => {
   const { orderId } = useParams();
@@ -64,24 +65,9 @@ const UserOrderDetailPage = () => {
         color: "#3a2e5c",
       }}
     >
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginBottom: 24,
-          background: "#ede7f6",
-          border: "none",
-          color: "#5e35b1",
-          fontWeight: "bold",
-          padding: "6px 18px",
-          borderRadius: 8,
-          cursor: "pointer",
-          transition: "background 0.2s",
-        }}
-        onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
-        onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
-      >
+      <ButtonLink href={`/profile`} aria-label={`Volver a mi perfil`} bleedLeft>
         ← Volver
-      </button>
+      </ButtonLink>
       <h2 style={{ color: "#5e35b1", marginBottom: 12 }}>
         Detalle del pedido #{order.id}
       </h2>

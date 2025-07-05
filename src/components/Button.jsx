@@ -86,6 +86,34 @@ export const ButtonPrimary = ({
   );
 };
 
+export const ButtonSecondary = ({
+  href,
+  onClick,
+  children,
+  disabled,
+  "aria-label": ariaLabel,
+  small,
+}) => {
+  const buttonSecondaryStyles = `${styles.buttonSecondary} ${styles.button} ${
+    small ? styles.small : ""
+  }`;
+
+  return href ? (
+    <a href={href} aria-label={ariaLabel} className={buttonSecondaryStyles}>
+      {children}
+    </a>
+  ) : (
+    <button
+      onClick={onClick}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      className={buttonSecondaryStyles}
+    >
+      {children}
+    </button>
+  );
+};
+
 export const ButtonDanger = ({
   href,
   onClick,

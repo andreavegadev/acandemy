@@ -1,4 +1,5 @@
 import React from "react";
+import { ButtonSecondary } from "./Button";
 
 const cardStyle = {
   border: "1px solid #d1c4e9",
@@ -52,14 +53,9 @@ const UserMainData = ({ user, onViewAllUserData }) => (
       <span style={labelStyle}>Teléfono:</span>{" "}
       {user.phone || "No proporcionado"}
     </p>
-    <button
-      style={buttonStyle}
-      onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
-      onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
-      onClick={onViewAllUserData}
-    >
+    <ButtonSecondary onClick={onViewAllUserData}>
       Ver todos mis datos
-    </button>
+    </ButtonSecondary>
   </div>
 );
 

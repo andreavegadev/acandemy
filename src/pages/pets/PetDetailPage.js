@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "../../styles/PetDetailPage.css";
+import {
+  ButtonDanger,
+  ButtonPrimary,
+  ButtonSecondary,
+} from "../../components/Button";
 
 const cardStyle = {
   border: "1px solid #d1c4e9",
@@ -154,8 +159,17 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
     return <p className="error">{error}</p>;
   }
 
+  if (!pet) {
+    return <p>No se encontró la mascota.</p>;
+  }
+
   return (
     <div style={cardStyle}>
+      <div>
+        <ButtonSecondary href={`/profile`} aria-label="Volver a mi perfil">
+          Volver
+        </ButtonSecondary>
+      </div>
       <h2 style={{ color: "#5e35b1", marginBottom: 24 }}>
         Detalles de la Mascota
       </h2>
@@ -266,16 +280,18 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
             </div>
           </div>
           <div style={actionsStyle}>
-            <button type="button" style={buttonStyle} onClick={handleSave}>
+            <ButtonPrimary
+              onClick={handleSave}
+              aria-label={`Guardar cambios de mascota ${pet.name}`}
+            >
               {pet && pet.id ? "Guardar cambios" : "Crear mascota"}
-            </button>
-            <button
-              type="button"
-              style={buttonStyle}
+            </ButtonPrimary>
+            <ButtonDanger
               onClick={() => setIsEditing(false)}
+              aria-label={`Cancelar edición de mascota ${pet.name}`}
             >
               Cancelar
-            </button>
+            </ButtonDanger>
           </div>
         </form>
       ) : (
@@ -331,12 +347,12 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
             </div>
           </div>
           <div style={actionsStyle}>
-            <button style={buttonStyle} onClick={() => setIsEditing(true)}>
+            <ButtonPrimary
+              onClick={() => setIsEditing(true)}
+              aria-label={`Editar mascota`}
+            >
               Editar Mascota
-            </button>
-            <button style={buttonStyle} onClick={() => navigate("/profile")}>
-              Volver
-            </button>
+            </ButtonPrimary>
           </div>
         </div>
       )}
