@@ -1,29 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 
-const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
-  const [shippingTypes, setShippingTypes] = useState([]);
+const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
+  const [types, setTypes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterActive, setFilterActive] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({});
 
   useEffect(() => {
-    const fetchShipping = async () => {
+    const fetchTypes = async () => {
       setLoading(true);
       let query = supabase
-        .from("shipping")
+        .from("personalization_types")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("id", { ascending: false });
 
-      // Filtro estado
-      if (filterActive === "active") query = query.eq("active", true);
-      if (filterActive === "inactive") query = query.eq("active", false);
-
-      // Filtro búsqueda
       if (search.length > 1) {
         query = query.ilike("name", `%${search}%`);
       }
@@ -32,51 +24,21 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
       const to = from + pageSize - 1;
       let { data } = await query.range(from, to);
 
-      setShippingTypes(data || []);
+      setTypes(data || []);
       setLoading(false);
     };
-    fetchShipping();
-  }, [filterActive, search, page, pageSize]);
+    fetchTypes();
+  }, [search, page, pageSize]);
 
-  const totalPages = Math.ceil(shippingTypes.length / pageSize);
-
-  const handleEdit = (shipping) => {
-    setEditingId(shipping.id);
-    setEditForm({ ...shipping });
-  };
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setEditForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSave = async () => {
-    const updateData = {
-      name: editForm.name,
-      price: Number(editForm.price),
-      active: editForm.active,
-    };
-    await supabase.from("shipping").update(updateData).eq("id", editingId);
-    setEditingId(null);
-    window.location.reload();
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditForm({});
-  };
+  const totalPages = Math.ceil(types.length / pageSize);
 
   const handleClearFilters = () => {
-    setFilterActive("all");
     setSearch("");
     setPage(1);
     setPageSize(10);
   };
 
-  if (loading) return <div>Cargando tipos de envío...</div>;
+  if (loading) return <div>Cargando tipos de personalización...</div>;
 
   return (
     <div>
@@ -88,26 +50,12 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
           marginBottom: 12,
         }}
       >
-        <h2>Tipos de Envío</h2>
-        <button onClick={onAddShipping}>Crear tipo de envío</button>
+        <h2>Tipos de Personalización</h2>
+        <button onClick={onAddType}>Crear tipo</button>
       </div>
       <div
         style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
       >
-        <label>
-          Estado:&nbsp;
-          <select
-            value={filterActive}
-            onChange={(e) => {
-              setFilterActive(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="all">Todos</option>
-            <option value="active">Activos</option>
-            <option value="inactive">Inactivos</option>
-          </select>
-        </label>
         <input
           type="text"
           placeholder="Buscar nombre"
@@ -141,22 +89,18 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
         <thead>
           <tr>
             <th>Nombre</th>
-            <th>Precio</th>
-            <th>Activo</th>
+            <th>Descripción</th>
           </tr>
         </thead>
         <tbody>
-          {shippingTypes.map((shipping) => (
+          {types.map((type) => (
             <tr
-              key={shipping.id}
-              onClick={() => onShippingSelect && onShippingSelect(shipping)}
+              key={type.id}
+              onClick={() => onTypeSelect && onTypeSelect(type)}
               style={{ cursor: "pointer" }}
             >
-              <td>{shipping.name}</td>
-              <td>{shipping.price}€</td>
-              <td>
-                <input type="checkbox" checked={shipping.active} readOnly />
-              </td>
+              <td>{type.name}</td>
+              <td>{type.description}</td>
             </tr>
           ))}
         </tbody>
@@ -205,4 +149,4 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
   );
 };
 
-export default AdminShippingTable;
+export default AdminPersonalizationTypesTable;

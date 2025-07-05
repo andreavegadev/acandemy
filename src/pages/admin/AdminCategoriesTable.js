@@ -110,7 +110,7 @@ const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
             </tr>
           ) : (
             categories.map((cat) => (
-              <tr key={cat.id} onDoubleClick={() => onCategorySelect(cat)}>
+              <tr key={cat.id} onClick={() => onCategorySelect(cat)}>
                 <td>{cat.icon || "-"}</td>
                 <td>{cat.name}</td>
                 <td>{cat.description || "-"}</td>
