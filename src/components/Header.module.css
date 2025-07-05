@@ -3,6 +3,7 @@
   align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid var(--purple20);
+  overflow: clip;
 }
 
 .navigation {
@@ -19,7 +20,7 @@
   padding: 0;
 }
 
-.navigationLink{
+.navigationLink {
   margin: 0;
   font-size: 0.875rem;
   color: var(--purple60);
