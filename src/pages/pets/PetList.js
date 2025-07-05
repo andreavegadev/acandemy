@@ -74,9 +74,6 @@ const PetList = () => {
     }
   };
 
-  if (loading)
-    return <div className="pet-list-loading">Cargando mascotas...</div>;
-
   return (
     <div className="pet-list-container">
       <style>{`

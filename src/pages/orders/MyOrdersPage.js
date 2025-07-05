@@ -53,12 +53,6 @@ const MyOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  if (loading)
-    return (
-      <div style={{ textAlign: "center", marginTop: 40 }}>
-        Cargando pedidos...
-      </div>
-    );
   if (error)
     return (
       <div style={{ color: "red", textAlign: "center", marginTop: 40 }}>

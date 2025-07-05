@@ -69,11 +69,6 @@ const UserOrdersPage = () => {
     navigate(`/orders/${orderId}`);
   };
 
-  if (loading)
-    return (
-      <p style={{ textAlign: "center", marginTop: 40 }}>Cargando pedidos...</p>
-    );
-
   return (
     <div style={{ maxWidth: 700, margin: "40px auto" }}>
       <h2

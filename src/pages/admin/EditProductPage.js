@@ -69,8 +69,6 @@ const EditProductPage = () => {
     }
   };
 
-  if (loading) return <p>Cargando...</p>;
-
   return (
     <div className="add-product-page">
       <h1>Editar Producto</h1>

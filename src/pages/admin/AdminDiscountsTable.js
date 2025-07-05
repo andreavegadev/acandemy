@@ -134,8 +134,6 @@ const AdminDiscountsTable = ({ onDiscountSelect, onAddDiscount }) => {
     if (onDiscountSelect) onDiscountSelect(discount);
   };
 
-  if (loading) return <div>Cargando códigos descuento...</div>;
-
   return (
     <div>
       <div

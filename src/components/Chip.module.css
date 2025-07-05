@@ -1,0 +1,27 @@
+.container {
+  display: inline-flex;
+  border-radius: var(--border-radii-chip);
+  padding: 8px 12px;
+  background-color: var(--purple10);
+  color: var(--purple60);
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  align-items: center;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.active {
+  background-color: var(--purple60);
+  color: white;
+}
+
+@media (hover: hover) {
+  .container:hover {
+    background-color: var(--purple20);
+  }
+
+  .active:hover {
+    background-color: var(--purple70);
+  }
+}

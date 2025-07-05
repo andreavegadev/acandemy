@@ -43,12 +43,6 @@ const UserOrderDetailPage = () => {
     fetchOrder();
   }, [orderId]);
 
-  if (loading)
-    return (
-      <p style={{ textAlign: "center", marginTop: 40 }}>
-        Cargando detalle del pedido...
-      </p>
-    );
   if (!order)
     return (
       <p style={{ textAlign: "center", marginTop: 40 }}>
@@ -143,10 +137,18 @@ const UserOrderDetailPage = () => {
         >
           <thead>
             <tr style={{ background: "#ede7f6" }}>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Producto</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Personalizaciones</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Cantidad</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Precio ud.</th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                Producto
+              </th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                Personalizaciones
+              </th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                Cantidad
+              </th>
+              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>
+                Precio ud.
+              </th>
               <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Total</th>
             </tr>
           </thead>

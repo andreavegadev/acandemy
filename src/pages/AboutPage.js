@@ -27,10 +27,6 @@ const AboutPage = () => {
     fetchValues();
   }, []);
 
-  if (loading) {
-    return <p>Cargando valores...</p>;
-  }
-
   return (
     <div className="about-page">
       <h1>Sobre Nosotros</h1>
@@ -46,8 +42,8 @@ const AboutPage = () => {
         <p>
           Acandemy nació en Gijón con el objetivo de crear un espacio donde los
           amantes de las mascotas puedan encontrar todo lo que necesitan en un
-          solo lugar. Desde entonces, hemos trabajado arduamente para convertirnos
-          en una referencia en el cuidado de mascotas.
+          solo lugar. Desde entonces, hemos trabajado arduamente para
+          convertirnos en una referencia en el cuidado de mascotas.
         </p>
       </div>
 
@@ -69,8 +65,8 @@ const AboutPage = () => {
         <h2>🤝 Nuestro Compromiso</h2>
         <p>
           Nos esforzamos por brindar una experiencia excepcional a nuestros
-          clientes, desde la selección de productos hasta el servicio al cliente.
-          Tu satisfacción es nuestra prioridad.
+          clientes, desde la selección de productos hasta el servicio al
+          cliente. Tu satisfacción es nuestra prioridad.
         </p>
       </div>
 

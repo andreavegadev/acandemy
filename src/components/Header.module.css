@@ -1,0 +1,35 @@
+.container {
+  background-color: var(--purple10);
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--purple20);
+}
+
+.navigation {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.navigation ul {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigationLink{
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--purple60);
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  border-radius: var(--border-radii-button);
+}
+
+.navigationLinkActive {
+  border: 1px solid var(--purple60);
+  color: var(--purple60);
+  padding: 6px 4px;
+}

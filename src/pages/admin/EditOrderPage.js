@@ -38,7 +38,6 @@ const EditOrderPage = () => {
     fetchOrder();
   }, [id]);
 
-  if (loading) return <p>Cargando...</p>;
   if (error) return <p className="error">{error}</p>;
   if (!order) return <p>Pedido no encontrado.</p>;
 

@@ -109,10 +109,6 @@ const UserMenuPage = () => {
     navigate("/profile/details");
   };
 
-  if (loading) {
-    return <p>Cargando...</p>;
-  }
-
   return (
     <div className="user-menu-container">
       <aside className="user-menu-sidebar">

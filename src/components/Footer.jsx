@@ -9,7 +9,6 @@ const Footer = () => (
       color: "#5e35b1",
       padding: "32px 0 16px 0",
       textAlign: "center",
-      marginTop: 48,
       borderTop: "2px solid #b39ddb55",
     }}
   >

@@ -2,6 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import ProductCard from "../../components/ProductCard";
+import "../../styles/Products.css"; // Asegúrate de tener estilos para el listado de productos
+import Heading from "../../components/Heading";
+import ResponsiveLayout from "../../components/ResponsiveLayout";
+import Chip from "../../components/Chip";
+import {
+  Inline,
+  Stack,
+  Box,
+  HorizontalScroll,
+} from "../../components/LayoutUtilities";
 
 const ProductListPage = () => {
   const { category } = useParams();
@@ -107,141 +117,136 @@ const ProductListPage = () => {
             p.description.toLowerCase().includes(search.toLowerCase()))
     );
 
-  if (loading) {
-    return <p>Cargando productos...</p>;
-  }
-
   return (
-    <div className="product-list">
-      <h1>
-        {selectedCategory === "Todos"
-          ? "Todos los productos"
-          : `Productos en la categoría: ${selectedCategory}`}
-      </h1>
-      {/* Filtros */}
-      <div
-        style={{ marginBottom: 24, display: "flex", flexWrap: "wrap", gap: 16 }}
-      >
-        {/* Chips de categoría */}
-        <div>
-          {categories.map((cat) => (
-            <button
-              key={cat.id ?? "todos"}
-              onClick={() => {
-                if (cat.name === "Todos") {
-                  navigate("/products");
-                } else {
-                  navigate(`/products/${encodeURIComponent(cat.name)}`);
-                }
-              }}
+    <ResponsiveLayout>
+      <Box paddingY={48}>
+        <Stack gap={32}>
+          <Heading>
+            {selectedCategory === "Todos"
+              ? "Todos los productos"
+              : `Productos en la categoría: ${selectedCategory}`}
+          </Heading>
+          {/* Filtros */}
+          <Stack>
+            <Inline justify="space-between" wrap>
+              {/* Chips de categoría */}
+              <HorizontalScroll>
+                <Inline>
+                  {categories.map((cat) => (
+                    <Chip
+                      label={cat.name}
+                      key={cat.id ?? "todos"}
+                      onClick={() => {
+                        if (cat.name === "Todos") {
+                          navigate("/products");
+                        } else {
+                          navigate(`/products/${encodeURIComponent(cat.name)}`);
+                        }
+                      }}
+                      active={
+                        selectedCategory === cat.name ||
+                        (cat.name === "Todos" && selectedCategory === "Todos")
+                      }
+                    ></Chip>
+                  ))}
+                </Inline>
+              </HorizontalScroll>
+
+              {/* Filtro por texto */}
+              <div>
+                <input
+                  type="text"
+                  placeholder="Buscar producto..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: 8,
+                    border: "1px solid #d1c4e9",
+                  }}
+                />
+              </div>
+            </Inline>
+
+            {/* Filtro por precio */}
+            <div
               style={{
-                display: "inline-block",
-                marginRight: 10,
-                marginBottom: 10,
-                padding: "8px 18px",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                background: "#f3e5f5",
                 borderRadius: 20,
-                border: "none",
-                background:
-                  selectedCategory === cat.name ? "#5e35b1" : "#ede7f6",
-                color: selectedCategory === cat.name ? "#fff" : "#5e35b1",
-                fontWeight: 600,
-                cursor: "pointer",
-                boxShadow:
-                  selectedCategory === cat.name
-                    ? "0 2px 8px #b39ddb55"
-                    : "none",
-                transition: "background 0.2s",
+                padding: "6px 18px",
+                marginRight: 16,
+                boxShadow: "0 1px 4px #b39ddb33",
               }}
             >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-        {/* Filtro por precio */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            background: "#f3e5f5",
-            borderRadius: 20,
-            padding: "6px 18px",
-            marginRight: 16,
-            boxShadow: "0 1px 4px #b39ddb33",
-          }}
-        >
-          <span style={{ color: "#5e35b1", fontWeight: 600, marginRight: 6 }}>
-            Precio:
-          </span>
-          <input
-            type="number"
-            min="0"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-            placeholder="Mín"
-            style={{
-              width: 70,
-              border: "1px solid #d1c4e9",
-              borderRadius: 8,
-              padding: "4px 8px",
-              marginRight: 4,
-              background: "#fff",
-              color: "#5e35b1",
-            }}
-          />
-          <span style={{ color: "#5e35b1" }}>-</span>
-          <input
-            type="number"
-            min="0"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-            placeholder="Máx"
-            style={{
-              width: 70,
-              border: "1px solid #d1c4e9",
-              borderRadius: 8,
-              padding: "4px 8px",
-              marginLeft: 4,
-              background: "#fff",
-              color: "#5e35b1",
-            }}
-          />
-          <span style={{ color: "#5e35b1", marginLeft: 4 }}>€</span>
-        </div>
-        {/* Filtro por texto */}
-        <div>
-          <input
-            type="text"
-            placeholder="Buscar producto..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: 8,
-              border: "1px solid #d1c4e9",
-            }}
-          />
-        </div>
-      </div>
-      {/* Listado de productos */}
-      <div className="product-cards">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              title={product.name}
-              description={product.description}
-              price={product.price}
-              image={product.photo_url}
-              linkDetails={`/product/${encodeURIComponent(product.name)}`}
-            />
-          ))
-        ) : (
-          <p>No se encontraron productos.</p>
-        )}
-      </div>
-    </div>
+              <span
+                style={{ color: "#5e35b1", fontWeight: 600, marginRight: 6 }}
+              >
+                Precio:
+              </span>
+              <input
+                type="number"
+                min="0"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                placeholder="Mín"
+                style={{
+                  width: 70,
+                  border: "1px solid #d1c4e9",
+                  borderRadius: 8,
+                  padding: "4px 8px",
+                  marginRight: 4,
+                  background: "#fff",
+                  color: "#5e35b1",
+                }}
+              />
+              <span style={{ color: "#5e35b1" }}>-</span>
+              <input
+                type="number"
+                min="0"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                placeholder="Máx"
+                style={{
+                  width: 70,
+                  border: "1px solid #d1c4e9",
+                  borderRadius: 8,
+                  padding: "4px 8px",
+                  marginLeft: 4,
+                  background: "#fff",
+                  color: "#5e35b1",
+                }}
+              />
+              <span style={{ color: "#5e35b1", marginLeft: 4 }}>€</span>
+            </div>
+          </Stack>
+
+          {/* Listado de productos */}
+          <div className="product-cards">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  title={product.name}
+                  description={product.description}
+                  price={product.price}
+                  //image={product.photo_url}
+                  image={{
+                    src: `https://picsum.photos/200/300`,
+                  }}
+                  linkDetails={`/product/${encodeURIComponent(product.name)}`}
+                />
+              ))
+            ) : (
+              <p>No se encontraron productos.</p>
+            )}
+          </div>
+        </Stack>
+      </Box>
+    </ResponsiveLayout>
   );
 };
 

@@ -38,8 +38,6 @@ const AdminPersonalizationTypesTable = ({ onAddType, onTypeSelect }) => {
     setPageSize(10);
   };
 
-  if (loading) return <div>Cargando tipos de personalización...</div>;
-
   return (
     <div>
       <div

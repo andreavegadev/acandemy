@@ -150,14 +150,6 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
     setLoading(false);
   };
 
-  if (loading) {
-    return (
-      <p style={{ textAlign: "center", marginTop: 40 }}>
-        Cargando datos de la mascota...
-      </p>
-    );
-  }
-
   if (error) {
     return <p className="error">{error}</p>;
   }

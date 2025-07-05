@@ -1,6 +1,7 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import { ButtonLinkDanger } from "../components/Button";
 import "../styles/CartPage.css";
 
 const CartPage = () => {
@@ -83,13 +84,20 @@ const CartPage = () => {
                       value={item.quantity}
                       min="1"
                       onChange={(e) =>
-                        updateQuantity(item.cartLineId, parseInt(e.target.value, 10))
+                        updateQuantity(
+                          item.cartLineId,
+                          parseInt(e.target.value, 10)
+                        )
                       }
                     />
                   </div>
-                  <button onClick={() => removeFromCart(item.cartLineId)}>
+                  <ButtonLinkDanger
+                    small
+                    bleedLeft
+                    onClick={() => removeFromCart(item.cartLineId)}
+                  >
                     Eliminar
-                  </button>
+                  </ButtonLinkDanger>
                 </div>
               </li>
             ))}

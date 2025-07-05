@@ -3,17 +3,25 @@
   padding: 20px;
 }
 
-.product-list h1 {
-  text-align: center;
-  color: #6a1b9a; /* Lila pastel */
-  margin-bottom: 20px;
+.product-cards {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(200px, 1fr) minmax(
+      200px,
+      1fr
+    );
+  gap: 20px;
 }
 
-.product-cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+@media (min-width: 640px) and (max-width: 1008px) {
+  .product-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .product-cards {
+    grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+  }
 }
 
 /* Product Card */

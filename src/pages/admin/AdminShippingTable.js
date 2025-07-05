@@ -76,8 +76,6 @@ const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
     setPageSize(10);
   };
 
-  if (loading) return <div>Cargando tipos de envío...</div>;
-
   return (
     <div>
       <div

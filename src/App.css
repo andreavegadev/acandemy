@@ -1,3 +1,40 @@
+:root {
+  --purple10: #f6f2fa;
+  --purple20: #e6d8f5;
+  --purple30: #d1b8ee;
+  --purple40: #b98ae2;
+  --purple50: #a05fd6;
+  --purple60: #6a1b9a;
+  --purple70: #55209a;
+  --purple80: #3c1473;
+  --purple90: #22094a;
+  --purple100: #14082b;
+
+  --red10: #fbeaea;
+  --red20: #f5cccc;
+  --red30: #ef9a9a;
+  --red40: #e57373;
+  --red50: #ef5350;
+  --red60: #d32f2f;
+  --red70: #b71c1c;
+  --red80: #8a1313;
+  --red90: #5a0909;
+  --red100: #2d0404;
+
+  ---text-primary: #333;
+  --text-secondary: #666;
+
+  --border-radii-button: 8px;
+  --border-radii-card: 16px;
+  --border-radii-chip: 9999px;
+}
+
+main {
+  min-height: calc(
+    100vh - 64px
+  ); /* Ajusta el alto del main para que ocupe el espacio restante */
+}
+
 .App {
   text-align: center;
 }

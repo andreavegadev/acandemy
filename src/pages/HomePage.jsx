@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
+import styles from "./HomePage.module.css";
 import { supabase } from "../supabaseClient";
 import FeaturedCard from "../components/FeaturedCard";
 import ProductCard from "../components/ProductCard";
 import ValueCard from "../components/ValueCard";
 import "../styles/Common.css";
+import {
+  Box,
+  HorizontalScroll,
+  Inline,
+  Stack,
+} from "../components/LayoutUtilities";
+import ResponsiveLayout from "../components/ResponsiveLayout";
+import Heading from "../components/Heading";
+import Carousel from "../components/Carousel";
 
 const HomePage = () => {
   const [featuredCategories, setFeaturedCategories] = useState([]);
@@ -93,67 +103,77 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <p>Cargando...</p>;
-  }
+  const ProductCategories = ({ label, href, asset }) => {
+    return (
+      <a href={href} className={styles.categoryContainer}>
+        <div className={styles.categoryIcon}>{asset} </div>
+        <span className={styles.categoryLabel}>{label}</span>
+      </a>
+    );
+  };
 
   return (
-    <div className="home-page">
-      <section className="featured-section">
-        <h2>Destacados</h2>
-        <div className="featured-cards">
-          {featuredCategories.map((category, index) => (
-            <FeaturedCard
-              key={index}
-              icon={category.icon}
-              title={category.title}
-              description={category.description}
-              link={category.link}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="categories-products-section">
-        {categoriesWithProducts.map((cat) =>
-          cat.products && cat.products.length > 0 ? (
-            <div key={cat.id} style={{ marginBottom: 32 }}>
-              <h2 style={{ color: "#5e35b1", marginBottom: 12 }}>{cat.name}</h2>
-              <div
-                className="product-cards"
-                style={{ display: "flex", gap: 18, flexWrap: "wrap" }}
-              >
-                {cat.products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    id={product.id}
-                    title={product.name}
-                    description={product.description}
-                    price={product.price}
-                    image={product.photo_url}
-                    linkDetails={`/product/${encodeURIComponent(product.name)}`}
+    <ResponsiveLayout>
+      <Box paddingY={48}>
+        <div className="home-page">
+          <section className="featured-section">
+            <HorizontalScroll className={styles.categoriesScroll}> 
+              <Inline justify="center" gap={16} fullWidth>
+                {featuredCategories.map((category, index) => (
+                  <ProductCategories
+                    key={index}
+                    label={category.name}
+                    href={category.link}
+                    asset={category.icon}
                   />
                 ))}
-              </div>
-            </div>
-          ) : null
-        )}
-      </section>
+              </Inline>
+            </HorizontalScroll>
+          </section>
 
-      <section className="values-section">
-        <h2>¿Por qué escoger Acandemy?</h2>
-        <div className="values-cards">
-          {values.map((value, index) => (
-            <ValueCard
-              key={index}
-              icon={value.icon}
-              title={value.title}
-              subtitle={value.subtitle}
-            />
-          ))}
+          <section className="categories-products-section">
+            <Stack>
+              {categoriesWithProducts.map((cat) =>
+                cat.products && cat.products.length > 0 ? (
+                  <div key={cat.id}>
+                    <Heading>{cat.name}</Heading>
+                    <Carousel>
+                      {cat.products.map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          id={product.id}
+                          title={product.name}
+                          description={product.description}
+                          price={product.price}
+                          image={product.photo_url}
+                          linkDetails={`/product/${encodeURIComponent(
+                            product.name
+                          )}`}
+                        />
+                      ))}
+                    </Carousel>
+                  </div>
+                ) : null
+              )}
+            </Stack>
+          </section>
+
+          <section className="values-section">
+            <h2>¿Por qué escoger Acandemy?</h2>
+            <div className="values-cards">
+              {values.map((value, index) => (
+                <ValueCard
+                  key={index}
+                  icon={value.icon}
+                  title={value.title}
+                  subtitle={value.subtitle}
+                />
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
-    </div>
+      </Box>
+    </ResponsiveLayout>
   );
 };
 
