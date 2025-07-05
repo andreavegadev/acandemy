@@ -1,6 +1,13 @@
+.carouselContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .itemsContainer {
   scroll-snap-type: x mandatory;
   overflow-x: auto;
+  overflow-y: visible;
   display: flex;
   gap: 16px;
 }
@@ -58,7 +65,7 @@
     margin: 0 -16px;
   }
 
-   .itemWrapper {
+  .itemWrapper {
     padding-left: 16px;
   }
 

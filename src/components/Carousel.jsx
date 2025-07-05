@@ -1,8 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { IconButton } from "./Button";
 import styles from "./Carousel.module.css";
+import { Inline } from "./LayoutUtilities";
 
-const Carousel = ({ children }) => {
+const Carousel = ({
+  children,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+}) => {
   const carouselRef = useRef(null);
   const childRef = useRef(null);
   const gap = 16;
@@ -42,7 +47,12 @@ const Carousel = ({ children }) => {
   }, []);
 
   return (
-    <div style={{ position: "relative" }} className={styles.carouselContainer}>
+    <section
+      className={styles.carouselContainer}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
+      aria-roledescription="Carrusel"
+    >
       <div ref={carouselRef} className={styles.itemsContainer}>
         {React.Children.map(children, (child, index) => (
           <div
@@ -63,40 +73,63 @@ const Carousel = ({ children }) => {
         ))}
       </div>
       {(canScrollLeft || canScrollRight) && (
-        <div>
+        <Inline gap={16} fullWidth justify="flex-end">
           <IconButton
             onClick={() => scrollByChildWidth(-1)}
             disabled={!canScrollLeft}
-            style={{
-              position: "absolute",
-              left: 0,
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: 1,
-              opacity: canScrollLeft ? 1 : 0.3,
-              cursor: canScrollLeft ? "pointer" : "default",
-            }}
+            aria-label={"Página anterior"}
           >
-            ◀
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              class="eva eva-chevron-left-outline"
+              fill="inherit"
+            >
+              <g data-name="Layer 2">
+                <g data-name="chevron-left">
+                  <rect
+                    width="24"
+                    height="24"
+                    transform="rotate(90 12 12)"
+                    opacity="0"
+                  ></rect>
+                  <path d="M13.36 17a1 1 0 0 1-.72-.31l-3.86-4a1 1 0 0 1 0-1.4l4-4a1 1 0 1 1 1.42 1.42L10.9 12l3.18 3.3a1 1 0 0 1 0 1.41 1 1 0 0 1-.72.29z"></path>
+                </g>
+              </g>
+            </svg>
           </IconButton>
           <IconButton
+            bleedRight
             onClick={() => scrollByChildWidth(1)}
             disabled={!canScrollRight}
-            style={{
-              position: "absolute",
-              right: 0,
-              top: "50%",
-              transform: "translateY(-50%)",
-              zIndex: 1,
-              opacity: canScrollRight ? 1 : 0.3,
-              cursor: canScrollRight ? "pointer" : "default",
-            }}
+            aria-label={"Página siguiente"}
           >
-            ▶
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              class="eva eva-chevron-right-outline"
+              fill="inherit"
+            >
+              <g data-name="Layer 2">
+                <g data-name="chevron-right">
+                  <rect
+                    width="24"
+                    height="24"
+                    transform="rotate(-90 12 12)"
+                    opacity="0"
+                  ></rect>
+                  <path d="M10.5 17a1 1 0 0 1-.71-.29 1 1 0 0 1 0-1.42L13.1 12 9.92 8.69a1 1 0 0 1 0-1.41 1 1 0 0 1 1.42 0l3.86 4a1 1 0 0 1 0 1.4l-4 4a1 1 0 0 1-.7.32z"></path>
+                </g>
+              </g>
+            </svg>
           </IconButton>
-        </div>
+        </Inline>
       )}
-    </div>
+    </section>
   );
 };
 

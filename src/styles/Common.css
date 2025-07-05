@@ -5,12 +5,6 @@ body {
   padding: 0;
 }
 
-h2 {
-  color: #6a1b9a; /* Lila pastel */
-  text-align: center;
-  margin-bottom: 20px;
-}
-
 a {
   text-decoration: none;
   color: inherit;

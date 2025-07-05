@@ -21,6 +21,11 @@
   margin: -8px -8px;
 }
 
+.iconButton:disabled {
+  cursor: default;
+  opacity: 0.325;
+}
+
 .iconButton .iconButtonContainer {
   display: flex;
   align-items: center;
@@ -48,6 +53,10 @@
   .iconButton:hover .iconButtonContainer {
     background-color: var(--purple10);
   }
+
+  .iconButton:disabled:hover .iconButtonContainer {
+    background-color: transparent;
+  }
 }
 
 .button.small {
@@ -64,8 +73,16 @@
   margin-left: -16px;
 }
 
+.bleedRight {
+  margin-right: -16px;
+}
+
 .bleedLeftSmall {
   margin-left: -12px;
+}
+
+.bleedRightSmall {
+  margin-right: -12px;
 }
 
 .link {

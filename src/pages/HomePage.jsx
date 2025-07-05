@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useId } from "react";
 import styles from "./HomePage.module.css";
 import { supabase } from "../supabaseClient";
 import FeaturedCard from "../components/FeaturedCard";
@@ -117,7 +117,7 @@ const HomePage = () => {
       <Box paddingY={48}>
         <div className="home-page">
           <section className="featured-section">
-            <HorizontalScroll className={styles.categoriesScroll}> 
+            <HorizontalScroll className={styles.categoriesScroll}>
               <Inline justify="center" gap={16} fullWidth>
                 {featuredCategories.map((category, index) => (
                   <ProductCategories
@@ -132,29 +132,35 @@ const HomePage = () => {
           </section>
 
           <section className="categories-products-section">
-            <Stack>
-              {categoriesWithProducts.map((cat) =>
-                cat.products && cat.products.length > 0 ? (
+            <Stack gap={48}>
+              {categoriesWithProducts.map((cat) => {
+                if (!cat.products || cat.products.length === 0) return null;
+
+                const headingId = `category-heading-${cat.id}`;
+
+                return (
                   <div key={cat.id}>
-                    <Heading>{cat.name}</Heading>
-                    <Carousel>
-                      {cat.products.map((product) => (
-                        <ProductCard
-                          key={product.id}
-                          id={product.id}
-                          title={product.name}
-                          description={product.description}
-                          price={product.price}
-                          image={product.photo_url}
-                          linkDetails={`/product/${encodeURIComponent(
-                            product.name
-                          )}`}
-                        />
-                      ))}
-                    </Carousel>
+                    <Stack gap={16}>
+                      <Heading id={headingId} as="h2">{cat.name}</Heading>
+                      <Carousel aria-labelledby={headingId}>
+                        {cat.products.map((product) => (
+                          <ProductCard
+                            key={product.id}
+                            id={product.id}
+                            title={product.name}
+                            description={product.description}
+                            price={product.price}
+                            image={product.photo_url}
+                            linkDetails={`/product/${encodeURIComponent(
+                              product.name
+                            )}`}
+                          />
+                        ))}
+                      </Carousel>
+                    </Stack>
                   </div>
-                ) : null
-              )}
+                );
+              })}
             </Stack>
           </section>
 

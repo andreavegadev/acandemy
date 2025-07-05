@@ -120,6 +120,7 @@ export const IconButton = ({
   "aria-label": ariaLabel,
   small,
   bleedLeft,
+  bleedRight,
   children,
   overMedia,
 }) => {
