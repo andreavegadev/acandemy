@@ -1,0 +1,17 @@
+.valueCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  border: 1px solid var(--neutral20);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.assetContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 2rem;
+}

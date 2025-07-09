@@ -3,7 +3,6 @@ import { useState, useEffect, useId } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import ProductCard from "../../components/ProductCard";
-import "../../styles/Products.css";
 import Heading from "../../components/Heading";
 import ResponsiveLayout from "../../components/ResponsiveLayout";
 import Chip from "../../components/Chip";
@@ -13,7 +12,6 @@ import {
   Box,
   HorizontalScroll,
 } from "../../components/LayoutUtilities";
-import { useCart } from "../../context/CartContext";
 import useProductCardActions from "../../hooks/useProductCartActions";
 import Toast from "../../components/Toast";
 import { ButtonPrimary, IconButton } from "../../components/Button";
@@ -265,7 +263,7 @@ const ProductListPage = () => {
           </Stack>
 
           {/* Productos */}
-          <div className="product-cards">
+          <div className={styles.productCards}>
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <ProductCard

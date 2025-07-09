@@ -25,6 +25,12 @@
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
 @media (hover: hover) {
   .categoryContainer:hover .categoryIcon {
     background: var(--purple10);
@@ -32,8 +38,11 @@
   }
 }
 
-@media (max-width: 450px) {
+@media (max-width: 640px) {
   .categoriesScroll {
     justify-content: flex-start;
+  }
+  .valuesGrid {
+    grid-template-columns: 1fr;
   }
 }

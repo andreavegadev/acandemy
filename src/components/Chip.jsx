@@ -11,12 +11,20 @@ const Chip = ({
   const chipStyles = `${styles.container} ${active ? styles.active : ""}`;
   return href ? (
     <a className={chipStyles} href={href} aria-label={ariaLabel}>
-      {asset && <span className={styles.asset}>{asset}</span>}
+      {asset && (
+        <span className={styles.asset} aria-hidden="true">
+          {asset}
+        </span>
+      )}
       {label}
     </a>
   ) : (
     <button className={chipStyles} onClick={onClick} aria-label={ariaLabel}>
-      {asset && <span className={styles.asset}>{asset}</span>}
+      {asset && (
+        <span className={styles.asset} aria-hidden="true">
+          {asset}
+        </span>
+      )}
       {label}
     </button>
   );

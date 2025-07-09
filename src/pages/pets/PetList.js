@@ -3,9 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "../../styles/PetList.css";
 import PetDetailPanel from "./PetDetailPanel";
-import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import {
+  ButtonPrimary,
+  ButtonSecondary,
+  IconButton,
+} from "../../components/Button";
 import Heading from "../../components/Heading";
 import Select from "../../components/Select";
+import { Stack } from "../../components/LayoutUtilities";
 
 const PetList = () => {
   const [pets, setPets] = useState([]);
@@ -75,67 +80,9 @@ const PetList = () => {
   };
 
   return (
-    <div className="pet-list-container">
+    <Stack gap={24}>
       <Heading>Mis mascotas</Heading>
-      <style>{`
-        .add-pet-btn {
-          background: #5e35b1;
-          color: #fff;
-          border: none;
-          border-radius: 50%;
-          width: 56px;
-          height: 56px;
-          font-size: 2em;
-          box-shadow: 0 4px 16px #b39ddb77;
-          cursor: pointer;
-          z-index: 100;
-          transition: background 0.2s;
-        }
-        .add-pet-btn:hover {
-          background: #7e57c2;
-        }
-        .pet-modal-bg {
-          position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(60,40,100,0.18);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 200;
-        }
-        .pet-modal {
-          background: #fff;
-          border-radius: 16px;
-          box-shadow: 0 4px 32px #b39ddb55;
-          padding: 32px 28px 24px 28px;
-          min-width: 320px;
-          max-width: 95vw;
-          position: relative;
-        }
-        .pet-modal h3 {
-          margin-top: 0;
-          color: #5e35b1;
-        }
-        .pet-modal label {
-          display: block;
-          margin: 14px 0 6px 0;
-          font-weight: 500;
-        }
-        .pet-modal input,
-        .pet-modal select {
-          width: 100%;
-          padding: 8px 10px;
-          border: 1px solid #d1c4e9;
-          border-radius: 6px;
-          font-size: 1em;
-        }
-        .pet-modal .modal-actions {
-          margin-top: 22px;
-          display: flex;
-          gap: 12px;
-          justify-content: flex-end;
-        }
-      `}</style>
+
       <div className="pet-list-grid">
         {pets.map((pet) => (
           <div
@@ -162,7 +109,7 @@ const PetList = () => {
           </div>
         ))}
       </div>
-      <ButtonPrimary href={`/profile/pets/add`}>+</ButtonPrimary>
+      <IconButton href={`/profile/pets/add`}>+</IconButton>
       {showModal && (
         <div className="pet-modal-bg" onClick={handleCloseModal}>
           <form
@@ -220,7 +167,7 @@ const PetList = () => {
           }}
         />
       )}
-    </div>
+    </Stack>
   );
 };
 

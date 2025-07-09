@@ -1,6 +1,4 @@
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
-
-import "../../styles/UserMenuPage.css";
 import SidenavLayout from "../../components/SidenavLayout";
 
 const UserMenuPage = () => {

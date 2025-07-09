@@ -140,35 +140,29 @@ const HomePage = () => {
   // 📦 UI
   return (
     <Box paddingY={48}>
-      <div className="home-page">
+      <Stack gap={32}>
         <ResponsiveLayout>
-          <section className="featured-section">
-            <HorizontalScroll className={styles.categoriesScroll}>
-              <Inline justify="center" gap={16} fullWidth>
-                {featuredCategories.map((category, index) => (
-                  <a
-                    key={index}
-                    href={category.link}
-                    className={styles.categoryContainer}
-                  >
-                    <div className={styles.categoryIcon}>{category.icon}</div>
-                    <span className={styles.categoryLabel}>
-                      {category.name}
-                    </span>
-                  </a>
-                ))}
-              </Inline>
-            </HorizontalScroll>
-          </section>
+          <HorizontalScroll className={styles.categoriesScroll}>
+            <Inline justify="center" gap={16} fullWidth>
+              {featuredCategories.map((category, index) => (
+                <a
+                  key={index}
+                  href={category.link}
+                  className={styles.categoryContainer}
+                >
+                  <div className={styles.categoryIcon}>{category.icon}</div>
+                  <span className={styles.categoryLabel}>{category.name}</span>
+                </a>
+              ))}
+            </Inline>
+          </HorizontalScroll>
         </ResponsiveLayout>
 
-        <section className="hero-section">
-          <Hero />
-        </section>
+        <Hero />
 
         <ResponsiveLayout>
           <section className="categories-products-section">
-            <Stack gap={48}>
+            <Stack gap={24}>
               {categoriesWithProducts.map((cat) => {
                 if (!cat.products || cat.products.length === 0) return null;
 
@@ -186,7 +180,7 @@ const HomePage = () => {
                             key={product.id}
                             id={product.id}
                             tag={
-                              product.stock === 0  ? (
+                              product.stock === 0 ? (
                                 <Tag type="warning">Agotado</Tag>
                               ) : null
                             }
@@ -212,32 +206,31 @@ const HomePage = () => {
         </ResponsiveLayout>
 
         <ResponsiveLayout>
-          <section className="values-section">
+          <Stack gap={24}>
             <Heading as="h2">¿Por qué escoger Acandemy?</Heading>
-            <div className="values-cards">
+            <div className={styles.valuesGrid}>
               {values.map((value, index) => (
                 <ValueCard
                   key={index}
-                  icon={value.icon}
+                  asset={value.icon}
                   title={value.title}
                   subtitle={value.subtitle}
                 />
               ))}
             </div>
-          </section>
-
-          {showToast && (
-            <Toast
-              message={toastMessage}
-              action={{
-                label: "Ver carrito",
-                href: "/cart",
-              }}
-              onClose={() => setShowToast(false)}
-            />
-          )}
+          </Stack>
         </ResponsiveLayout>
-      </div>
+        {showToast && (
+          <Toast
+            message={toastMessage}
+            action={{
+              label: "Ver carrito",
+              href: "/cart",
+            }}
+            onClose={() => setShowToast(false)}
+          />
+        )}
+      </Stack>
     </Box>
   );
 };
