@@ -28,11 +28,11 @@
 }
 
 .ok {
-  background-color: var(--green-50);
+  background-color: var(--green50);
 }
 
 .ok::before {
-  background-color: var(--green-50);
+  background-color: var(--green50);
 }
 
 .low {

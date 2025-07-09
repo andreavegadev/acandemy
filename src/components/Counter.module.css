@@ -31,7 +31,7 @@
 
 .button {
   all: unset;
-  height: 40px;
+  height: 38px;
   width: 40px;
   display: grid;
   place-items: center;
@@ -54,11 +54,12 @@
 @media only screen and (max-width: 640px) {
   .counter {
     min-height: 48px;
+    box-sizing: border-box;
   }
 
   .button {
     width: 48px;
-    height: 48px;
+    height: 46px;
   }
 
   .counter.fullWidth {
