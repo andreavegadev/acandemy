@@ -1,10 +1,12 @@
 import { useCart } from "../context/CartContext";
+import getCartLineId from "../utils/getCartLineId";
 
 const useProductCardActions = ({ setToastMessage, setShowToast }) => {
   const { cart, addToCart } = useCart();
 
   const getProductQuantityInCart = (product) => {
-    return cart.find((item) => item.cartLineId === product.id)?.quantity || 0;
+    const cartLineId = getCartLineId(product, product.personalizations || []);
+    return cart.find((item) => item.cartLineId === cartLineId)?.quantity || 0;
   };
 
   const isProductOutOfStockOrMaxedInCart = (product) => {
@@ -13,6 +15,7 @@ const useProductCardActions = ({ setToastMessage, setShowToast }) => {
   };
 
   const handleAddToCart = (product) => {
+    const cartLineId = getCartLineId(product, product.personalizations || []);
     const inCartQty = getProductQuantityInCart(product);
 
     if (product.stock === 0) {
@@ -25,14 +28,13 @@ const useProductCardActions = ({ setToastMessage, setShowToast }) => {
       setToastMessage(
         `Ya tienes ${product.stock} unidad${product.stock > 1 ? "es" : ""} de ${
           product.name
-        } en el carrito. No puedes añadir más.`
+        } en el carrito.`
       );
       setShowToast(true);
       return;
     }
 
-    // If everything's okay, add to cart and show confirmation
-    addToCart({ ...product, quantity: 1 });
+    addToCart({ ...product, cartLineId, quantity: 1 });
     setToastMessage(`${product.name} se añadió al carrito.`);
     setShowToast(true);
   };

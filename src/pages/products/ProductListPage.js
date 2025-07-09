@@ -273,8 +273,7 @@ const ProductListPage = () => {
                   key={product.id}
                   id={product.id}
                   tag={
-                    product.stock === 0 ||
-                    getProductQuantityInCart(product) === product.stock ? (
+                    product.stock === 0 ? (
                       <Tag type="warning">Agotado</Tag>
                     ) : null
                   }

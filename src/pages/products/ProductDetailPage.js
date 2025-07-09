@@ -1,96 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import { useCart } from "../../context/CartContext";
+import getCartLineId from "../../utils/getCartLineId";
 import styles from "./ProductDetailPage.module.css";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Heading from "../../components/Heading";
 import Price from "../../components/Price";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Box, Stack, Inline } from "../../components/LayoutUtilities";
 import ResponsiveLayout from "../../components/ResponsiveLayout";
 import Select from "../../components/Select";
 import { ButtonPrimary } from "../../components/Button";
 import { Counter } from "../../components/Counter";
-import { Inline } from "../../components/LayoutUtilities";
 import { StockIndicator } from "../../components/StockIndicator";
+import Text from "../../components/Text";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { name } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   const [personalizations, setPersonalizations] = useState([]);
   const [selectedPersonalizations, setSelectedPersonalizations] = useState({});
 
+  const { addToCart, isProductMaxed } = useCart();
+
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
-      const { data: productData, error: productError } = await supabase
+      const { data, error } = await supabase
         .from("products")
         .select("*")
         .eq("name", name)
         .single();
 
-      if (!productError) {
-        setProduct(productData);
-      }
+      if (!error) setProduct(data);
       setLoading(false);
     };
     fetchProduct();
   }, [name]);
 
-  const ImagePreview = ({ images }) => {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const detailImage = images[activeIndex];
-
-    useEffect(() => {
-      if (images.length > 0) {
-        setActiveIndex(0);
-      }
-    }, [images]);
-
-    return (
-      <div className={styles.imagePreview}>
-        {/* Main detail image */}
-        {detailImage && (
-          <img
-            src={detailImage.src}
-            alt={detailImage.alt || "Imagen destacada"}
-            className={styles.detailImage}
-          />
-        )}
-
-        {/* Thumbnails */}
-        <div className={styles.thumbnailContainer}>
-          {images.map((img, index) => {
-            const buttonStyles = `${styles.thumbnailButton} ${
-              index === activeIndex ? styles.activeThumbnail : ""
-            }`;
-            return (
-              <button
-                onClick={() => setActiveIndex(index)}
-                key={index}
-                className={buttonStyles}
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt || `Imagen ${index + 1}`}
-                  className={`${styles.thumbnailImage} ${
-                    img.src === detailImage?.src ? styles.activeThumbnail : ""
-                  }`}
-                />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
-  // Cargar personalizaciones del producto con su tipo
   useEffect(() => {
     const fetchPersonalizations = async () => {
       if (!product?.id) return;
@@ -106,7 +57,6 @@ const ProductDetailPage = () => {
     fetchPersonalizations();
   }, [product]);
 
-  // Agrupar personalizaciones por tipo
   const groupedPersonalizations = React.useMemo(() => {
     const acc = {};
     for (const perso of personalizations) {
@@ -135,22 +85,25 @@ const ProductDetailPage = () => {
 
     if (missingMandatory.length > 0) {
       alert(
-        `Debes seleccionar una opción para las siguientes personalizaciones: ${missingMandatory.join(
-          ", "
-        )}`
+        `Debes seleccionar una opción para: ${missingMandatory.join(", ")}`
       );
       return;
     }
 
     const selectedPersos = Object.entries(selectedPersonalizations)
-      .map(([type, id]) => personalizations.find((p) => p.id === Number(id)))
+      .map(([type, id]) => {
+        const found = personalizations.find((p) => p.id === Number(id));
+        return found ? { ...found, value: type } : null;
+      })
       .filter(Boolean);
+
+    const cartLineId = getCartLineId(product, selectedPersos);
 
     addToCart({
       ...product,
       category: product.category_id,
-      personalizations: [...selectedPersos],
-      cartLineId: getCartLineId(product, selectedPersos),
+      personalizations: selectedPersos,
+      cartLineId,
       quantity,
     });
   };
@@ -160,19 +113,59 @@ const ProductDetailPage = () => {
     let sum = Number(product.price);
     Object.entries(selectedPersonalizations).forEach(([type, id]) => {
       const perso = personalizations.find((p) => p.id === Number(id));
-      if (perso && perso.additional_price) {
+      if (perso?.additional_price) {
         sum += Number(perso.additional_price);
       }
     });
-    return sum; // ← No quantity multiplication
+    return sum;
   }, [product, selectedPersonalizations, personalizations]);
 
+  const ImagePreview = ({ images }) => {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const detailImage = images[activeIndex];
+
+    useEffect(() => {
+      if (images.length > 0) {
+        setActiveIndex(0);
+      }
+    }, [images]);
+
+    return (
+      <div className={styles.imagePreview}>
+        {detailImage && (
+          <img
+            src={detailImage.src}
+            alt={detailImage.alt || "Imagen destacada"}
+            className={styles.detailImage}
+          />
+        )}
+        <div className={styles.thumbnailContainer}>
+          {images.map((img, index) => (
+            <button
+              onClick={() => setActiveIndex(index)}
+              key={index}
+              className={`${styles.thumbnailButton} ${
+                index === activeIndex ? styles.activeThumbnail : ""
+              }`}
+            >
+              <img
+                src={img.src}
+                alt={img.alt || `Imagen ${index + 1}`}
+                className={styles.thumbnailImage}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
-    return <p className="product-loading">Cargando detalles del producto...</p>;
+    return <p>Cargando detalles del producto...</p>;
   }
 
   if (!product) {
-    return <p className="product-notfound">No se encontró el producto.</p>;
+    return <p>No se encontró el producto.</p>;
   }
 
   return (
@@ -182,63 +175,50 @@ const ProductDetailPage = () => {
           <Breadcrumbs
             items={[
               { label: "Productos", onClick: () => navigate("/products") },
-              {
-                label: `${product.name}`,
-                current: true,
-              },
+              { label: product.name, current: true },
             ]}
-          ></Breadcrumbs>
-
-          <section
-            aria-label="Configuración de producto"
-            className={styles.productDetail}
-          >
+          />
+          <section className={styles.productDetail}>
             <ImagePreview images={product.product_images} />
-
             <Stack gap={16}>
               <Heading>{product.name}</Heading>
               <Price amount={totalPrice} />
               {product.short_description && <p>{product.short_description}</p>}
-              {/* Picklists de personalizaciones agrupadas por tipo */}
               {Object.keys(groupedPersonalizations).length > 0 && (
-                <div className="personalization-block">
+                <div>
                   {Object.entries(groupedPersonalizations).map(
                     ([type, persos]) => (
-                      <div key={type}>
-                        <Select
-                          name={type}
-                          required={persos[0]?.personalization_type?.mandatory}
-                          label={type}
-                          value={selectedPersonalizations[type] || ""}
-                          onChange={(e) =>
-                            handlePersonalizationChange(type, e.target.value)
-                          }
-                          options={[
-                            {
-                              value: "",
-                              label:
-                                "--Selecciona " + type.toLowerCase() + "--",
-                            },
-                            ...persos.map((perso) => ({
-                              value: perso.id,
-                              label:
-                                perso.name +
-                                (perso.additional_price > 0
-                                  ? ` (+${Number(
-                                      perso.additional_price
-                                    ).toFixed(2)}€)`
-                                  : ""),
-                            })),
-                          ]}
-                        />
-                      </div>
+                      <Select
+                        key={type}
+                        name={type}
+                        label={type}
+                        value={selectedPersonalizations[type] || ""}
+                        onChange={(e) =>
+                          handlePersonalizationChange(type, e.target.value)
+                        }
+                        required={persos[0]?.personalization_type?.mandatory}
+                        options={[
+                          {
+                            value: "",
+                            label: "--Selecciona " + type.toLowerCase() + "--",
+                          },
+                          ...persos.map((p) => ({
+                            value: p.id,
+                            label: `${p.name}${
+                              p.additional_price > 0
+                                ? ` (+${Number(p.additional_price).toFixed(
+                                    2
+                                  )}€)`
+                                : ""
+                            }`,
+                          })),
+                        ]}
+                      />
                     )
                   )}
                 </div>
               )}
-              <div>
-                <StockIndicator stock={product.stock} />
-              </div>
+              <StockIndicator stock={product.stock} />
               <div className={styles.actions}>
                 <Counter
                   value={quantity}
@@ -249,21 +229,22 @@ const ProductDetailPage = () => {
                 />
                 <ButtonPrimary
                   onClick={handleAddToCart}
-                  disabled={product.stock === 0}
-                  aria-label={`Añadir ${product.name} al carrito`}
+                  disabled={product.stock === 0 || isProductMaxed(product)}
                   fullWidth
                   forceDesktopFullWidth
                 >
                   Añadir al carrito
                 </ButtonPrimary>
               </div>
+              {isProductMaxed(product) && (
+                <Inline gap={8} align="center">
+                  <Text>Tienes el máximo de este producto en tu carrito. <Link to="/cart">Ver carrito</Link></Text>             
+                </Inline>
+              )}
             </Stack>
           </section>
-          <hr></hr>
-          <section
-            aria-label="especificaciones"
-            className={styles.productDescription}
-          >
+          <hr />
+          <section className={styles.productDescription}>
             <p>
               <strong>Descripción:</strong> <span>{product.description}</span>
             </p>
@@ -276,13 +257,5 @@ const ProductDetailPage = () => {
     </ResponsiveLayout>
   );
 };
-
-function getCartLineId(product, personalizations) {
-  const persoIds = (personalizations || [])
-    .map((p) => `${p.type || ""}:${p.id}`)
-    .sort()
-    .join("|");
-  return `${product.id}__${persoIds}`;
-}
 
 export default ProductDetailPage;

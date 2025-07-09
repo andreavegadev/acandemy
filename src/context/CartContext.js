@@ -1,5 +1,6 @@
 // src/context/CartContext.js
 import { createContext, useState, useContext, useEffect } from "react";
+import getCartLineId from "../utils/getCartLineId";
 
 const CartContext = createContext();
 
@@ -23,23 +24,20 @@ export const CartProvider = ({ children }) => {
 
   // Añadir al carrito usando cartLineId para distinguir producto+personalizaciones
   const addToCart = (product) => {
+    const cartLineId =
+      product.cartLineId ||
+      getCartLineId(product, product.personalizations || []);
+
     setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === product.id);
+      const existing = prevCart.find((item) => item.cartLineId === cartLineId);
       if (existing) {
-        // Si quieres sumar cantidades:
         return prevCart.map((item) =>
-          item.id === product.id
+          item.cartLineId === cartLineId
             ? { ...item, quantity: item.quantity + product.quantity }
             : item
         );
-        // Si quieres reemplazar la cantidad (siempre la del botón):
-        // return prevCart.map((item) =>
-        //   item.id === product.id
-        //     ? { ...item, quantity: product.quantity }
-        //     : item
-        // );
       } else {
-        return [...prevCart, { ...product }];
+        return [...prevCart, { ...product, cartLineId }];
       }
     });
   };
@@ -88,17 +86,13 @@ export const CartProvider = ({ children }) => {
     }, 0);
   };
   const getProductQuantity = (product) => {
-    return cart.find((item) => item.cartLineId === product.id)?.quantity || 0;
+    const cartLineId = getCartLineId(product, product.personalizations || []);
+    return cart.find((item) => item.cartLineId === cartLineId)?.quantity || 0;
   };
-
   const isProductMaxed = (product) => {
-    const quantity = getProductQuantity(product);
-    return product.stock === 0 || quantity >= product.stock;
-  };
-
-  const canAddToCart = (product) => {
-    return product.stock > 0 && getProductQuantity(product) < product.stock;
-  };
+  const quantity = getProductQuantity(product);
+  return product.stock > 0 && quantity === product.stock;
+};
 
   return (
     <CartContext.Provider
