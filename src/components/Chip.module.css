@@ -3,10 +3,10 @@
   gap: 8px;
   border-radius: var(--border-radii-chip);
   padding: 0px 12px;
-  background-color: var(--purple10);
+  background-color: transparent;
   color: var(--purple60);
   cursor: pointer;
-  border: 1px solid var(--purple40);
+  border: 1px solid var(--purple20);
   font-weight: 550;
   align-items: center;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -18,17 +18,17 @@
 }
 
 .active {
-  background-color: var(--purple60);
-  color: white;
+  background-color: var(--purple10);
+  border: 1px solid var(--purple40);
 }
 
 @media (hover: hover) {
   .container:hover {
-    background-color: var(--purple20);
+    background-color: var(--purple10);
   }
 
   .active:hover {
-    background-color: var(--purple70);
+    background-color: var(--purple20);
   }
 }
 
