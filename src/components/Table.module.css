@@ -1,0 +1,86 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 1rem;
+}
+
+.table th,
+.table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #ece6f7;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.table th {
+  background: linear-gradient(90deg, #f6f2fa 60%, #ede7f6 100%);
+  color: #5e35b1;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  letter-spacing: 0.02em;
+  font-size: 1.05rem;
+}
+
+.table th:hover {
+  background: #e6d8f5;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: #f3eaff;
+  transition: background 0.2s;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.minMaxFilter {
+  display: flex;
+  gap:16px;
+  align-items: center;
+}
+
+
+
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+  .table th,
+  .table td {
+    padding: 10px 8px;
+    font-size: 0.95rem;
+  }
+  .filters {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .tableresponsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Para escritorio, asegúrate de que .table-responsive no afecte */
+.tableresponsive {
+  width: 100%;
+  overflow-x: visible;
+}

@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { ButtonPrimary } from "../../components/Button";
+import Heading from "../../components/Heading";
+import ResponsiveLayout from "../../components/ResponsiveLayout";
+import { Stack } from "../../components/LayoutUtilities";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
@@ -41,30 +45,43 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="reset-password-container">
-      <h2>Restablecer Contraseña</h2>
-      {error ? (
-        <p className="error">{error}</p>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <input
-            type="password"
-            name="password"
-            placeholder="Nueva Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Restablecer Contraseña</button>
-        </form>
-      )}
-      {message && <p className="success">{message}</p>}
-      <div className="links">
-        <p>
-          <a href="/login">Volver a Iniciar Sesión</a>
-        </p>
-      </div>
-    </div>
+    <ResponsiveLayout contentWidth="narrow">
+      <Stack gap={24}>
+        <Heading as="h2">Restablecer Contraseña</Heading>
+        <Stack gap={16}>
+          {error ? (
+            <p className="error">{error}</p>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <Stack gap={16}>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Nueva Contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <ButtonPrimary type="submit">
+                  Restablecer Contraseña
+                </ButtonPrimary>
+              </Stack>
+            </form>
+          )}
+        </Stack>
+        {message && <p className="success">{message}</p>}
+        <div className="links">
+          <p>
+            <ButtonPrimary
+              href={`/login`}
+              aria-label={`Volver a iniciar sesión`}
+            >
+              Volver a iniciar Sesión
+            </ButtonPrimary>
+          </p>
+        </div>
+      </Stack>
+    </ResponsiveLayout>
   );
 };
 

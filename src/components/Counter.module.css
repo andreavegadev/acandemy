@@ -1,0 +1,70 @@
+.counter {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--neutral20);
+  border-radius: 4px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.input {
+  width: 48px;
+  text-align: center;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  appearance: textfield;
+  outline: none;
+}
+
+/* Remove default spinners in Chrome, Safari, Edge */
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  padding: 0;
+}
+
+.button {
+  all: unset;
+  height: 38px;
+  width: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  color: var(--neutral80);
+  background-color: var(--neutral10);
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--neutral20);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@media only screen and (max-width: 640px) {
+  .counter {
+    min-height: 48px;
+    box-sizing: border-box;
+  }
+
+  .button {
+    width: 48px;
+    height: 46px;
+  }
+
+  .counter.fullWidth {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -1,23 +1,27 @@
-import React from "react";
 import PropTypes from "prop-types";
+import { ButtonPrimary } from "./Button";
 
 const PetList = ({ pets, onViewPet, onAddPet }) => {
   return (
     <section>
-      <h2>Mis Mascotas</h2>
+      <Heading as="h2">Mis Mascotas</Heading>
       {pets.length > 0 ? (
         <ul>
           {pets.map((pet) => (
             <li key={pet.id}>
               {pet.name} - {calculateAge(pet.birth_date)} años
-              <button onClick={() => onViewPet(pet.id)}>Ver Detalles</button>
+              <ButtonPrimary
+                href={`/profile/pets/${pet.Id}`}
+                aria-label={`Ver detalles de ${pet.name}`}
+              >
+                Ver Detalles
+              </ButtonPrimary>
             </li>
           ))}
         </ul>
       ) : (
         <p>No tienes mascotas registradas.</p>
       )}
-      <button onClick={onAddPet}>Añadir Mascota</button>
     </section>
   );
 };

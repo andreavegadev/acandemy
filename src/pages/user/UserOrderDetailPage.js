@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { STATUS_LABELS } from "../../constants/order";
+import { getOrderTagType, STATUS_LABELS } from "../../constants/order";
+import Tag from "../../components/Tag";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import Heading from "../../components/Heading";
+import Table from "../../components/Table";
+import Price from "../../components/Price";
 
 const UserOrderDetailPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("orders")
         .select(
           `
@@ -38,74 +41,44 @@ const UserOrderDetailPage = () => {
         .eq("id", orderId)
         .single();
       setOrder(data);
-      setLoading(false);
     };
     fetchOrder();
   }, [orderId]);
 
-  if (loading) return <p style={{ textAlign: "center", marginTop: 40 }}>Cargando detalle del pedido...</p>;
-  if (!order) return <p style={{ textAlign: "center", marginTop: 40 }}>No se encontró el pedido.</p>;
+  if (!order)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        No se encontró el pedido.
+      </p>
+    );
 
   return (
-    <div
-      style={{
-        maxWidth: 600,
-        margin: "40px auto",
-        background: "#f8f6ff",
-        border: "1px solid #d1c4e9",
-        borderRadius: 16,
-        boxShadow: "0 2px 12px #ede7f6",
-        padding: 32,
-        fontSize: 16,
-        color: "#3a2e5c",
-      }}
-    >
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginBottom: 24,
-          background: "#ede7f6",
-          border: "none",
-          color: "#5e35b1",
-          fontWeight: "bold",
-          padding: "6px 18px",
-          borderRadius: 8,
-          cursor: "pointer",
-          transition: "background 0.2s",
-        }}
-        onMouseOver={e => (e.target.style.background = "#d1c4e9")}
-        onMouseOut={e => (e.target.style.background = "#ede7f6")}
-      >
-        ← Volver
-      </button>
-      <h2 style={{ color: "#5e35b1", marginBottom: 12 }}>
-        Detalle del pedido #{order.id}
-      </h2>
+    <div>
+      <Breadcrumbs
+        items={[
+          { label: "Mi perfil", href: "/profile" },
+          { label: "Mis pedidos", onClick: () => navigate("/profile/orders") },
+          {
+            label: `Pedido #${orderId}`,
+            href: `/profile/orders/${orderId}`,
+            current: true,
+          },
+        ]}
+      />
+      <Heading>Detalle del pedido #{order.id}</Heading>
       <div style={{ marginBottom: 18 }}>
         <p>
           <b>Fecha:</b>{" "}
           {order.order_date ? new Date(order.order_date).toLocaleString() : "-"}
         </p>
         <p>
-          <b>Total:</b> <span style={{ color: "#43a047" }}>{Number(order.total_amount).toFixed(2)} €</span>
+          <b>Total:</b> <Price amount={Number(order.total_amount)} />
         </p>
         <p>
           <b>Estado:</b>{" "}
-          <span
-            style={{
-              color:
-                order.status === "pending"
-                  ? "#fbc02d"
-                  : order.status === "delivered"
-                  ? "#43a047"
-                  : order.status === "cancelled"
-                  ? "#e53935"
-                  : "#5e35b1",
-              fontWeight: 600,
-            }}
-          >
+          <Tag type={getOrderTagType(order.status)}>
             {STATUS_LABELS[order.status] || order.status}
-          </span>
+          </Tag>
         </p>
         <p>
           <b>Dirección de envío:</b> {order.shipping_address || "-"}
@@ -114,64 +87,33 @@ const UserOrderDetailPage = () => {
           <b>Dirección de facturación:</b> {order.billing_address || "-"}
         </p>
       </div>
-      <h3 style={{ color: "#5e35b1", marginTop: 24 }}>Productos</h3>
+      <Heading as="h3">Productos</Heading>
       {order.items && order.items.length > 0 ? (
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            background: "#fff",
-            borderRadius: 8,
-            overflow: "hidden",
-            marginTop: 8,
-            marginBottom: 8,
-            boxShadow: "0 1px 4px #ede7f6",
-          }}
-        >
-          <thead>
-            <tr style={{ background: "#ede7f6" }}>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Producto</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Personalizaciones</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Cantidad</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Precio ud.</th>
-              <th style={{ padding: 8, border: "1px solid #d1c4e9" }}>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {order.items.map((item) => (
-              <tr key={item.id}>
-                <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                  {item.product?.name || item.product_id}
-                </td>
-                <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                  {item.customizations && item.customizations.length > 0 ? (
-                    <ul style={{ margin: 0, paddingLeft: 18, fontSize: 14 }}>
-                      {item.customizations.map((p, idx) => (
-                        <li key={idx}>
-                          {p.type ? <b>{p.type}:</b> : null} {p.name}
-                          {p.additional_price > 0
+        <Table
+          title=""
+          items={order.items.map((item) => ({
+            producto: item.product?.name || item.product_id,
+            personalizaciones:
+              item.customizations && item.customizations.length > 0
+                ? item.customizations
+                    .map(
+                      (p) =>
+                        `${p.type ? p.type + ": " : ""}${p.name}${
+                          p.additional_price > 0
                             ? ` (+${Number(p.additional_price).toFixed(2)}€)`
-                            : ""}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <span style={{ color: "#aaa" }}>—</span>
-                  )}
-                </td>
-                <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                  {item.quantity}
-                </td>
-                <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                  {Number(item.unit_price).toFixed(2)} €
-                </td>
-                <td style={{ padding: 8, border: "1px solid #d1c4e9" }}>
-                  {Number(item.total_price).toFixed(2)} €
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                            : ""
+                        }`
+                    )
+                    .join(", ")
+                : "—",
+            cantidad: item.quantity,
+            precio: `${Number(item.unit_price).toFixed(2)} €`,
+            total: `${Number(item.total_price).toFixed(2)} €`,
+          }))}
+          filters={[]} // Sin filtros
+          onClickAdd={null}
+          onClick={null}
+        />
       ) : (
         <p>No hay productos en este pedido.</p>
       )}

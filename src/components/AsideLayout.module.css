@@ -1,0 +1,36 @@
+.container {
+  display: grid;
+  gap: 24px;
+}
+
+.withAside {
+  grid-template-columns: 1fr 280px;
+}
+
+.aside {
+  padding-top: 24px;
+  padding-left: 24px;
+  border-left: 1px solid var(--neutral20);
+}
+
+.content {
+  padding-top: 24px;
+}
+
+
+
+@media (max-width: 640px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .aside {
+    border-left: none;
+    border-top: 1px solid var(--neutral20);
+    padding-left: 0;
+  }
+
+  .content {
+    padding-top: 0;
+  }
+}

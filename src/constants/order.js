@@ -6,12 +6,7 @@ export const ORDER_STATUSES = [
   "cancelled",
 ];
 
-export const PAYMENT_STATUSES = [
-  "unpaid",
-  "paid",
-  "failed",
-  "refunded",
-];
+export const PAYMENT_STATUSES = ["unpaid", "paid", "failed", "refunded"];
 
 export const STATUS_LABELS = {
   pending: "Pendiente",
@@ -27,3 +22,18 @@ export const PAYMENT_LABELS = {
   failed: "Fallido",
   refunded: "Reembolsado",
 };
+
+export function getOrderTagType(status) {
+  switch (status) {
+    case "pending":
+      return "warning";
+    case "delivered":
+      return "success";
+    case "cancelled":
+      return "danger";
+    case "shipped":
+      return "success";
+    default:
+      return "info";
+  }
+}

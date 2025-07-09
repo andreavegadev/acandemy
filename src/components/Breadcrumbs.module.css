@@ -1,0 +1,41 @@
+.breadcrumbsMobile {
+  display: none;
+}
+
+.list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  align-items: baseline;
+}
+
+.item {
+  display: inline-flex;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.link {
+  color: var(--purple60);
+  text-decoration: none;
+  font-weight: 550;
+  transition: color 0.2s ease-in-out;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+@media screen and (max-width: 640px) {
+  .breadcrumbsMobile {
+    display: inline-flex;
+  }
+
+  .breadcrumbsDesktop {
+    display: none;
+  }
+    
+}

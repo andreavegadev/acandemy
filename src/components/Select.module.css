@@ -1,0 +1,140 @@
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative; /* for dropdown positioning */
+}
+
+.label {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 550;
+}
+
+.select {
+  border: 1.5px var(--neutral50) solid;
+  border-radius: 8px;
+  padding: 0px 52px 0 16px;
+  font-size: 1em;
+  transition: border 0.2s;
+  background-color: white;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  min-height: 40px;
+  margin: 0;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.selectContainer {
+  position: relative; /* for dropdown arrow positioning */
+}
+
+.error {
+  border-color: #e53935 !important;
+  background: #ffebee;
+}
+
+.errorMessage {
+  color: #e53935;
+  margin-top: 4px;
+  font-size: 0.875em;
+}
+
+/* Hidden native multiple select */
+.hiddenSelect {
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Custom multi-select button styles */
+.customSelectButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  position: relative;
+  border: 1.5px var(--neutral50) solid;
+  border-radius: 8px;
+  padding: 0px 52px 0 16px;
+  color: var(--text-primary);
+  background: transparent;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+/* Dropdown arrow/marker */
+.dropdownMarker {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Prevent interaction */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Custom dropdown menu */
+.customDropdown {
+  position: absolute;
+  z-index: 1000;
+  background: white;
+  border: 1.5px var(--neutral50) solid;
+  border-radius: 8px;
+  width: 100%;
+  overflow-y: auto;
+  margin-top: 4px;
+  padding: 0;
+  list-style: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dropdown items */
+.customDropdownItem,
+.customDropdownItemSelected {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.customDropdownItem:hover {
+  background-color: #f0f0f0;
+}
+
+.customDropdownItemSelected {
+  background-color: #e6f7ff;
+}
+
+/* Checkbox inside dropdown */
+.checkbox {
+  cursor: pointer;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+
+/* Label next to checkbox */
+.optionLabel {
+  margin-left: 8px;
+  user-select: none;
+}
+
+@media (max-width: 640px) {
+  .select {
+    min-height: 48px;
+  }
+
+  .customSelectButton {
+    min-height: 48px;
+  }
+}

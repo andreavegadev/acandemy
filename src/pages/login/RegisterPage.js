@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import "../../styles/AuthPages.css";
+import { ButtonLink, ButtonPrimary } from "../../components/Button";
+import Heading from "../../components/Heading";
+import ResponsiveLayout from "../../components/ResponsiveLayout";
+import { Box, Stack } from "../../components/LayoutUtilities";
+import Input from "../../components/Input";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -35,8 +39,6 @@ const RegisterPage = () => {
       console.error("Error al registrar usuario:", error.message);
       setError("Hubo un error al registrar el usuario. Inténtalo de nuevo.");
     } else {
-      console.log("Usuario registrado con éxito:", data);
-
       // Inserta datos adicionales en la tabla `users`
       const { error: userError } = await supabase.from("users").insert([
         {
@@ -63,59 +65,74 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="auth-bg">
-      <div className="auth-page">
-        <h1>Registrarse</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="full_name"
-            placeholder="Nombre completo"
-            value={formData.full_name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="phone"
-            placeholder="Teléfono"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="address"
-            placeholder="Dirección"
-            value={formData.address}
-            onChange={handleChange}
-          />
-          <button type="submit">Registrarse</button>
-        </form>
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
-        <div className="links">
-          <p>
-            <a href="/login">¿Ya tienes una cuenta? Inicia sesión</a>
-          </p>
-        </div>
-      </div>
-    </div>
+    <ResponsiveLayout contentWidth="narrow">
+      <Box paddingY={48}>
+        <Stack gap={24}>
+          <Heading>Registrarse</Heading>
+          <form onSubmit={handleSubmit}>
+            <Stack gap={16}>
+              <Input
+                type="text"
+                name="full_name"
+                label="Nombre completo"
+                value={formData.full_name}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type="email"
+                name="email"
+                label="Correo electrónico"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type="password"
+                name="password"
+                label="Contraseña"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type="text"
+                name="phone"
+                label="Teléfono"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+              <Input
+                type="text"
+                name="address"
+                label="Dirección"
+                value={formData.address}
+                onChange={handleChange}
+              />
+              <ButtonPrimary
+                type="submit"
+                aria-label={`Registrarse con correo`}
+                fullWidth
+              >
+                Registrarse
+              </ButtonPrimary>
+            </Stack>
+          </form>
+          {error && <p className="error">{error}</p>}
+          {success && <p className="success">{success}</p>}
+          <div className="links">
+            <p>
+              <ButtonLink
+                href={`/login`}
+                aria-label={`¿Ya tienes una cuenta? Inicia sesión`}
+              >
+                ¿Ya tienes una cuenta? Inicia sesión
+              </ButtonLink>
+            </p>
+          </div>
+        </Stack>
+      </Box>
+    </ResponsiveLayout>
   );
 };
 

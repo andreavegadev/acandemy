@@ -1,6 +1,6 @@
-import React from "react";
 import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { ButtonLink } from "./Button";
 
 const LogoutButton = () => {
   const navigate = useNavigate();
@@ -15,9 +15,9 @@ const LogoutButton = () => {
   };
 
   return (
-    <button onClick={handleLogout} className="logout-button">
+    <ButtonLink onClick={handleLogout} aria-label="Cerrar sesión">
       Cerrar Sesión
-    </button>
+    </ButtonLink>
   );
 };
 

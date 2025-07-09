@@ -1,168 +1,154 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import TextArea from "../../components/TextArea";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import Heading from "../../components/Heading";
+import { Box, Stack } from "../../components/LayoutUtilities";
 
 const AddShippingPage = ({ onCreated, onCancel }) => {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [active, setActive] = useState(true);
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    estimated_days: "",
+    active: true,
+  });
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSuccess("");
     setError("");
-    setSuccess(false);
-
-    if (!name.trim()) {
-      setError("El nombre es obligatorio.");
-      return;
-    }
-    if (price === "" || isNaN(price) || Number(price) <= 0) {
-      setError("El precio debe ser un número mayor a 0.");
-      return;
-    }
-
-    const { error: insertError } = await supabase.from("shipping").insert([
+    const { error } = await supabase.from("shipping").insert([
       {
-        name: name.trim(),
-        price: Number(price),
-        active,
+        name: form.name,
+        description: form.description,
+        price: Number(form.price),
+        estimated_days: Number(form.estimated_days),
+        active: form.active,
       },
     ]);
-
-    if (insertError) {
-      setError("Error al crear el tipo de envío: " + insertError.message);
+    if (error) {
+      setError("Error al crear el método de envío: " + error.message);
     } else {
-      setSuccess(true);
-      setName("");
-      setPrice("");
-      setActive(true);
+      setSuccess("Método de envío creado correctamente.");
+      setTimeout(() => navigate("/admin/shippings"), 1200);
+      setForm({
+        name: "",
+        description: "",
+        price: "",
+        estimated_days: "",
+        active: true,
+      });
       if (onCreated) onCreated();
     }
   };
 
   return (
-    <div>
-      <style>{`
-        .add-panel {
-          background: #f8f6ff;
-          border: 1px solid #d1c4e9;
-          border-radius: 12px;
-          padding: 28px 24px 24px 24px;
-          min-width: 320px;
-          max-width: 420px;
-          box-shadow: 0 2px 12px #ede7f6;
-          font-size: 16px;
-          color: #3a2e5c;
-          margin-bottom: 16px;
-          animation: fadeInDetail 0.3s;
-        }
-        .add-panel h2 {
-          color: #5e35b1;
-          margin-top: 0;
-          margin-bottom: 18px;
-          font-size: 1.3em;
-        }
-        .add-panel label {
-          display: block;
-          margin: 10px 0 4px 0;
-          font-weight: 500;
-        }
-        .add-panel input[type="text"],
-        .add-panel input[type="number"] {
-          width: 100%;
-          padding: 8px 10px;
-          border-radius: 6px;
-          border: 1px solid #d1c4e9;
-          font-size: 15px;
-          margin-bottom: 8px;
-        }
-        .add-panel input[type="checkbox"] {
-          accent-color: #5e35b1;
-        }
-        .add-panel .panel-actions {
-          display: flex;
-          gap: 12px;
-          margin-top: 10px;
-        }
-        .add-panel button {
-          background: #5e35b1;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          padding: 8px 18px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .add-panel button[type="button"] {
-          background: #ede7f6;
-          color: #5e35b1;
-        }
-        .add-panel button[type="button"]:hover {
-          background: #d1c4e9;
-        }
-        .add-panel button[type="submit"]:hover {
-          background: #7e57c2;
-        }
-        .add-panel .error {
-          color: #e53935;
-          margin-top: 8px;
-        }
-        .add-panel .success {
-          color: #43a047;
-          margin-top: 8px;
-        }
-      `}</style>
+    <Stack gap={24}>
+      {" "}
+      <Breadcrumbs
+        items={[
+          { label: "Envíos", onClick: () => navigate("/admin/shippings") },
+          {
+            label: `Envío`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
       <div className="add-panel">
-        <h2>Crear tipo de envío</h2>
+        <Heading as="h2">Crear método de envío</Heading>
         <form onSubmit={handleSubmit}>
-          <label>
-            Nombre:
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+          <Stack gap={16}>
+            <label>
+              Nombre:
+              <input
+                type="text"
+                name="name"
+                placeholder="Nombre"
+                value={form.name}
+                onChange={handleChange}
+                required
+                autoFocus
+              />
+            </label>
+
+            <TextArea
+              name="description"
+              label="Descripción"
+              value={form.description}
+              onChange={handleChange}
               required
-              autoFocus
             />
-          </label>
-          <label>
-            Precio (€):
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={price}
-              onChange={(e) => {
-                // No permitir valores negativos
-                const val = e.target.value;
-                if (val === "" || Number(val) >= 0) setPrice(val);
+            <label>
+              Precio (€):
+              <input
+                type="number"
+                name="price"
+                placeholder="Precio"
+                value={form.price}
+                onChange={handleChange}
+                required
+                min="0"
+                step="0.01"
+              />
+            </label>
+            <label>
+              Días estimados:
+              <input
+                type="number"
+                name="estimated_days"
+                placeholder="Días estimados"
+                value={form.estimated_days}
+                onChange={handleChange}
+                required
+                min="0"
+              />
+            </label>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginTop: 10,
               }}
-              required
-            />
-          </label>
-          <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
-            <input
-              type="checkbox"
-              checked={active}
-              onChange={(e) => setActive(e.target.checked)}
-            />
-            Activo
-          </label>
-          <div className="panel-actions">
-            <button type="submit">Crear</button>
-            {onCancel && (
-              <button type="button" onClick={onCancel}>
-                Cancelar
-              </button>
-            )}
-          </div>
-          {error && <div className="error">{error}</div>}
-          {success && <div className="success">¡Tipo de envío creado!</div>}
+            >
+              <input
+                type="checkbox"
+                name="active"
+                checked={form.active}
+                onChange={handleChange}
+              />
+              Activo
+            </label>
+            <div className="panel-actions">
+              <ButtonPrimary type="submit">
+                Guardar nuevo método de envío
+              </ButtonPrimary>
+              {onCancel && (
+                <ButtonSecondary aria-label={`Cancel`} onClick={onCancel}>
+                  Cancelar
+                </ButtonSecondary>
+              )}
+            </div>
+            {error && <div className="error">{error}</div>}
+            {success && <div className="success">{success}</div>}
+          </Stack>
         </form>
       </div>
-    </div>
+    </Stack>
   );
 };
 
