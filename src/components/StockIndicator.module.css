@@ -1,0 +1,78 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.pulseDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.pulseDot::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  animation: pulse 3s ease-in-out infinite;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.ok {
+  background-color: var(--green-50);
+}
+
+.ok::before {
+  background-color: var(--green-50);
+}
+
+.low {
+  background-color: var(--orange50);
+}
+
+.low::before {
+  background-color: var(--orange50);
+}
+
+.none {
+  background-color: var(--red50);
+}
+
+.none::before {
+  background-color: var(--red50);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  70% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.label {
+  line-height: 1.2;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .pulseDot::before {
+    animation: none;
+  }
+}

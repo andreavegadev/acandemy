@@ -8,6 +8,7 @@ export const Counter = ({
   max = Infinity,
   id,
   name,
+  fullWidth,
 }) => {
   const handleChange = (e) => {
     const val = parseInt(e.target.value, 10);
@@ -24,8 +25,12 @@ export const Counter = ({
     if (value < max) onChange(value + 1);
   };
 
+  const counterStyles = `${styles.counter} ${
+    fullWidth ? styles.fullWidth : ""
+  }`;
+
   return (
-    <div className={styles.counter}>
+    <div className={counterStyles}>
       <button
         type="button"
         onClick={decrease}

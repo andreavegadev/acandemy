@@ -86,7 +86,7 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
             </ul>
           </Stack>
         )}
-        <Inline gap={8} justify="space-between" fullWidth>
+        <Inline gap={8} justify="space-between" fullWidth align="center">
           <Counter
             id={`quantity-${item.cartLineId}`}
             name="quantity"
@@ -126,14 +126,14 @@ const CartPage = () => {
 
   const relatedProductsHeadingId = useId();
 
-const {
-  getProductQuantityInCart,
-  isProductOutOfStockOrMaxedInCart,
-  handleAddToCart,
-} = useProductCardActions({
-  setToastMessage,
-  setShowToast,
-});
+  const {
+    getProductQuantityInCart,
+    isProductOutOfStockOrMaxedInCart,
+    handleAddToCart,
+  } = useProductCardActions({
+    setToastMessage,
+    setShowToast,
+  });
   // Calcula el total sumando producto base y personalizaciones
   const getTotal = () => {
     return cart.reduce((acc, item) => {

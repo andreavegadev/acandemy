@@ -9,9 +9,10 @@ import Price from "../../components/Price";
 import { Box, Stack } from "../../components/LayoutUtilities";
 import ResponsiveLayout from "../../components/ResponsiveLayout";
 import Select from "../../components/Select";
-import Input from "../../components/Input";
 import { ButtonPrimary } from "../../components/Button";
 import { Counter } from "../../components/Counter";
+import { Inline } from "../../components/LayoutUtilities";
+import { StockIndicator } from "../../components/StockIndicator";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -194,7 +195,7 @@ const ProductDetailPage = () => {
           >
             <ImagePreview images={product.product_images} />
 
-            <div>
+            <Stack gap={16}>
               <Heading>{product.name}</Heading>
               <Price amount={totalPrice} />
               {product.short_description && <p>{product.short_description}</p>}
@@ -236,35 +237,27 @@ const ProductDetailPage = () => {
                 </div>
               )}
               <div>
+                <StockIndicator stock={product.stock} />
+              </div>
+              <div className={styles.actions}>
                 <Counter
                   value={quantity}
                   onChange={setQuantity}
                   min={1}
                   max={product.stock}
+                  fullWidth
                 />
-
-                <div
-                  style={{
-                    marginLeft: 2,
-                    fontStyle: "italic",
-                    fontSize: "0.85em",
-                    color: "#7e57c2",
-                    marginTop: 4,
-                  }}
+                <ButtonPrimary
+                  onClick={handleAddToCart}
+                  disabled={product.stock === 0}
+                  aria-label={`Añadir ${product.name} al carrito`}
+                  fullWidth
+                  forceDesktopFullWidth
                 >
-                  (Stock disponible: {product.stock})
-                </div>
+                  Añadir al carrito
+                </ButtonPrimary>
               </div>
-
-              <ButtonPrimary
-                onClick={handleAddToCart}
-                disabled={product.stock === 0}
-                aria-label={`Añadir ${product.name} al carrito`}
-                fullWidth
-              >
-                Añadir al carrito
-              </ButtonPrimary>
-            </div>
+            </Stack>
           </section>
           <hr></hr>
           <section
