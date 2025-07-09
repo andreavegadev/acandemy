@@ -35,10 +35,8 @@ const ProductListPage = () => {
 
   const advancedFilterId = useId();
 
-  const { addToCart, cart } = useCart();
 
   const {
-    getProductQuantityInCart,
     isProductOutOfStockOrMaxedInCart,
     handleAddToCart,
   } = useProductCardActions({
@@ -50,7 +48,7 @@ const ProductListPage = () => {
     const fetchCategories = async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name")
+        .select("id, name, icon")
         .order("name", { ascending: true });
 
       if (error) {
@@ -173,12 +171,13 @@ const ProductListPage = () => {
 
           {/* Filtros */}
           <Stack gap={16}>
-            <Inline justify="space-between" wrap fullWidth>
+            <Inline justify="space-between" wrap fullWidth align="center">
               <HorizontalScroll>
                 <Inline>
                   {categories.map((cat) => (
                     <Chip
                       key={cat.id ?? "todos"}
+                      asset={cat.icon ? cat.icon : null}
                       label={cat.name}
                       onClick={() => {
                         if (cat.name === "Todos") {
