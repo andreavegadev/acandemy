@@ -1,4 +1,4 @@
-import React from "react";
+import Heading from "../../components/Heading";
 import { ButtonSecondary } from "../../components/Button";
 
 const PetDetailPanel = ({ pet, onClose, onEdit }) => {
@@ -103,7 +103,7 @@ const PetDetailPanel = ({ pet, onClose, onEdit }) => {
           alt={pet.name}
           className="pet-img"
         />
-        <h3>{pet.name}</h3>
+        <Heading as="h3">{pet.name}</Heading>
         <p>
           <b>Especie:</b> {pet.species}
         </p>

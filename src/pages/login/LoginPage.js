@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import "../../styles/AuthPages.css";
 import { ButtonLink, ButtonPrimary } from "../../components/Button";
+import Heading from "../../components/Heading";
+import ResponsiveLayout from "../../components/ResponsiveLayout";
+import { Box, Stack } from "../../components/LayoutUtilities";
+import Input from "../../components/Input";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -36,48 +39,64 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="auth-bg">
-      <div className="auth-page">
-        <h1>Iniciar sesión</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <ButtonPrimary type="submit" aria-label={`Iniciar sesión con correo`}>
-            Iniciar Sesión
-          </ButtonPrimary>
-        </form>
-        {error && <p className="error">{error}</p>}
-        <div className="links">
-          <p>
-            <ButtonLink
-              href={`/forgot-password`}
-              aria-label={`¿Olvisate tu contraseña?`}
-            >
-              ¿Olvidaste tu contraseña?
-            </ButtonLink>
-          </p>
-          <p>
-            <ButtonPrimary href={`/register`} aria-label={`Registrase`}>
-              Registrarse
-            </ButtonPrimary>
-          </p>
-        </div>
-      </div>
-    </div>
+    <ResponsiveLayout contentWidth="narrow">
+      <Box paddingY={48}>
+        <Stack gap={24}>
+          <Heading>Iniciar sesión</Heading>
+          <form onSubmit={handleSubmit}>
+            <Stack gap={16}>
+              <Input
+                type="email"
+                name="email"
+                label="Correo electrónico"
+                value={formData.email}
+                onChange={handleChange}
+                autoComplete
+                required
+              />
+              <Input
+                type="password"
+                name="password"
+                label="Contraseña"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+
+              <ButtonPrimary
+                type="submit"
+                aria-label={`Iniciar sesión con correo`}
+                fullWidth
+              >
+                Iniciar Sesión
+              </ButtonPrimary>
+            </Stack>
+          </form>
+          {error && <p className="error">{error}</p>}
+          <div className="links">
+            <p>
+              <ButtonLink
+                bleedLeft
+                href={`/forgot-password`}
+                aria-label={`¿Olvisate tu contraseña?`}
+              >
+                ¿Olvidaste tu contraseña?
+              </ButtonLink>
+            </p>
+            <p>¿No tienes una cuenta? Registrate en un minuto.</p>
+            <p>
+              <ButtonPrimary
+                href={`/register`}
+                aria-label={`Registrase`}
+                fullWidth
+              >
+                Registrarse
+              </ButtonPrimary>
+            </p>
+          </div>
+        </Stack>
+      </Box>
+    </ResponsiveLayout>
   );
 };
 

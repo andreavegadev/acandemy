@@ -1,10 +1,11 @@
 import { ButtonLink } from "../components/Button";
+import Heading from "../components/Heading";
 
 const ErrorPage = () => {
   return (
     <div className="error-page-container">
-      <h1>404</h1>
-      <h2>Página no encontrada</h2>
+      <Heading>404</Heading>
+      <Heading as="h2">Página no encontrada</Heading>
       <p>Lo sentimos, la página que estás buscando no existe.</p>
       <ButtonLink href={`/`} aria-label={`Volver al inicio`}>
         Volver al Inicio

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./HomePage.module.css";
 import { supabase } from "../supabaseClient";
+import useProductCardActions from "../hooks/useProductCartActions";
 import ProductCard from "../components/ProductCard";
 import ValueCard from "../components/ValueCard";
 import "../styles/Common.css";
@@ -13,26 +14,39 @@ import {
 import ResponsiveLayout from "../components/ResponsiveLayout";
 import Heading from "../components/Heading";
 import Carousel from "../components/Carousel";
+import Hero from "../components/Hero";
+import Toast from "../components/Toast";
+import { ButtonPrimary } from "../components/Button";
+import Tag from "../components/Tag";
 
 const HomePage = () => {
   const [featuredCategories, setFeaturedCategories] = useState([]);
   const [values, setValues] = useState([]);
   const [categoriesWithProducts, setCategoriesWithProducts] = useState([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
+  const {
+    getProductQuantityInCart,
+    isProductOutOfStockOrMaxedInCart,
+    handleAddToCart,
+  } = useProductCardActions({
+    setToastMessage,
+    setShowToast,
+  });
+
+  // 🔁 Fetch Data
   useEffect(() => {
     const fetchData = async () => {
-      // Categorías destacadas
-      const { data: categoriesData, error: categoriesError } = await supabase
-        .from("categories")
-        .select("id, name, description, icon")
-        .eq("featured", true);
+      try {
+        // Fetch featured categories
+        const { data: categoriesData, error: categoriesError } = await supabase
+          .from("categories")
+          .select("id, name, description, icon")
+          .eq("featured", true);
 
-      if (categoriesError) {
-        console.error(
-          "Error al obtener las categorías destacadas:",
-          categoriesError.message
-        );
-      } else {
+        if (categoriesError) throw categoriesError;
+
         setFeaturedCategories(
           categoriesData.map((category) => ({
             icon: category.icon,
@@ -43,16 +57,14 @@ const HomePage = () => {
             name: category.name,
           }))
         );
-      }
 
-      // Valores
-      const { data: valuesData, error: valuesError } = await supabase
-        .from("values")
-        .select("id, title, description, icon");
+        // Fetch values
+        const { data: valuesData, error: valuesError } = await supabase
+          .from("values")
+          .select("id, title, description, icon");
 
-      if (valuesError) {
-        console.error("Error al obtener los valores:", valuesError.message);
-      } else {
+        if (valuesError) throw valuesError;
+
         setValues(
           valuesData.map((value) => ({
             icon: value.icon,
@@ -60,71 +72,101 @@ const HomePage = () => {
             subtitle: value.description,
           }))
         );
-      }
 
-      // Todas las categorías para la sección de productos por categoría
-      const { data: allCategories, error: allCategoriesError } = await supabase
-        .from("categories")
-        .select("id, name");
+        // Fetch all categories
+        const { data: allCategories, error: allCategoriesError } =
+          await supabase.from("categories").select("id, name");
 
-      if (allCategoriesError) {
-        console.error(
-          "Error al obtener todas las categorías:",
-          allCategoriesError.message
-        );
-        setCategoriesWithProducts([]);
-      } else {
-        // Para cada categoría, obtener los últimos 5 productos
+        if (allCategoriesError) throw allCategoriesError;
+
         const categoriesWithProds = await Promise.all(
           allCategories.map(async (cat) => {
             const { data: products, error: productsError } = await supabase
               .from("products")
-              .select("id, name, description, price, photo_url")
+              .select(
+                "id, name, description, price, product_images, stock, order_customized, category_id"
+              )
               .eq("category_id", cat.id)
               .order("created_at", { ascending: false })
               .limit(5);
 
-            if (productsError) {
-              return { ...cat, products: [] };
-            }
+            if (productsError) return { ...cat, products: [] };
             return { ...cat, products };
           })
         );
+
         setCategoriesWithProducts(categoriesWithProds);
+      } catch (error) {
+        console.error("Error loading homepage data:", error.message);
       }
     };
 
     fetchData();
   }, []);
 
-  const ProductCategories = ({ label, href, asset }) => {
+  // 🧠 Render button based on product
+  const renderPrimaryAction = (product) => {
+    const disabled = isProductOutOfStockOrMaxedInCart(product);
+
+    if (product.order_customized) {
+      return (
+        <ButtonPrimary
+          small
+          disabled={disabled}
+          onClick={() =>
+            (window.location.href = `/product/${encodeURIComponent(
+              product.name
+            )}`)
+          }
+          aria-label={`Personalizar ${product.name}`}
+        >
+          Personalizar
+        </ButtonPrimary>
+      );
+    }
+
     return (
-      <a href={href} className={styles.categoryContainer}>
-        <div className={styles.categoryIcon}>{asset} </div>
-        <span className={styles.categoryLabel}>{label}</span>
-      </a>
+      <ButtonPrimary
+        small
+        disabled={disabled}
+        onClick={() => handleAddToCart(product)}
+        aria-label={`Añadir ${product.name} al carrito`}
+      >
+        Añadir al Carrito
+      </ButtonPrimary>
     );
   };
 
+  // 📦 UI
   return (
-    <ResponsiveLayout>
-      <Box paddingY={48}>
-        <div className="home-page">
+    <Box paddingY={48}>
+      <div className="home-page">
+        <ResponsiveLayout>
           <section className="featured-section">
             <HorizontalScroll className={styles.categoriesScroll}>
               <Inline justify="center" gap={16} fullWidth>
                 {featuredCategories.map((category, index) => (
-                  <ProductCategories
+                  <a
                     key={index}
-                    label={category.name}
                     href={category.link}
-                    asset={category.icon}
-                  />
+                    className={styles.categoryContainer}
+                  >
+                    <div className={styles.categoryIcon}>{category.icon}</div>
+                    <span className={styles.categoryLabel}>
+                      {category.name}
+                    </span>
+                  </a>
                 ))}
               </Inline>
             </HorizontalScroll>
           </section>
+        </ResponsiveLayout>
 
+        <section className="hero-section">
+          <Hero />
+        </section>
+
+        <ResponsiveLayout>
           <section className="categories-products-section">
             <Stack gap={48}>
               {categoriesWithProducts.map((cat) => {
@@ -143,10 +185,20 @@ const HomePage = () => {
                           <ProductCard
                             key={product.id}
                             id={product.id}
+                            tag={
+                              product.stock === 0 ||
+                              getProductQuantityInCart(product) ===
+                                product.stock ? (
+                                <Tag type="warning">Agotado</Tag>
+                              ) : null
+                            }
                             title={product.name}
                             description={product.description}
                             price={product.price}
-                            image={product.photo_url}
+                            image={product.product_images[0]?.src}
+                            stock={product.stock}
+                            customized={product.order_customized}
+                            primaryAction={renderPrimaryAction(product)}
                             linkDetails={`/product/${encodeURIComponent(
                               product.name
                             )}`}
@@ -159,9 +211,11 @@ const HomePage = () => {
               })}
             </Stack>
           </section>
+        </ResponsiveLayout>
 
+        <ResponsiveLayout>
           <section className="values-section">
-            <h2>¿Por qué escoger Acandemy?</h2>
+            <Heading as="h2">¿Por qué escoger Acandemy?</Heading>
             <div className="values-cards">
               {values.map((value, index) => (
                 <ValueCard
@@ -173,9 +227,20 @@ const HomePage = () => {
               ))}
             </div>
           </section>
-        </div>
-      </Box>
-    </ResponsiveLayout>
+
+          {showToast && (
+            <Toast
+              message={toastMessage}
+              action={{
+                label: "Ver carrito",
+                href: "/cart",
+              }}
+              onClose={() => setShowToast(false)}
+            />
+          )}
+        </ResponsiveLayout>
+      </div>
+    </Box>
   );
 };
 

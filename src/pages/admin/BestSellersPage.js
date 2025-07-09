@@ -18,11 +18,11 @@ const BestSellersPage = ({ type }) => {
 
   return (
     <div>
-      <h2>
+      <Heading as="h2">
         {type === "best"
           ? "Productos más vendidos"
           : "Productos menos vendidos"}
-      </h2>
+      </Heading>
       <ul>
         {products.map((p) => (
           <li key={p.id}>

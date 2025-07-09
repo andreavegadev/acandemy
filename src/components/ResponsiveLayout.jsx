@@ -1,7 +1,10 @@
 import styles from "./ResponsiveLayout.module.css";
 
-const ResponsiveLayout = ({ children }) => {
-  return <div className={styles.container}>{children}</div>;
+const ResponsiveLayout = ({ children, contentWidth }) => {
+  const containerStyle = `${styles.container} ${
+    contentWidth === "narrow" ? styles.narrow : ""
+  }`;
+  return <div className={containerStyle}>{children}</div>;
 };
 
 export default ResponsiveLayout;

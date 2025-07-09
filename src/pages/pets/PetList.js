@@ -4,6 +4,8 @@ import { supabase } from "../../supabaseClient";
 import "../../styles/PetList.css";
 import PetDetailPanel from "./PetDetailPanel";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import Heading from "../../components/Heading";
+import Select from "../../components/Select";
 
 const PetList = () => {
   const [pets, setPets] = useState([]);
@@ -74,6 +76,7 @@ const PetList = () => {
 
   return (
     <div className="pet-list-container">
+      <Heading>Mis mascotas</Heading>
       <style>{`
         .add-pet-btn {
           background: #5e35b1;
@@ -133,21 +136,20 @@ const PetList = () => {
           justify-content: flex-end;
         }
       `}</style>
-      <h2>Mis mascotas</h2>
       <div className="pet-list-grid">
         {pets.map((pet) => (
           <div
             className="pet-card"
             key={pet.id}
-            onClick={() => navigate(`/pets/${pet.id}`)} // Para ver o editar
+            onClick={() => navigate(`/profile/pets/${pet.id}`)} // Para ver o editar
           >
             <img
-              src={pet.photo_url || "/img/pet-placeholder.png"}
+              src={"/img/pet-placeholder.png"}
               alt={pet.name}
               className="pet-card-img"
             />
             <div className="pet-card-info">
-              <h3>{pet.name}</h3>
+              <Heading as="h3">{pet.name}</Heading>
               <p>
                 {pet.species} {pet.breed && `- ${pet.breed}`}
               </p>
@@ -160,12 +162,7 @@ const PetList = () => {
           </div>
         ))}
       </div>
-      <ButtonPrimary
-        onClick={handleOpenModal}
-        aria-label={`Añadir nueva mascota`}
-      >
-        +
-      </ButtonPrimary>
+      <ButtonPrimary href={`/profile/pets/add`}>+</ButtonPrimary>
       {showModal && (
         <div className="pet-modal-bg" onClick={handleCloseModal}>
           <form
@@ -173,7 +170,7 @@ const PetList = () => {
             onClick={(e) => e.stopPropagation()}
             onSubmit={handleAddPet}
           >
-            <h3>Añadir Mascota</h3>
+            <Heading as="h3">Añadir Mascota</Heading>
             <label>Nombre</label>
             <input
               name="name"
@@ -183,19 +180,19 @@ const PetList = () => {
               maxLength={40}
               autoFocus
             />
-            <label>Especie</label>
-            <select
+            <Select
               name="species"
+              label={`Especie`}
               value={form.species}
               onChange={handleChange}
               required
-            >
-              <option value="">Selecciona especie</option>
-              <option value="perro">Perro</option>
-              <option value="gato">Gato</option>
-              <option value="ave">Ave</option>
-              {/* Agrega aquí los valores reales de tu enum */}
-            </select>
+              options={[
+                { value: "", label: "Selecciona especie" },
+                { value: "perro", label: "Perro" },
+                { value: "gato", label: "Gato" },
+                { value: "ave", label: "Ave" },
+              ]}
+            />
             <label>Raza</label>
             <input
               name="breed"
@@ -220,7 +217,6 @@ const PetList = () => {
           onClose={() => setShowDetail(false)}
           onSave={() => {
             setShowDetail(false);
-            // Recarga la lista de mascotas aquí si quieres
           }}
         />
       )}

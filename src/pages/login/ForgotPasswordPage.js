@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { ButtonLink, ButtonPrimary } from "../../components/Button";
+import Heading from "../../components/Heading";
+import ResponsiveLayout from "../../components/ResponsiveLayout";
+import { Box, Stack } from "../../components/LayoutUtilities";
+import Input from "../../components/Input";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -31,34 +35,45 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="forgot-password-container">
-      <h2>Recuperar Contraseña</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo Electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <ButtonPrimary
-          type="submit"
-          aria-label={`Enviar enlace de recuperación de contraseña`}
-        >
-          Enviar Enlace de Recuperación
-        </ButtonPrimary>
-      </form>
-      {message && <p className="success">{message}</p>}
-      {error && <p className="error">{error}</p>}
-      <div className="links">
-        <p>
-          <ButtonLink href={`/login`} aria-label={`Volver a iniciar sesión`}>
-            Volver a Iniciar Sesión
-          </ButtonLink>
-        </p>
-      </div>
-    </div>
+    <ResponsiveLayout contentWidth="narrow">
+      <Box paddingY={48}>
+        <Stack gap={24}>
+          <Heading as="h2">Recuperar Contraseña</Heading>
+          <form onSubmit={handleSubmit}>
+            <Stack gap={16}>
+              <Input
+                type="email"
+                name="email"
+                label="Correo Electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <ButtonPrimary
+                type="submit"
+                aria-label={`Enviar enlace de recuperación de contraseña`}
+                fullWidth
+              >
+                Enviar Enlace de Recuperación
+              </ButtonPrimary>
+            </Stack>
+          </form>
+          {message && <p className="success">{message}</p>}
+          {error && <p className="error">{error}</p>}
+          <div className="links">
+            <p>
+              <ButtonLink
+                href={`/login`}
+                aria-label={`Volver a iniciar sesión`}
+                bleedLeft
+              >
+                Volver a inicio de sesión
+              </ButtonLink>
+            </p>
+          </div>
+        </Stack>
+      </Box>
+    </ResponsiveLayout>
   );
 };
 

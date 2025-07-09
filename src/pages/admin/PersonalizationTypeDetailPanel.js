@@ -5,6 +5,7 @@ import {
   ButtonPrimary,
   ButtonSecondary,
 } from "../../components/Button";
+import TextArea from "../../components/TextArea";
 
 const PersonalizationTypeDetailPanel = ({ type, onClose, onReloadTypes }) => {
   const [editMode, setEditMode] = useState(false);
@@ -157,8 +158,7 @@ const PersonalizationTypeDetailPanel = ({ type, onClose, onReloadTypes }) => {
               onChange={handleChange}
               required
             />
-            <label>Descripción:</label>
-            <textarea
+            <TextArea
               name="description"
               value={form.description}
               onChange={handleChange}

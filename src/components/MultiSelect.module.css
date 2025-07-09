@@ -1,0 +1,28 @@
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.label {
+  margin-bottom: 6px;
+}
+
+.multiselect {
+  border: 1.5px var(--neutral50) solid;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1em;
+  transition: border 0.2s;
+  min-height: 80px;
+}
+
+.multiselect:focus {
+  border: 1.5px solid #7e57c2;
+  outline: none;
+}
+
+.error {
+  border-color: #e53935 !important;
+  background: #ffebee;
+}

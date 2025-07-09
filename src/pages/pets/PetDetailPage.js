@@ -2,39 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "../../styles/PetDetailPage.css";
-import {
-  ButtonDanger,
-  ButtonPrimary,
-  ButtonSecondary,
-} from "../../components/Button";
-
-const cardStyle = {
-  border: "1px solid #d1c4e9",
-  borderRadius: 16,
-  boxShadow: "0 2px 12px #ede7f6",
-  padding: 32,
-  margin: "40px auto",
-  maxWidth: 500,
-  color: "#3a2e5c",
-};
-
-const fieldStyle = {
-  marginBottom: 12,
-  fontSize: 16,
-};
-
-const labelStyle = {
-  color: "#5e35b1",
-  fontWeight: 600,
-  minWidth: 140,
-  display: "inline-block",
-};
-
-const actionsStyle = {
-  display: "flex",
-  gap: 16,
-  marginTop: 24,
-};
+import Heading from "../../components/Heading";
+import { ButtonDanger, ButtonPrimary } from "../../components/Button";
+import Input from "../../components/Input";
+import Select from "../../components/Select";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   const { id } = useParams(); // Obtiene el ID de la mascota desde la URL
@@ -90,7 +62,10 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "active" ? value === "true" : value,
+    }));
   };
 
   const handleSave = async () => {
@@ -144,122 +119,100 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
   }
 
   return (
-    <div style={cardStyle}>
-      <div>
-        <ButtonSecondary href={`/profile`} aria-label="Volver a mi perfil">
-          Volver
-        </ButtonSecondary>
-      </div>
-      <h2 style={{ color: "#5e35b1", marginBottom: 24 }}>
-        Detalles de la Mascota
-      </h2>
+    <>
+      <Breadcrumbs
+        items={[
+          { label: "Mis mascotas", href: "/profile/pets" },
+          {
+            label: `${pet.name || "Nueva Mascota"}`,
+            current: true,
+          },
+        ]}
+      />
+      <Heading as="h2">
+        {isEditing
+          ? `Editar mascota${formData.name ? `: ${formData.name}` : ""}`
+          : `Detalles de${pet?.name ? ` ${pet.name}` : ""}`}
+      </Heading>
       {isEditing ? (
         <form className="pet-detail-form">
+          <Input
+            type="text"
+            id="name"
+            name="name"
+            label="Nombre"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            type="text"
+            id="species"
+            name="species"
+            label="Especie"
+            value={formData.species}
+            onChange={handleInputChange}
+          />
+          <Input
+            type="text"
+            id="breed"
+            name="breed"
+            label="Raza"
+            value={formData.breed}
+            onChange={handleInputChange}
+          />
+          <Input
+            type="date"
+            id="birth_date"
+            name="birth_date"
+            label="Fecha de Nacimiento"
+            value={formData.birth_date}
+            onChange={handleInputChange}
+            style={{ width: "100%" }}
+          />
+          <Input
+            type="number"
+            id="neck_size"
+            name="neck_size"
+            label="Medida del Cuello (cm)"
+            value={formData.neck_size}
+            onChange={handleInputChange}
+            step="0.01"
+            style={{ width: "100%" }}
+          />
+          <Input
+            type="number"
+            id="chest_size"
+            name="chest_size"
+            label="Medida del Pecho (cm)"
+            value={formData.chest_size}
+            onChange={handleInputChange}
+            step="0.01"
+          />
+
+          <Input
+            type="number"
+            id="weight"
+            name="weight"
+            label="Peso (kg)"
+            value={formData.weight}
+            onChange={handleInputChange}
+            step="0.01"
+          />
+
+          <Select
+            id="active"
+            name="active"
+            label="Estado"
+            value={formData.active}
+            onChange={handleInputChange}
+            options={[
+              { value: true, label: "Activo" },
+              { value: false, label: "Inactivo" },
+            ]}
+          />
+
           <div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="name">
-                Nombre:
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="species">
-                Especie:
-              </label>
-              <input
-                type="text"
-                id="species"
-                name="species"
-                value={formData.species}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="breed">
-                Raza:
-              </label>
-              <input
-                type="text"
-                id="breed"
-                name="breed"
-                value={formData.breed}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="birth_date">
-                Fecha de Nacimiento:
-              </label>
-              <input
-                type="date"
-                id="birth_date"
-                name="birth_date"
-                value={formData.birth_date}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="neck_size">
-                Medida del Cuello (cm):
-              </label>
-              <input
-                type="number"
-                id="neck_size"
-                name="neck_size"
-                value={formData.neck_size}
-                onChange={handleInputChange}
-                step="0.01"
-              />
-            </div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="chest_size">
-                Medida del Pecho (cm):
-              </label>
-              <input
-                type="number"
-                id="chest_size"
-                name="chest_size"
-                value={formData.chest_size}
-                onChange={handleInputChange}
-                step="0.01"
-              />
-            </div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="weight">
-                Peso (kg):
-              </label>
-              <input
-                type="number"
-                id="weight"
-                name="weight"
-                value={formData.weight}
-                onChange={handleInputChange}
-                step="0.01"
-              />
-            </div>
-            <div style={fieldStyle}>
-              <label style={labelStyle} htmlFor="active">
-                Estado:
-              </label>
-              <select
-                id="active"
-                name="active"
-                value={formData.active}
-                onChange={handleInputChange}
-              >
-                <option value={true}>Activo</option>
-                <option value={false}>Inactivo</option>
-              </select>
-            </div>
-          </div>
-          <div style={actionsStyle}>
             <ButtonPrimary
               onClick={handleSave}
               aria-label={`Guardar cambios de mascota ${pet.name}`}
@@ -275,58 +228,67 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
           </div>
         </form>
       ) : (
-        <div>
+        <form className="pet-detail-form" style={{ marginBottom: 0 }}>
+          <Input
+            type="text"
+            label="Nombre"
+            value={pet.name}
+            readOnly
+            style={{ marginBottom: 12 }}
+          />
+          <Input
+            type="text"
+            label="Especie"
+            value={pet.species}
+            readOnly
+            style={{ marginBottom: 12 }}
+          />
+          <Input
+            type="text"
+            label="Raza"
+            value={pet.breed || "Sin raza"}
+            readOnly
+            style={{ marginBottom: 12 }}
+          />
+          <Input
+            type="text"
+            label="Fecha de nacimiento"
+            value={pet.birth_date || "No especificada"}
+            readOnly
+            style={{ marginBottom: 12 }}
+          />
+          <Input
+            type="text"
+            label="Medida del cuello (cm)"
+            value={pet.neck_size ? `${pet.neck_size} cm` : "No especificada"}
+            readOnly
+            style={{ marginBottom: 12 }}
+          />
+          <Input
+            type="text"
+            label="Medida del pecho (cm)"
+            value={pet.chest_size ? `${pet.chest_size} cm` : "No especificada"}
+            readOnly
+            style={{ marginBottom: 12 }}
+          />
+          <Input
+            type="text"
+            label="Peso (kg)"
+            value={pet.weight ? `${pet.weight} kg` : "No especificado"}
+            readOnly
+            style={{ marginBottom: 12 }}
+          />
+          <Select
+            label="Estado"
+            value={pet.active ? "true" : "false"}
+            readOnly
+            options={[
+              { value: "true", label: "Activo" },
+              { value: "false", label: "Inactivo" },
+            ]}
+            style={{ marginBottom: 12 }}
+          />
           <div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Nombre:</strong>
-              </span>{" "}
-              {pet.name}
-            </div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Especie:</strong>
-              </span>{" "}
-              {pet.species}
-            </div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Raza:</strong>
-              </span>{" "}
-              {pet.breed || "Sin raza"}
-            </div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Fecha de nacimiento:</strong>
-              </span>{" "}
-              {pet.birth_date || "No especificada"}
-            </div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Medida del cuello:</strong>
-              </span>{" "}
-              {pet.neck_size ? `${pet.neck_size} cm` : "No especificada"}
-            </div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Medida del pecho:</strong>
-              </span>{" "}
-              {pet.chest_size ? `${pet.chest_size} cm` : "No especificada"}
-            </div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Peso:</strong>
-              </span>{" "}
-              {pet.weight ? `${pet.weight} kg` : "No especificado"}
-            </div>
-            <div style={fieldStyle}>
-              <span style={labelStyle}>
-                <strong>Estado:</strong>
-              </span>{" "}
-              {pet.active ? "Activo" : "Inactivo"}
-            </div>
-          </div>
-          <div style={actionsStyle}>
             <ButtonPrimary
               onClick={() => setIsEditing(true)}
               aria-label={`Editar mascota`}
@@ -334,9 +296,9 @@ const PetDetailPage = ({ pet: initialPet, onClose, onSave }) => {
               Editar Mascota
             </ButtonPrimary>
           </div>
-        </div>
+        </form>
       )}
-    </div>
+    </>
   );
 };
 

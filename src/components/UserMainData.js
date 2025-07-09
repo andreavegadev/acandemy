@@ -1,49 +1,87 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 import { ButtonSecondary } from "./Button";
+import Heading from "./Heading";
 
-const cardStyle = {
-  border: "1px solid #d1c4e9",
-  borderRadius: 16,
-  boxShadow: "0 2px 12px #ede7f6",
-  padding: 24,
-  marginBottom: 24,
-  maxWidth: 400,
+const UserMainData = () => {
+  const [userData, setUserData] = useState({
+    full_name: "",
+    email: "",
+    id_number: "",
+    phone: "",
+  });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+      if (sessionError) {
+        console.error("Error al obtener la sesión:", sessionError.message);
+        return;
+      }
+
+      const userId = sessionData?.session?.user?.id;
+      const email = sessionData?.session?.user?.email;
+
+      if (!userId) {
+        console.error("No se pudo obtener el ID del usuario.");
+        return;
+      }
+
+      setUserData((prev) => ({ ...prev, email }));
+
+      const { data: userData, error: userDataError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (userDataError) {
+        console.error(
+          "Error al obtener los datos del usuario:",
+          userDataError.message
+        );
+      } else {
+        setUserData((prev) => ({
+          ...prev,
+          full_name: userData.full_name,
+          id_number: userData.id_number,
+          phone: userData.phone,
+        }));
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const onViewAllUserData = () => {
+    navigate("/profile/all-data");
+  };
+
+  return (
+    <div>
+      <Heading as="h2">Datos principales</Heading>
+      <p>
+        <span>Nombre:</span> {userData.full_name}
+      </p>
+      <p>
+        <span>Documento de identidad:</span>{" "}
+        {userData.id_number || "No proporcionado"}
+      </p>
+      <p>
+        <span>Email:</span> {userData.email}
+      </p>
+      <p>
+        <span>Teléfono:</span> {userData.phone || "No proporcionado"}
+      </p>
+      <ButtonSecondary onClick={onViewAllUserData}>
+        Ver todos mis datos
+      </ButtonSecondary>
+    </div>
+  );
 };
-
-const titleStyle = {
-  color: "#5e35b1",
-  marginBottom: 16,
-  fontSize: "1.2em",
-  fontWeight: 600,
-};
-
-const labelStyle = {
-  fontWeight: 500,
-  color: "#5e35b1",
-  minWidth: 120,
-  display: "inline-block",
-};
-
-const UserMainData = ({ user, onViewAllUserData }) => (
-  <div style={cardStyle}>
-    <h2 style={titleStyle}>Datos principales</h2>
-    <p>
-      <span style={labelStyle}>Nombre:</span> {user.full_name}
-    </p>
-    <p>
-      <span style={labelStyle}>Documento de identidad:</span>{" "}
-      {user.id_number || "No proporcionado"}
-    </p>
-    <p>
-      <span style={labelStyle}>Email:</span> {user.email}
-    </p>
-    <p>
-      <span style={labelStyle}>Teléfono:</span>{" "}
-      {user.phone || "No proporcionado"}
-    </p>
-    <ButtonSecondary onClick={onViewAllUserData}>
-      Ver todos mis datos
-    </ButtonSecondary>
-  </div>
-);
 
 export default UserMainData;

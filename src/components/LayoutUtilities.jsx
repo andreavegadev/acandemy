@@ -1,6 +1,6 @@
 import styles from "./LayoutUtilities.module.css";
 
-export const Stack = ({ children, gap = "0.5rem" }) => {
+export const Stack = ({ children, gap = "0.5rem"}) => {
   const stackStyles = {
     display: "flex",
     flexDirection: "column",

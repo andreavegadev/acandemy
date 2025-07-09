@@ -1,178 +1,64 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { ButtonSecondary } from "../../components/Button";
+import Table from "../../components/Table";
 
-const AdminCategoriesTable = ({ onAddCategory, onCategorySelect }) => {
+const AdminCategoriesTable = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
       let query = supabase
         .from("categories")
-        .select("*", { count: "exact" })
+        .select("*")
         .order("name", { ascending: true });
 
-      if (search.length > 1) {
-        query = query.ilike("name", `%${search}%`);
-      }
-
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
-      const { data, count } = await query.range(from, to);
-
+      const { data } = await query;
       setCategories(data || []);
-      setTotal(count || 0);
       setLoading(false);
     };
     fetchCategories();
-  }, [search, page, pageSize]);
+  }, []);
 
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-
-  const handleClearFilters = () => {
-    setSearch("");
-    setPage(1);
-    setPageSize(10);
+  const onAddCategory = () => {
+    navigate("/admin/categories/add");
   };
+
+  const onCategorySelect = (category) => {
+    if (category && category.id) {
+      navigate(`/admin/categories/${category.id}`);
+    }
+  };
+
+  const categoryFilters = [
+    { key: "name", label: "Buscar nombre", type: "text" },
+    { key: "description", label: "Buscar descripción", type: "text" },
+    {
+      key: "featured",
+      label: "Destacada",
+      type: "select",
+      options: [
+        { value: "true", label: "Sí" },
+        { value: "false", label: "No" },
+      ],
+    },
+  ];
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 12,
-        }}
-      >
-        <h2>Categorías</h2>
-        <ButtonSecondary
-          onClick={onAddCategory}
-          aria-label={`Añadir categoría`}
-        >
-          Añadir categoría
-        </ButtonSecondary>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          gap: 16,
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Buscar categoría"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          style={{ minWidth: 180 }}
-        />
-        <label>
-          Ver&nbsp;
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
-            }}
-          >
-            {[5, 10, 20, 50].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          &nbsp;por página
-        </label>
-        <ButtonSecondary
-          onClick={handleClearFilters}
-          aria-label={`Limpiar filtros`}
-        >
-          Limpiar filtros
-        </ButtonSecondary>
-      </div>
-      <table className="admin-products-table">
-        <thead>
-          <tr>
-            <th>Icono</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Destacada</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={4}>Cargando...</td>
-            </tr>
-          ) : categories.length === 0 ? (
-            <tr>
-              <td colSpan={4}>Sin categorías</td>
-            </tr>
-          ) : (
-            categories.map((cat) => (
-              <tr key={cat.id} onClick={() => onCategorySelect(cat)}>
-                <td>{cat.icon || "-"}</td>
-                <td>{cat.name}</td>
-                <td>{cat.description || "-"}</td>
-                <td>{cat.featured ? "Sí" : "No"}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-      <div
-        style={{
-          marginTop: "1em",
-          display: "flex",
-          alignItems: "center",
-          gap: "1em",
-        }}
-      >
-        <ButtonSecondary
-          aria-label={`Volver a la página anterior`}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          disabled={page === 1}
-        >
-          Anterior
-        </ButtonSecondary>
-        <span>
-          Página {page} de {totalPages}
-        </span>
-        <ButtonSecondary
-          aria-label={`Ir a la siguiente página`}
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          disabled={page === totalPages}
-        >
-          Siguiente
-        </ButtonSecondary>
-        <span>
-          Ir a página:&nbsp;
-          <input
-            type="number"
-            min={1}
-            max={totalPages}
-            value={page}
-            onChange={(e) => {
-              let val = Number(e.target.value);
-              if (val > totalPages) val = totalPages;
-              if (val < 1) val = 1;
-              setPage(val);
-            }}
-            style={{ width: 60 }}
-          />
-        </span>
-      </div>
+      <Table
+        title="Categorías"
+        items={categories}
+        onClick={onCategorySelect}
+        filters={categoryFilters}
+        addItems
+        onClickAdd={onAddCategory}
+      ></Table>
+      {loading && <p>Cargando...</p>}
+      {!loading && categories.length === 0 && <p>Sin categorías</p>}
     </div>
   );
 };

@@ -1,17 +1,17 @@
 import PropTypes from "prop-types";
-import { ButtonLink, ButtonPrimary } from "./Button";
+import { ButtonPrimary } from "./Button";
 
 const PetList = ({ pets, onViewPet, onAddPet }) => {
   return (
     <section>
-      <h2>Mis Mascotas</h2>
+      <Heading as="h2">Mis Mascotas</Heading>
       {pets.length > 0 ? (
         <ul>
           {pets.map((pet) => (
             <li key={pet.id}>
               {pet.name} - {calculateAge(pet.birth_date)} años
               <ButtonPrimary
-                href={`/pets/${pet.Id}`}
+                href={`/profile/pets/${pet.Id}`}
                 aria-label={`Ver detalles de ${pet.name}`}
               >
                 Ver Detalles
@@ -22,9 +22,6 @@ const PetList = ({ pets, onViewPet, onAddPet }) => {
       ) : (
         <p>No tienes mascotas registradas.</p>
       )}
-      <ButtonLink href={`/pets/add`} aria-label={`Àñadir nueva mascota`}>
-        Añadir Mascota
-      </ButtonLink>
     </section>
   );
 };

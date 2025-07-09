@@ -1,11 +1,17 @@
 import styles from "./Chip.module.css";
 
-const Chip = ({ label, active, "aria-label": ariaLabel, onClick }) => {
+const Chip = ({ label, active, "aria-label": ariaLabel, onClick, href }) => {
   const chipStyles = `${styles.container} ${active ? styles.active : ""}`;
   return (
-    <button className={chipStyles} onClick={onClick} aria-label={ariaLabel}>
-      {label}
-    </button>
+    href ? (
+      <a className={chipStyles} href={href} aria-label={ariaLabel}>
+        {label}
+      </a>
+    ) : (
+      <button className={chipStyles} onClick={onClick} aria-label={ariaLabel}>
+        {label}
+      </button>
+    )
   );
 };
 

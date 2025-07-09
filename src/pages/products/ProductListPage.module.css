@@ -1,0 +1,12 @@
+.advancedFilters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .advancedFilters {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

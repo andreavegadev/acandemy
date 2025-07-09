@@ -1,0 +1,118 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 32px 0;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 1rem;
+}
+
+.table th,
+.table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #ece6f7;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.table th {
+  background: linear-gradient(90deg, #f6f2fa 60%, #ede7f6 100%);
+  color: #5e35b1;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  letter-spacing: 0.02em;
+  font-size: 1.05rem;
+}
+
+.table th:hover {
+  background: #e6d8f5;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: #f3eaff;
+  transition: background 0.2s;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filters label {
+  font-size: 0.95rem;
+  color: #6c3eb8;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.filters input,
+.filters select {
+  padding: 8px 12px;
+  border: 1.5px solid #d1c4e9;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #faf7ff;
+  color: #3c1473;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.filters input:focus,
+.filters select:focus {
+  border-color: #a05fd6;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+  .table th,
+  .table td {
+    padding: 10px 8px;
+    font-size: 0.95rem;
+  }
+  .filters {
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 12px;
+    align-items: stretch;
+  }
+  .filters > div {
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  .filters label {
+    margin-bottom: 4px;
+    font-size: 1rem;
+  }
+  .filters input,
+  .filters select {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+  }
+  .tableresponsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Para escritorio, asegúrate de que .table-responsive no afecte */
+.tableresponsive {
+  width: 100%;
+  overflow-x: visible;
+}

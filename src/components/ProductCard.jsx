@@ -1,10 +1,10 @@
 import styles from "./ProductCard.module.css";
-import { useCart } from "../context/CartContext";
 import WishlistButton from "./WishlistButton";
 import { ButtonLink, ButtonPrimary } from "./Button";
 import Price from "./Price";
-
 import { forwardRef } from "react";
+import Tag from "./Tag";
+
 const ProductCard = forwardRef((props, ref) => {
   const {
     id,
@@ -12,21 +12,27 @@ const ProductCard = forwardRef((props, ref) => {
     description,
     price,
     image,
-    stock,
+    tag,
     linkDetails,
     className,
+    primaryAction,
   } = props;
-  const { addToCart } = useCart();
+
+  // Mostrar solo las primeras 15 palabras de la descripción
+  const shortDescription = description
+    ? description.split(" ").slice(0, 15).join(" ") +
+      (description.split(" ").length > 15 ? "..." : "")
+    : "";
 
   const imageObj =
     typeof image === "string"
       ? {
-          src: image,
+          src: image[0]?.src || image,
           alt: title || "Imagen del producto",
           aspectRatio: "4/3",
         }
       : {
-          src: image?.src || "https://picsum.photos/200/300",
+          src: image?.src,
           alt: image?.alt || title || "Imagen del producto",
           aspectRatio: image?.aspectRatio || "4/3",
         };
@@ -35,29 +41,15 @@ const ProductCard = forwardRef((props, ref) => {
   const titleLabel = isTitleObj ? title.label : title;
   const titleLevel = isTitleObj ? title.level : "h3";
 
-  const handleAddToCart = () => {
-    addToCart({
-      id,
-      title: titleLabel,
-      price: Number(price),
-      image: imageObj,
-      quantity: 1,
-      stock,
-      cartLineId: id,
-    });
-  };
+  const TopActions = ({ id }) => (
+    <div className={styles.topActions}>
+      <WishlistButton productId={id} />
+    </div>
+  );
 
-  const TopActions = ({ id }) => {
-    return (
-      <div className={styles.topActions}>
-        <WishlistButton productId={id} />
-      </div>
-    );
-  };
-
-  const CardTitle = ({ children, as: Tag = "h3" }) => {
-    return <Tag className={styles.title}>{children}</Tag>;
-  };
+  const CardTitle = ({ children, as: Tag = "h3" }) => (
+    <Tag className={styles.title}>{children}</Tag>
+  );
 
   return (
     <div className={`${styles.container} ${className}`} ref={ref}>
@@ -69,18 +61,13 @@ const ProductCard = forwardRef((props, ref) => {
           style={{ aspectRatio: imageObj.aspectRatio }}
           className={styles.image}
         />
+        {tag && tag}
         <CardTitle as={titleLevel}>{titleLabel}</CardTitle>
-        <p className={styles.description}>{description}</p>
+        <p className={styles.description}>{shortDescription}</p>
         <Price amount={price} />
       </div>
       <div className={styles.buttonContainer}>
-        <ButtonPrimary
-          small
-          onClick={handleAddToCart}
-          aria-label={`Añadir ${title} al carrito`}
-        >
-          Añadir al Carrito
-        </ButtonPrimary>
+        {primaryAction && primaryAction}
         <ButtonLink
           small
           bleedLeft

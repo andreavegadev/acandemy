@@ -6,7 +6,10 @@ import {
   STATUS_LABELS,
   PAYMENT_LABELS,
 } from "../../constants/order";
+import Input from "../../components/Input";
 import { ButtonSecondary } from "../../components/Button";
+import Price from "../../components/Price";
+import Select from "../../components/Select";
 
 const OrderDetailPanel = ({
   order,
@@ -59,52 +62,6 @@ const OrderDetailPanel = ({
   if (!order) return null;
   return (
     <div>
-      <style>{`
-        .detail-panel {
-          border: 1px solid #d1c4e9;
-          border-radius: 12px;
-          padding: 24px 20px 20px 20px;
-          min-width: 320px;
-          max-width: 420px;
-          min-height: 320px;
-          box-shadow: 0 2px 12px #ede7f6;
-          position: relative;
-          font-size: 16px;
-          color: #3a2e5c;
-          margin-bottom: 16px;
-          animation: fadeInDetail 0.3s;
-        }
-        .detail-panel h3 {
-          margin-top: 0;
-          margin-bottom: 18px;
-          color: #5e35b1;
-          font-size: 1.3em;
-        }
-        .detail-panel p {
-          margin: 8px 0;
-          line-height: 1.5;
-        }
-        .detail-panel table {
-          margin-top: 10px;
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 15px;
-        }
-        .detail-panel th, .detail-panel td {
-          border: 1px solid #d1c4e9;
-          padding: 4px 8px;
-          text-align: left;
-        }
-        .detail-panel th {
-          background: #ede7f6;
-          color: #5e35b1;
-        }
-        
-        @keyframes fadeInDetail {
-          from { opacity: 0; transform: translateY(20px);}
-          to { opacity: 1; transform: translateY(0);}
-        }
-      `}</style>
       <div className="detail-panel">
         <ButtonSecondary
           onClick={onClose}
@@ -114,59 +71,48 @@ const OrderDetailPanel = ({
         </ButtonSecondary>
         <h3>Detalle pedido #{order.id}</h3>
         <p>
-          <b>Usuario:</b>{" "}
-          {order.user ? (
-            <>
-              {order.user.full_name}
-              {order.user.id_number && (
-                <>
-                  <br />
-                  DNI: {order.user.id_number}
-                </>
-              )}
-              {order.user.phone && (
-                <>
-                  <br />
-                  Tel: {order.user.phone}
-                </>
-              )}
-            </>
-          ) : (
-            order.user_id
-          )}
+          <Input
+            type="text"
+            value={
+              order.user
+                ? `${order.user.full_name || ""}${
+                    order.user.id_number ? `\nDNI: ${order.user.id_number}` : ""
+                  }${order.user.phone ? `\nTel: ${order.user.phone}` : ""}`
+                : order.user_id
+            }
+            readOnly
+            label="Usuario"
+          />
         </p>
-        <p>
-          <b>Fecha:</b>{" "}
-          {order.order_date ? new Date(order.order_date).toLocaleString() : "-"}
-        </p>
-        <p>
-          <b>Total:</b> {Number(order.total_amount).toFixed(2)} €
-        </p>
+        <Input
+          type="text"
+          value={
+            order.order_date ? new Date(order.order_date).toLocaleString() : "-"
+          }
+          readOnly
+          label="Fecha de pedido"
+        ></Input>
+        <Input
+          type="text"
+          value={<Price amount={order.total_amount}></Price>}
+          readOnly
+          label="Total:"
+        ></Input>
+
         <p>
           <b>Descuento:</b> {order.discount_id || "-"}
         </p>
         <p>
-          <b>Estado:</b>{" "}
-          <select
+          <Select
+            label="Estado"
             value={status}
             onChange={handleStatusUpdate}
             disabled={saving}
-            style={{
-              padding: "4px 10px",
-              borderRadius: 6,
-              border: "1px solid #d1c4e9",
-              marginLeft: 8,
-              background: "#fff",
-              color: "#5e35b1",
-              fontWeight: 600,
-            }}
-          >
-            {ORDER_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {STATUS_LABELS[s]}
-              </option>
-            ))}
-          </select>
+            options={ORDER_STATUSES.map((s) => ({
+              value: s,
+              label: STATUS_LABELS[s],
+            }))}
+          />
           {saving && (
             <span style={{ marginLeft: 8, color: "#888" }}>Guardando...</span>
           )}
@@ -174,35 +120,24 @@ const OrderDetailPanel = ({
             <span style={{ color: "#e53935", marginLeft: 8 }}>{error}</span>
           )}
         </p>
-        <p>
-          <b>Pago:</b>{" "}
-          <select
+        
+          <Select
+            label={`Pago`}
             value={order.payment_status || "unpaid"}
             onChange={handlePaymentUpdate}
             disabled={saving}
-            style={{
-              padding: "4px 10px",
-              borderRadius: 6,
-              border: "1px solid #d1c4e9",
-              marginLeft: 8,
-              background: "#fff",
-              color: "#5e35b1",
-              fontWeight: 600,
-            }}
-          >
-            {PAYMENT_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {PAYMENT_LABELS[s]}
-              </option>
-            ))}
-          </select>
+            options={PAYMENT_STATUSES.map((s) => ({
+              value: s,
+              label: PAYMENT_LABELS[s],
+            }))}
+          />
           {saving && (
             <span style={{ marginLeft: 8, color: "#888" }}>Guardando...</span>
           )}
           {error && (
             <span style={{ color: "#e53935", marginLeft: 8 }}>{error}</span>
           )}
-        </p>
+        
         <p>
           <b>Tracking:</b> {order.tracking_number || "-"}
         </p>

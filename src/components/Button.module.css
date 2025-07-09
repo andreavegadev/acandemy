@@ -7,6 +7,25 @@
   cursor: pointer;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   max-width: max-content;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.325;
+}
+
+.button.overMedia {
+  background-color: #fff;
+  color: var(--purple60);
+}
+
+@media (hover: hover) {
+  .button.overMedia:hover {
+    background-color: var(--purple10);
+  }
 }
 
 .iconButton {
@@ -90,6 +109,19 @@
   display: inline-flex;
   color: var(--purple60);
   background-color: transparent;
+  align-items: center;
+}
+
+.fullWidth {
+  width: max-content;
+}
+
+.forceDesktopFullWidth {
+  display: flex;
+  max-width: none;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 @media (hover: hover) {
@@ -159,4 +191,24 @@
 
 .buttonDanger:active {
   background-color: var(--red80);
+}
+
+@media (max-width: 640px) {
+  .button {
+    min-height: 48px;
+  }
+
+  .button.small {
+    min-height: 40px;
+  }
+
+  .buttonPrimary.fullWidth,
+  .buttonSecondary.fullWidth,
+  .buttonDanger.fullWidth {
+    display: flex;
+    max-width: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
 }

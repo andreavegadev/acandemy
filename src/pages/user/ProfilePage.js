@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import "../../styles/ProfilePage.css";
 import {
   ButtonDanger,
-  ButtonLink,
   ButtonPrimary,
 } from "../../components/Button";
+import Heading from "../../components/Heading";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -128,111 +127,8 @@ const ProfilePage = () => {
 
   return (
     <div className="profile-page-bg">
-      <style>{`
-        .profile-page-bg {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #ede7f6 0%, #fff 100%);
-          padding: 40px 0;
-        }
-        .profile-card {
-          max-width: 440px;
-          margin: 0 auto;
-          background: #fff;
-          border: 1.5px solid #d1c4e9;
-          border-radius: 18px;
-          padding: 36px 30px 28px 30px;
-          box-shadow: 0 4px 32px #b39ddb33;
-          position: relative;
-        }
-        .profile-card h2 {
-          color: #5e35b1;
-          margin-bottom: 18px;
-          text-align: center;
-          font-size: 2em;
-          letter-spacing: 0.5px;
-        }
-        .profile-card label {
-          display: block;
-          margin: 14px 0 6px 0;
-          font-weight: 500;
-          color: #5e35b1;
-        }
-        .profile-card input {
-          width: 100%;
-          padding: 10px 12px;
-          border: 1px solid #d1c4e9;
-          border-radius: 8px;
-          font-size: 1em;
-          margin-bottom: 8px;
-          color: #3a2e5c;
-          transition: border 0.2s;
-        }
-        .profile-card input:focus {
-          border: 1.5px solid #7e57c2;
-          outline: none;
-        }
-        .profile-card input[disabled] {
-          background: #ede7f6;
-          color: #b39ddb;
-        }
-        .profile-actions {
-          margin-top: 22px;
-          display: flex;
-          gap: 14px;
-          justify-content: flex-end;
-        }
-        .profile-card .cancel-btn {
-          background: #ede7f6;
-          color: #5e35b1;
-        }
-        .profile-card .cancel-btn:hover {
-          background: #d1c4e9;
-        }
-        .profile-card .edit-btn {
-          background: #5e35b1;
-        }
-        .profile-card .edit-btn:hover {
-          background: #7e57c2;
-        }
-        .profile-card .success-msg {
-          color: #388e3c;
-          margin-top: 16px;
-          text-align: center;
-          font-weight: 500;
-        }
-        .profile-card .error-msg {
-          color: #b71c1c;
-          margin-top: 16px;
-          text-align: center;
-          font-weight: 500;
-        }
-        .back-btn {
-          position: absolute;
-          left: 24px;
-          top: 24px;
-          background: #ede7f6;
-          color: #5e35b1;
-          border: none;
-          border-radius: 8px;
-          padding: 8px 18px;
-          font-size: 1em;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .back-btn:hover {
-          background: #d1c4e9;
-        }
-      `}</style>
       <div className="profile-card" style={{ position: "relative" }}>
-        <ButtonLink
-          href={`/profile`}
-          aria-label={`Volver a mi perfil`}
-          bleedLeft
-        >
-          Volver
-        </ButtonLink>
-        <h2>Mi perfil</h2>
+        <Heading as="h2">Mi perfil</Heading>
         <form onSubmit={handleSave} autoComplete="off">
           <label>Correo electrónico</label>
           <input

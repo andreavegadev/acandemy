@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../../components/Button";
+import Input from "../../components/Input";
+import Select from "../../components/Select";
+import Heading from "../../components/Heading";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const AddPetPage = () => {
   const [formData, setFormData] = useState({
@@ -12,13 +16,18 @@ const AddPetPage = () => {
     chest_size: "",
     weight: "",
     species: "",
+    active: true,
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "select-one" && name === "active" ? value === "true" : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -50,7 +59,7 @@ const AddPetPage = () => {
         chest_size: formData.chest_size,
         weight: formData.weight,
         species: formData.species,
-        active: true,
+        active: formData.active,
       },
     ]);
 
@@ -65,83 +74,89 @@ const AddPetPage = () => {
   };
 
   return (
-    <div className="add-pet-page">
-      <h1>Añadir Mascota</h1>
+    <>
+      <Breadcrumbs
+        items={[
+          { label: "Mis mascotas", href: "/profile/pets" },
+          {
+            label: `Nueva Mascota`,
+            current: true,
+          },
+        ]}
+      />
+      <Heading>Añadir Mascota</Heading>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Nombre:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="breed">Raza:</label>
-          <input
-            type="text"
-            id="breed"
-            name="breed"
-            value={formData.breed}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="birth_date">Fecha de Nacimiento:</label>
-          <input
-            type="date"
-            id="birth_date"
-            name="birth_date"
-            value={formData.birth_date}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="neck_size">Tamaño del Cuello (cm):</label>
-          <input
-            type="number"
-            id="neck_size"
-            name="neck_size"
-            value={formData.neck_size}
-            onChange={handleInputChange}
-            step="0.01"
-          />
-        </div>
-        <div>
-          <label htmlFor="chest_size">Tamaño del Pecho (cm):</label>
-          <input
-            type="number"
-            id="chest_size"
-            name="chest_size"
-            value={formData.chest_size}
-            onChange={handleInputChange}
-            step="0.01"
-          />
-        </div>
-        <div>
-          <label htmlFor="weight">Peso (kg):</label>
-          <input
-            type="number"
-            id="weight"
-            name="weight"
-            value={formData.weight}
-            onChange={handleInputChange}
-            step="0.01"
-          />
-        </div>
-        <div>
-          <label htmlFor="species">Especie:</label>
-          <input
-            type="text"
-            id="species"
-            name="species"
-            value={formData.species}
-            onChange={handleInputChange}
-          />
-        </div>
+        <Input
+          type="text"
+          id="name"
+          name="name"
+          label="Nombre"
+          value={formData.name}
+          onChange={handleInputChange}
+          required
+        />
+        <Input
+          type="text"
+          id="species"
+          name="species"
+          label="Especie"
+          value={formData.species}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="text"
+          id="breed"
+          name="breed"
+          label="Raza"
+          value={formData.breed}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="date"
+          id="birth_date"
+          name="birth_date"
+          label="Fecha de Nacimiento"
+          value={formData.birth_date}
+          onChange={handleInputChange}
+        />
+        <Input
+          type="number"
+          id="neck_size"
+          name="neck_size"
+          label="Medida del Cuello (cm)"
+          value={formData.neck_size}
+          onChange={handleInputChange}
+          step="0.01"
+        />
+        <Input
+          type="number"
+          id="chest_size"
+          name="chest_size"
+          label="Medida del Pecho (cm)"
+          value={formData.chest_size}
+          onChange={handleInputChange}
+          step="0.01"
+        />
+        <Input
+          type="number"
+          id="weight"
+          name="weight"
+          label="Peso (kg)"
+          value={formData.weight}
+          onChange={handleInputChange}
+          step="0.01"
+        />
+        <Select
+          id="active"
+          name="active"
+          label="Estado"
+          value={formData.active}
+          onChange={handleInputChange}
+          options={[
+            { value: true, label: "Activo" },
+            { value: false, label: "Inactivo" },
+          ]}
+        />
         <ButtonPrimary
           type="submit"
           disabled={loading}
@@ -150,7 +165,7 @@ const AddPetPage = () => {
           {loading ? "Añadiendo..." : "Añadir Mascota"}
         </ButtonPrimary>
       </form>
-    </div>
+    </>
   );
 };
 

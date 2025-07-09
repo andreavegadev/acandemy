@@ -1,0 +1,87 @@
+.rowList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rowList > li {
+  border-bottom: 1px solid var(--neutral20);
+}
+
+.rowList > li:last-child {
+  border-bottom: none;
+}
+
+.row {
+  width: 100%;
+  width: -webkit-fill-available; /* Safari */
+  width: -moz-available;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px;
+  margin: 0 -16px;
+  background-color: transparent;
+  transition: background-color 0.2s ease-in-out;
+  border: none;
+  text-align: start;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pretitle {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.title {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.rightContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title,
+.pretitle,
+.sutitle {
+  font-weight: 550;
+  margin: 0;
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background-color: var(--purple10);
+  }
+}
+
+.row:active {
+  background-color: var(--purple20);
+}

@@ -1,0 +1,53 @@
+.counter {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--neutral20);
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.input {
+  width: 48px;
+  height: 32px;
+  text-align: center;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  appearance: textfield;
+  outline: none;
+}
+
+/* Remove default spinners in Chrome, Safari, Edge */
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  padding: 0;
+}
+
+.button {
+  all: unset;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  color: var(--neutral80);
+  background-color: var(--neutral10);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--neutral20);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

@@ -4,7 +4,6 @@ import "../styles/Footer.css";
 const Footer = () => (
   <footer
     style={{
-      background: "linear-gradient(90deg, #ede7f6 60%, #d1c4e9 100%)",
       color: "#5e35b1",
       padding: "32px 0 16px 0",
       textAlign: "center",
@@ -26,6 +25,11 @@ const Footer = () => (
       {" | "}
       <Link to="/contact" style={footerLinkStyle}>
         Contacto
+      </Link>
+      {" | "}
+
+      <Link to="/about" style={footerLinkStyle}>
+        Nosotros
       </Link>
     </div>
     <div style={{ fontSize: 15, color: "#7e57c2" }}>

@@ -1,8 +1,17 @@
+import styles from "./CheckoutPage.module.css";
 import { useState, useEffect } from "react";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
-import "../styles/CheckoutPage.css";
+import { supabase } from "../../supabaseClient";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import Heading from "../../components/Heading";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import { Box, Stack } from "../../components/LayoutUtilities";
+import ResponsiveLayout from "../../components/ResponsiveLayout";
+import Price from "../../components/Price";
+import Input from "../../components/Input";
+import { RadioButtonGroup } from "../../components/RadioButton";
+import AsideLayout from "../../components/AsideLayout";
 
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
@@ -108,9 +117,10 @@ const CheckoutPage = () => {
     }
     if (data.min_order && getTotal() < Number(data.min_order)) {
       setError(
-        `El pedido mínimo para este descuento es de €${Number(
-          data.min_order
-        ).toFixed(2)}.`
+        <>
+          El pedido mínimo para este descuento es de{" "}
+          <Price amount={Number(data.min_order)} />.
+        </>
       );
       return;
     }
@@ -158,9 +168,6 @@ const CheckoutPage = () => {
         .single();
       discountId = discountData?.id || null;
     }
-
-    // Busca el precio del envío seleccionado
-    const shipping = shippingOptions.find((s) => s.id === selectedShipping);
 
     const { data: order, error: orderError } = await supabase
       .from("orders")
@@ -238,174 +245,153 @@ const CheckoutPage = () => {
     setTimeout(() => navigate("/"), 3000);
   };
 
+  const shippingOptionsMapped = shippingOptions.map((option) => ({
+    value: option.id,
+    label: option.name,
+    detail: <Price amount={option.price} size={16} />,
+  }));
+
   if (cart.length === 0 && !success) {
     return <p>Tu carrito está vacío.</p>;
   }
 
   return (
-    <div className="checkout-page-container">
-      <button
-        onClick={() => navigate("/cart")}
-        style={{
-          background: "#ede7f6",
-          color: "#5e35b1",
-          border: "none",
-          borderRadius: 8,
-          padding: "8px 18px",
-          fontWeight: 600,
-          marginBottom: 24,
-          cursor: "pointer",
-        }}
-      >
-        ← Volver al carrito
-      </button>
-      <h1 style={{ color: "#5e35b1" }}>Finalizar compra</h1>
-      <h2>Resumen del pedido</h2>
-      <ul style={{ padding: 0, listStyle: "none" }}>
-        {cart.map((item) => (
-          <li
-            key={item.cartLineId || item.id}
-            style={{
-              marginBottom: 12,
-              borderBottom: "1px solid #eee",
-              paddingBottom: 8,
-            }}
-          >
-            <strong>{item.title || item.name}</strong> x{item.quantity} — €{" "}
-            {Number(item.price).toFixed(2)}
-            {item.personalizations && item.personalizations.length > 0 && (
-              <ul style={{ margin: "6px 0 0 12px", padding: 0, fontSize: 15 }}>
-                {item.personalizations.map((p, idx) => (
-                  <li key={idx}>
-                    {p.type ? <b>{p.type}:</b> : null} {p.name}
-                    {p.additional_price > 0
-                      ? ` (+${Number(p.additional_price).toFixed(2)}€)`
-                      : ""}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
+    <ResponsiveLayout>
+      <Box paddingY={48}>
+        <Stack gap={24}>
+          <Breadcrumbs
+            items={[
+              { label: "Carrito", onClick: () => navigate("/cart") },
+              {
+                label: `Checkout`,
+                current: true,
+              },
+            ]}
+          ></Breadcrumbs>
+          <Heading>Checkout</Heading>
 
-      {/* Opciones de envío */}
-      <form style={{ marginTop: 24, marginBottom: 12 }}>
-        <label
-          style={{
-            fontWeight: 500,
-            color: "#5e35b1",
-            marginBottom: 8,
-            display: "block",
-          }}
-        >
-          Método de envío:
-        </label>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {shippingOptions.map((option) => (
-            <label
-              key={option.id}
-              style={{ display: "flex", alignItems: "center", gap: 8 }}
-            >
-              <input
-                type="radio"
-                name="shipping"
-                value={option.id}
-                checked={selectedShipping === option.id}
-                onChange={() => setSelectedShipping(option.id)}
-              />
-              <span>
-                {option.name} — €{Number(option.price).toFixed(2)}
-              </span>
-            </label>
-          ))}
-        </div>
-      </form>
+          <AsideLayout
+            aside={
+              <Stack gap={16}>
+                <Heading as="h2">Items ({cart.length})</Heading>
+                <ul className={styles.cartItems}>
+                  {cart.map((item) => (
+                    <li
+                      key={item.cartLineId || item.id}
+                      className={`${styles.cartItem} ${
+                        item.personalizations?.length ? styles.hasChildren : ""
+                      }`}
+                    >
+                      <div className={styles.cartItemContent}>
+                        <strong>
+                          {item.title || item.name} x{item.quantity}
+                        </strong>
+                        <Price amount={Number(item.price)} size={16} />
+                      </div>
+                      {item.personalizations &&
+                        item.personalizations.length > 0 && (
+                          <ul>
+                            {item.personalizations.map((p, idx) => (
+                              <li key={idx}>
+                                {p.type ? <b>{p.type}:</b> : null} {p.name}
+                                {p.additional_price > 0 ? (
+                                  <span>
+                                    +
+                                    <Price
+                                      amount={p.additional_price}
+                                      size={16}
+                                    />
+                                  </span>
+                                ) : (
+                                  ""
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                    </li>
+                  ))}
+                </ul>
 
-      <form
-        onSubmit={handleApplyDiscount}
-        style={{ marginTop: 12, marginBottom: 12 }}
-      >
-        <label style={{ fontWeight: 500, color: "#5e35b1" }}>
-          Código de descuento:
-        </label>
-        <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
-          <input
-            type="text"
-            value={discountCode}
-            onChange={(e) => setDiscountCode(e.target.value)}
-            placeholder="Introduce tu código"
-            style={inputStyle}
-            disabled={discountApplied}
-          />
-          <button
-            type="submit"
-            style={{
-              background: discountApplied ? "#bdbdbd" : "#5e35b1",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              padding: "8px 18px",
-              fontWeight: 600,
-              cursor: discountApplied ? "not-allowed" : "pointer",
-            }}
-            disabled={discountApplied}
+                <Box paddingTop={24}>
+                  <Heading as="h3">
+                    Total: <Price amount={getTotal()}></Price>
+                    {discountApplied && <span>(descuento incluido)</span>}
+                  </Heading>
+                </Box>
+              </Stack>
+            }
           >
-            {discountApplied ? "Aplicado" : "Aplicar"}
-          </button>
-        </div>
-        {discountApplied && (
-          <div style={{ color: "#43a047", marginTop: 8 }}>
-            ¡Descuento{" "}
-            {discountType === "Percentage"
-              ? `${discountValue}%`
-              : `de €${discountValue}`}{" "}
-            aplicado!
-          </div>
-        )}
-        {error && <div style={{ color: "#e53935", marginTop: 8 }}>{error}</div>}
-      </form>
-      <h3>
-        Total: €{getTotal().toFixed(2)}
-        {discountApplied && (
-          <span style={{ color: "#43a047", fontSize: 15, marginLeft: 8 }}>
-            (descuento incluido)
-          </span>
-        )}
-      </h3>
-      <form onSubmit={handleSubmit} style={{ marginTop: 32 }}>
-        <button
-          type="submit"
-          style={{
-            background: "#5e35b1",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            padding: "12px 32px",
-            fontWeight: 700,
-            fontSize: 18,
-            cursor: "pointer",
-            marginTop: 8,
-          }}
-        >
-          Finalizar compra
-        </button>
-        {success && (
-          <div style={{ color: "#43a047", marginTop: 18 }}>
-            ¡Compra realizada con éxito! Serás redirigido a la página principal.
-          </div>
-        )}
-      </form>
-    </div>
+            <div className={styles.content}>
+              <Stack gap={24}>
+                <section>
+                  <Stack gap={16}>
+                    <Heading as="h2">Opciones de envío</Heading>
+                    <form>
+                      <RadioButtonGroup
+                        options={shippingOptionsMapped}
+                        name="shipping"
+                        selectedValue={selectedShipping}
+                        onChange={setSelectedShipping}
+                      />
+                    </form>
+                  </Stack>
+                </section>
+                <section>
+                  <Stack gap={16}>
+                    <Heading as="h2">Descuentos</Heading>
+                    <form onSubmit={handleApplyDiscount}>
+                      <Stack gap={8}>
+                        <Input
+                          label="Código de descuento"
+                          type="text"
+                          value={discountCode}
+                          onChange={(e) => setDiscountCode(e.target.value)}
+                          placeholder="Introduce tu código"
+                          disabled={discountApplied}
+                        />
+                        <ButtonSecondary
+                          type="submit"
+                          disabled={discountApplied}
+                        >
+                          {discountApplied ? "Aplicado" : "Aplicar"}
+                        </ButtonSecondary>
+                      </Stack>
+                      {discountApplied && (
+                        <div>
+                          ¡Descuento{" "}
+                          {discountType === "Percentage"
+                            ? `${discountValue}%`
+                            : `de €${discountValue}`}{" "}
+                          aplicado!
+                        </div>
+                      )}
+                      {error && <div>{error}</div>}
+                    </form>
+                  </Stack>
+                </section>
+              </Stack>
+            </div>
+          </AsideLayout>
+          <section className={styles.checkoutSubmit}>
+            <Stack gap={16}>
+              <form onSubmit={handleSubmit}>
+                <ButtonPrimary type="submit" fullWidth>
+                  Finalizar compra ({getTotal().toFixed(2)}€)
+                </ButtonPrimary>
+                {success && (
+                  <div>
+                    ¡Compra realizada con éxito! Serás redirigido a la página
+                    principal.
+                  </div>
+                )}
+              </form>
+            </Stack>
+          </section>
+        </Stack>
+      </Box>
+    </ResponsiveLayout>
   );
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px 12px",
-  borderRadius: 6,
-  border: "1px solid #d1c4e9",
-  fontSize: 16,
 };
 
 export default CheckoutPage;

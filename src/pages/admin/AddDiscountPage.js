@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import "../../styles/AddDiscountPage.css";
+import Input from "../../components/Input";
 import { ButtonPrimary } from "../../components/Button";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import Heading from "../../components/Heading";
+import { Box, Stack } from "../../components/LayoutUtilities";
+import TextArea from "../../components/TextArea";
 
 const AddDiscountPage = () => {
   const now = new Date();
@@ -13,22 +18,23 @@ const AddDiscountPage = () => {
   const [form, setForm] = useState({
     code: "",
     description: "",
-    type: "Percentage", // o el valor por defecto de tu enum discount_type
+    type: "Percentage",
     percentage: "",
     amount: "",
     user_id: "",
     max_uses: "",
-    start_date: defaultStartDate, // <-- por defecto ahora
+    start_date: defaultStartDate,
     end_date: "",
     min_order: "",
     active: true,
   });
+
   const [users, setUsers] = useState([]);
   const [userSearch, setUserSearch] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  // Buscar usuarios por nombre o email
   useEffect(() => {
     if (userSearch.length < 2) {
       setUsers([]);
@@ -64,54 +70,37 @@ const AddDiscountPage = () => {
     setSuccess("");
     setError("");
 
-    // Validaciones mínimas según constraints
-    if (!form.code) {
-      setError("El código es obligatorio.");
-      return;
+    if (!form.code) return setError("El código es obligatorio.");
+    if (!form.type) return setError("El tipo de descuento es obligatorio.");
+
+    if (form.type === "Percentage") {
+      if (!form.percentage || Number(form.percentage) <= 0)
+        return setError("El porcentaje debe ser mayor que 0.");
+      if (Number(form.percentage) > 100)
+        return setError("El porcentaje no puede ser mayor que 100.");
     }
-    if (!form.type) {
-      setError("El tipo de descuento es obligatorio.");
-      return;
+
+    if (form.type === "Amount") {
+      if (!form.amount || Number(form.amount) <= 0)
+        return setError("El importe debe ser mayor que 0.");
     }
-    if (
-      form.type === "Percentage" &&
-      (!form.percentage || Number(form.percentage) <= 0)
-    ) {
-      setError("El porcentaje debe ser mayor que 0.");
-      return;
-    }
-    if (
-      form.type === "Percentage" &&
-      (!form.percentage || Number(form.percentage) > 100)
-    ) {
-      setError("El porcentaje no puede ser mayor que 100.");
-      return;
-    }
-    if (form.type === "Amount" && (!form.amount || Number(form.amount) <= 0)) {
-      setError("El importe debe ser mayor que 0.");
-      return;
-    }
-    if (form.min_order && Number(form.min_order) <= 0) {
-      setError("El pedido mínimo debe ser mayor que 0.");
-      return;
-    }
+
+    if (form.min_order && Number(form.min_order) <= 0)
+      return setError("El pedido mínimo debe ser mayor que 0.");
+
     if (
       form.min_order &&
       form.type === "Amount" &&
       Number(form.min_order) < Number(form.amount)
-    ) {
-      setError("El descuento debe que ser mayor que el pedido mínimo.");
-      return;
-    }
-    if (!form.start_date) {
-      setError("La fecha de inicio es obligatoria.");
-      return;
-    }
+    )
+      return setError("El descuento debe ser menor que el pedido mínimo.");
+
+    if (!form.start_date) return setError("La fecha de inicio es obligatoria.");
 
     const discountData = {
       code: form.code,
       description: form.description || null,
-      type: form.type, // Esto enviará "Percentage" o "Amount"
+      type: form.type,
       percentage: form.type === "Percentage" ? Number(form.percentage) : null,
       amount: form.type === "Amount" ? Number(form.amount) : null,
       user_id: form.user_id || null,
@@ -141,77 +130,72 @@ const AddDiscountPage = () => {
         active: true,
       });
       setUserSearch("");
+      setTimeout(() => navigate("/admin/discounts"), 1200);
     }
   };
 
   return (
-    <div className="discount-form-container">
-      <h2>Crear Código Descuento</h2>
-      <form
-        onSubmit={handleSubmit}
-        className="discount-form"
-        autoComplete="off"
-      >
-        <div className="discount-form-row">
-          <label>
-            Código:
-            <input
+    <Box paddingY={24}>
+      <Stack gap={24}>
+        <Breadcrumbs
+          items={[
+            {
+              label: "Descuentos",
+              onClick: () => navigate("/admin/discounts"),
+            },
+            { label: `Descuento`, current: true },
+          ]}
+        />
+        <Heading as="h2">Crear Código Descuento</Heading>
+        <form
+          onSubmit={handleSubmit}
+          className="discount-form"
+          autoComplete="off"
+        >
+          <Stack gap={16}>
+            <Input
               type="text"
               name="code"
+              label="Código de descuento"
               value={form.code}
               onChange={handleChange}
               required
             />
-          </label>
-        </div>
-        <div className="discount-form-row">
-          <label>
-            Descripción:
-            <textarea
+            <TextArea
               name="description"
+              label="Breve descripción"
               value={form.description}
               onChange={handleChange}
               rows={2}
               maxLength={120}
-              placeholder="Breve descripción del descuento"
-              style={{ resize: "vertical", minHeight: 40 }}
             />
-          </label>
-        </div>
-        <div className="discount-form-row">
-          <label>
-            Tipo de descuento:
             <div className="discount-radio-group">
+              <span>Tipo de descuento:</span>
               <label>
-                <input
+                <Input
                   type="radio"
                   name="type"
                   value="Percentage"
                   checked={form.type === "Percentage"}
                   onChange={handleChange}
-                  required
                 />
                 Porcentaje
               </label>
               <label>
-                <input
+                <Input
                   type="radio"
                   name="type"
                   value="Amount"
                   checked={form.type === "Amount"}
                   onChange={handleChange}
-                  required
                 />
                 Importe fijo
               </label>
             </div>
-          </label>
-        </div>
-        <div className="discount-form-row">
-          {form.type === "Percentage" ? (
-            <label>
-              Porcentaje (%):
-              <input
+
+            {form.type === "Percentage" ? (
+              <Input
+                label="Porcentaje (%)"
                 type="number"
                 name="percentage"
                 value={form.percentage}
@@ -220,11 +204,9 @@ const AddDiscountPage = () => {
                 max={100}
                 required
               />
-            </label>
-          ) : (
-            <label>
-              Importe fijo (€):
-              <input
+            ) : (
+              <Input
+                label="Importe (€)"
                 type="number"
                 name="amount"
                 value={form.amount}
@@ -232,108 +214,86 @@ const AddDiscountPage = () => {
                 min={1}
                 required
               />
-            </label>
-          )}
-        </div>
-        <div className="discount-form-row">
-          <label>
-            Pedido mínimo (€):
-            <input
+            )}
+
+            <Input
+              label="Pedido mínimo (€)"
               type="number"
               name="min_order"
               value={form.min_order}
               onChange={handleChange}
               min={0.01}
               step="0.01"
-              placeholder="Opcional"
             />
-          </label>
-          <label>
-            Número máximo de usos:
-            <input
+
+            <Input
+              label="Máximo de usos"
               type="number"
               name="max_uses"
               value={form.max_uses}
               onChange={handleChange}
               min={1}
-              placeholder="Opcional"
             />
-          </label>
-        </div>
-        <div className="discount-form-row">
-          <div style={{ position: "relative", flex: 1 }}>
-            <label>
-              Usuario (opcional):
-              <input
-                type="text"
-                placeholder="Buscar por nombre o email"
-                value={userSearch}
-                onChange={(e) => {
-                  setUserSearch(e.target.value);
-                  setForm((prev) => ({ ...prev, user_id: "" }));
-                }}
-                autoComplete="off"
-              />
-              {users.length > 0 && (
-                <ul className="discount-user-list">
-                  {users.map((user) => (
-                    <li
-                      key={user.id}
-                      onMouseDown={() => handleUserSelect(user)}
-                    >
-                      {user.name} ({user.email})
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {form.user_id && (
-                <div className="discount-user-selected">
-                  Usuario seleccionado
-                </div>
-              )}
-            </label>
-          </div>
-        </div>
-        <div className="discount-form-row">
-          <label>
-            Fecha de inicio:
-            <input
+
+            <Input
+              label="Buscar usuario (nombre o email)"
+              type="text"
+              value={userSearch}
+              onChange={(e) => {
+                setUserSearch(e.target.value);
+                setForm((prev) => ({ ...prev, user_id: "" }));
+              }}
+            />
+            {users.length > 0 && (
+              <ul className="discount-user-list">
+                {users.map((user) => (
+                  <li key={user.id} onMouseDown={() => handleUserSelect(user)}>
+                    {user.name} ({user.email})
+                  </li>
+                ))}
+              </ul>
+            )}
+            {form.user_id && (
+              <div className="discount-user-selected">Usuario asignado</div>
+            )}
+
+            <Input
+              label="Fecha de inicio"
               type="datetime-local"
               name="start_date"
               value={form.start_date}
               onChange={handleChange}
               required
             />
-          </label>
-          <label>
-            Fecha de fin:
-            <input
+
+            <Input
+              label="Fecha de finalización"
               type="datetime-local"
               name="end_date"
               value={form.end_date}
               onChange={handleChange}
-              placeholder="Opcional"
             />
-          </label>
-          <label className="discount-checkbox">
-            Activo:
-            <input
+
+            <Input
+              label="Activo"
               type="checkbox"
               name="active"
               checked={form.active}
               onChange={handleChange}
             />
-          </label>
-        </div>
-        <div className="discount-form-actions">
-          <ButtonPrimary type="submit" aria-label={`Crear código descuento`}>
-            Crear código
-          </ButtonPrimary>
-        </div>
-        {success && <p className="success">{success}</p>}
-        {error && <p className="error">{error}</p>}
-      </form>
-    </div>
+
+            <div className="discount-form-actions">
+              <ButtonPrimary type="submit" aria-label="Crear código descuento">
+                Crear código
+              </ButtonPrimary>
+            </div>
+
+            {success && <p className="success">{success}</p>}
+            {error && <p className="error">{error}</p>}
+          </Stack>
+        </form>
+      </Stack>
+    </Box>
   );
 };
 

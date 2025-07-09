@@ -65,9 +65,14 @@ export const ButtonPrimary = ({
   disabled,
   "aria-label": ariaLabel,
   small,
+  fullWidth,
+  forceDesktopFullWidth,
+  overMedia,
 }) => {
   const buttonStyles = `${styles.buttonPrimary} ${styles.button} ${
     small ? styles.small : ""
+  } ${fullWidth ? styles.fullWidth : ""} ${overMedia ? styles.overMedia : ""} ${
+    forceDesktopFullWidth ? styles.forceDesktopFullWidth : ""
   }`;
 
   return href ? (
@@ -93,10 +98,11 @@ export const ButtonSecondary = ({
   disabled,
   "aria-label": ariaLabel,
   small,
+  fullWidth,
 }) => {
   const buttonSecondaryStyles = `${styles.buttonSecondary} ${styles.button} ${
     small ? styles.small : ""
-  }`;
+  } ${fullWidth ? styles.fullWidth : ""}`;
 
   return href ? (
     <a href={href} aria-label={ariaLabel} className={buttonSecondaryStyles}>
@@ -121,10 +127,11 @@ export const ButtonDanger = ({
   disabled,
   "aria-label": ariaLabel,
   small,
+  fullWidth,
 }) => {
   const buttonDangerStyles = `${styles.buttonDanger} ${styles.button} ${
     small ? styles.small : ""
-  }`;
+  } ${fullWidth ? styles.fullWidth : ""}`;
   return href ? (
     <a href={href} aria-label={ariaLabel} className={buttonDangerStyles}>
       {children}
@@ -146,6 +153,9 @@ export const IconButton = ({
   onClick,
   disabled,
   "aria-label": ariaLabel,
+  "aria-expanded": ariaExpanded,
+  "aria-controls": ariaControls,
+  "aria-haspopup": ariaHasPopup,
   small,
   bleedLeft,
   bleedRight,
@@ -164,6 +174,9 @@ export const IconButton = ({
     <button
       onClick={onClick}
       aria-label={ariaLabel}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
+      aria-haspopup={ariaHasPopup}
       disabled={disabled}
       className={iconButtonStyles}
     >

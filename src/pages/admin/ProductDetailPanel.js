@@ -18,7 +18,7 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
     description: product?.description || "",
     price: product?.price || 0,
     stock: product?.stock || 0,
-    photo_url: product?.photo_url || "",
+    product_images: product?.product_images || "",
     handmade: product?.handmade ?? true,
     active: product?.active ?? true,
     featured: product?.featured ?? false,
@@ -134,7 +134,7 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
         description: editForm.description,
         price: Number(editForm.price),
         stock: Number(editForm.stock),
-        photo_url: editForm.photo_url,
+        product_images: editForm.product_images,
         handmade: editForm.handmade,
         active: editForm.active,
         featured: editForm.featured,
@@ -413,9 +413,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
               Foto (URL):
               <input
                 type="text"
-                value={editForm.photo_url}
+                value={editForm.product_images}
                 onChange={(e) =>
-                  setEditForm((f) => ({ ...f, photo_url: e.target.value }))
+                  setEditForm((f) => ({ ...f, product_images: e.target.value }))
                 }
               />
             </label>
@@ -498,7 +498,7 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
                   description: product?.description || "",
                   price: product?.price || 0,
                   stock: product?.stock || 0,
-                  photo_url: product?.photo_url || "",
+                  product_images: product?.product_images || "",
                   handmade: product?.handmade ?? true,
                   active: product?.active ?? true,
                   featured: product?.featured ?? false,
@@ -548,9 +548,9 @@ const ProductDetailPanel = ({ product, onClose, onEdit, onReloadProducts }) => {
           </p>
           <p>
             <b>Foto:</b>{" "}
-            {product.photo_url ? (
+            {product.product_images ? (
               <a
-                href={product.photo_url}
+                href={product.product_images}
                 target="_blank"
                 rel="noopener noreferrer"
               >

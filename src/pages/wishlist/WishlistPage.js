@@ -1,45 +1,134 @@
 import { useEffect, useState } from "react";
-import { getWishlist } from "../../utils/wishlist";
+import { getWishlist, removeFromWishlist } from "../../utils/wishlist";
 import { getProductById } from "../../api/products";
 import ProductCard from "../../components/ProductCard";
 import useWishlistSync from "../../hooks/useWishlistSync";
+import Heading from "../../components/Heading";
+import ResponsiveLayout from "../../components/ResponsiveLayout";
+import { Box, Stack } from "../../components/LayoutUtilities";
+import useProductCardActions from "../../hooks/useProductCartActions";
+import Toast from "../../components/Toast";
+import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
+import Tag from "../../components/Tag";
 
 const WishlistPage = () => {
   const [products, setProducts] = useState([]);
-  const tick = useWishlistSync(); // Se actualiza cuando cambia la wishlist
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const tick = useWishlistSync();
 
   useEffect(() => {
     const wishlist = getWishlist().filter((id) => id);
     Promise.all(wishlist.map((id) => getProductById(id))).then(setProducts);
-  }, [tick]); // <-- Se vuelve a cargar cuando cambia la wishlist
+  }, [tick]);
+
+  const showToastMessage = (msg) => {
+    setToastMessage(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 5000);
+  };
+
+  const {
+    getProductQuantityInCart,
+    isProductOutOfStockOrMaxedInCart,
+    handleAddToCart,
+  } = useProductCardActions({
+    setToastMessage,
+    setShowToast,
+  });
+
+  const renderPrimaryAction = (product) => {
+    const disabled = isProductOutOfStockOrMaxedInCart(product);
+
+    if (product.order_customized) {
+      return (
+        <ButtonPrimary
+          small
+          disabled={disabled}
+          onClick={() =>
+            (window.location.href = `/product/${encodeURIComponent(
+              product.name
+            )}`)
+          }
+          aria-label={`Personalizar ${product.name}`}
+        >
+          Personalizar
+        </ButtonPrimary>
+      );
+    }
+
+    return (
+      <ButtonPrimary
+        small
+        disabled={disabled}
+        onClick={() => handleAddToCart(product)}
+        aria-label={`Añadir ${product.name} al carrito`}
+      >
+        Añadir al Carrito
+      </ButtonPrimary>
+    );
+  };
+
+  const renderRemoveButton = (product) => (
+    <ButtonSecondary
+      small
+      onClick={() => {
+        removeFromWishlist(product.id);
+        tick(); // refresh wishlist
+        showToastMessage(`${product.name} fue eliminado de tus favoritos.`);
+      }}
+      aria-label={`Quitar ${product.name} de favoritos`}
+    >
+      Quitar de Favoritos
+    </ButtonSecondary>
+  );
 
   return (
-    <div style={{ maxWidth: 900, margin: "40px auto" }}>
-      <h2 style={{ color: "#5e35b1" }}>Mi Wishlist</h2>
-      {products.length === 0 ? (
-        <div style={{ color: "#888" }}>No tienes productos en tu wishlist.</div>
-      ) : (
-        <div className="product-cards">
-          {products
-            .filter((product) => product)
-            .map((product) => (
-              <div
-                key={product.id}
-                style={{ position: "relative", marginBottom: 24 }}
-              >
+    <ResponsiveLayout>
+      <Box paddingY={48}>
+        <Stack gap={32}>
+          <Heading>Favoritos</Heading>
+          <div className="product-cards">
+            {products.length > 0 ? (
+              products.map((product) => (
                 <ProductCard
+                  key={product.id}
                   id={product.id}
+                  tag={
+                    product.stock === 0 ||
+                    getProductQuantityInCart(product) === product.stock ? (
+                      <Tag type="warning">Agotado</Tag>
+                    ) : null
+                  }
                   title={product.name}
                   description={product.description}
                   price={product.price}
-                  image={product.photo_url}
+                  customized={product.order_customized}
+                  image={product.product_images[0]?.src}
+                  stock={product.stock}
                   linkDetails={`/product/${encodeURIComponent(product.name)}`}
+                  primaryAction={renderPrimaryAction(product)}
+                  secondaryAction={renderRemoveButton(product)}
                 />
-              </div>
-            ))}
-        </div>
-      )}
-    </div>
+              ))
+            ) : (
+              <p>No se encontraron productos.</p>
+            )}
+          </div>
+
+          {showToast && (
+            <Toast
+              message={toastMessage}
+              onClose={() => setShowToast(false)}
+              action={{
+                label: "Ver carrito",
+                href: "/cart",
+              }}
+            />
+          )}
+        </Stack>
+      </Box>
+    </ResponsiveLayout>
   );
 };
 

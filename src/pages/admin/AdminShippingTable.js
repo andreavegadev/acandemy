@@ -1,183 +1,66 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { ButtonSecondary } from "../../components/Button";
+import Table from "../../components/Table";
 
-const AdminShippingTable = ({ onAddShipping, onShippingSelect }) => {
+const AdminShippingTable = () => {
   const [shippingTypes, setShippingTypes] = useState([]);
-  const [filterActive, setFilterActive] = useState("all");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchShipping = async () => {
+      setLoading(true);
       let query = supabase
         .from("shipping")
         .select("*")
         .order("created_at", { ascending: false });
 
-      // Filtro estado
-      if (filterActive === "active") query = query.eq("active", true);
-      if (filterActive === "inactive") query = query.eq("active", false);
-
-      // Filtro búsqueda
-      if (search.length > 1) {
-        query = query.ilike("name", `%${search}%`);
-      }
-
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
-      let { data } = await query.range(from, to);
-
+      const { data } = await query;
       setShippingTypes(data || []);
+      setLoading(false);
     };
     fetchShipping();
-  }, [filterActive, search, page, pageSize]);
+  }, []);
 
-  const totalPages = Math.ceil(shippingTypes.length / pageSize);
+  const onAddShipping = () => {
+    navigate("/admin/shippings/add");
+  };
 
-  const handleClearFilters = () => {
-    setFilterActive("all");
-    setSearch("");
-    setPage(1);
-    setPageSize(10);
+  const onShippingSelect = (shipping) => {
+    if (shipping && shipping.id) {
+      navigate(`/admin/shippings/${shipping.id}`);
+    }
   };
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 12,
-        }}
-      >
-        <h2>Tipos de Envío</h2>
-        <ButtonSecondary
-          onClick={onAddShipping}
-          aria-label={`Crear tipo de envío`}
-        >
-          Crear tipo de envío
-        </ButtonSecondary>
-      </div>
-      <div
-        style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}
-      >
-        <label>
-          Estado:&nbsp;
-          <select
-            value={filterActive}
-            onChange={(e) => {
-              setFilterActive(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="all">Todos</option>
-            <option value="active">Activos</option>
-            <option value="inactive">Inactivos</option>
-          </select>
-        </label>
-        <input
-          type="text"
-          placeholder="Buscar nombre"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          style={{ minWidth: 180 }}
-        />
-        <label>
-          Ver&nbsp;
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
-            }}
-          >
-            {[5, 10, 20, 50].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          &nbsp;por página
-        </label>
-        <ButtonSecondary
-          onClick={handleClearFilters}
-          aria-label={`Limpiar filtros`}
-        >
-          Limpiar filtros
-        </ButtonSecondary>
-      </div>
-      <table className="admin-products-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Activo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {shippingTypes.map((shipping) => (
-            <tr
-              key={shipping.id}
-              onClick={() => onShippingSelect && onShippingSelect(shipping)}
-              style={{ cursor: "pointer" }}
-            >
-              <td>{shipping.name}</td>
-              <td>{shipping.price}€</td>
-              <td>
-                <input type="checkbox" checked={shipping.active} readOnly />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div
-        style={{
-          marginTop: "1em",
-          display: "flex",
-          alignItems: "center",
-          gap: "1em",
-        }}
-      >
-        <ButtonSecondary
-          aria-label={`Volver a la página anterior`}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          disabled={page === 1}
-        >
-          Anterior
-        </ButtonSecondary>
-        <span>
-          Página {page} de {totalPages}
-        </span>
-        <ButtonSecondary
-          aria-label={`Ir a la siguiente página`}
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          disabled={page === totalPages}
-        >
-          Siguiente
-        </ButtonSecondary>
-        <span>
-          Ir a página:&nbsp;
-          <input
-            type="number"
-            min={1}
-            max={totalPages}
-            value={page}
-            onChange={(e) => {
-              let val = Number(e.target.value);
-              if (val > totalPages) val = totalPages;
-              if (val < 1) val = 1;
-              setPage(val);
-            }}
-            style={{ width: 60 }}
-          />
-        </span>
-      </div>
+      <Table
+        title="Tipos de Envío"
+        items={shippingTypes.map((shipping) => ({
+          id: shipping.id,
+          nombre: shipping.name,
+          precio: shipping.price + "€",
+          activo: shipping.active ? "Sí" : "No",
+        }))}
+        onClick={onShippingSelect}
+        filters={[
+          { key: "nombre", label: "Buscar nombre" },
+          {
+            key: "activo",
+            label: "Filtrar por activo",
+            type: "select",
+            options: [
+              { value: "Sí", label: "Sí" },
+              { value: "No", label: "No" },
+            ],
+          },
+        ]}
+        addItems
+        onClickAdd={onAddShipping}
+      />
+      {loading && <p>Cargando...</p>}
+      {!loading && shippingTypes.length === 0 && <p>Sin tipos de envío</p>}
     </div>
   );
 };

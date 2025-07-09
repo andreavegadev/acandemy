@@ -1,18 +1,20 @@
+/* === ESTRUCTURA GENERAL === */
 .container {
-  background-color: var(--purple10);
-  align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid var(--purple20);
-  overflow: clip;
+  position: relative;
+  overflow-x: clip;
+  z-index: 1000;
 }
 
-.navigation {
+/* === NAVEGACIÓN DESKTOP === */
+.navigationDesktop {
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-.navigation ul {
+.navigationDesktop ul {
   display: flex;
   gap: 8px;
   list-style: none;
@@ -21,16 +23,108 @@
 }
 
 .navigationLink {
-  margin: 0;
   font-size: 0.875rem;
   color: var(--purple60);
-  padding: 6px 4px;
-  border: 1px solid transparent;
-  border-radius: var(--border-radii-button);
+  padding: 6px 8px;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.navigationLink:hover {
+  color: var(--purple70);
+  border-bottom: 2px solid var(--purple40);
 }
 
 .navigationLinkActive {
-  border: 1px solid var(--purple60);
+  font-weight: bold;
+  border-bottom: 2px solid var(--purple60);
   color: var(--purple60);
-  padding: 6px 4px;
+}
+
+/* === NAVEGACIÓN MOBILE === */
+.navigationMobile {
+  display: none;
+}
+
+.mobileMenu {
+  position: relative;
+}
+
+.hamburgerIcon {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--purple60);
+}
+
+/* Menú desplegable mobile */
+.mobileMenuContainer {
+  position: fixed;
+  top: 56px; /* Ajustar si el header cambia de altura */
+  left: 0;
+  right: 0;
+  background-color: var(--purple10);
+  border-top: 1px solid var(--purple20);
+  padding: 16px;
+  z-index: 9999;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mobileMenuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobileMenuItem {
+  font-size: 1rem;
+}
+
+.mobileNavItem {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: var(--purple60);
+  border-left: 4px solid transparent;
+  background-color: transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mobileNavItem:hover {
+  background-color: var(--purple15);
+}
+
+.mobileNavItemActive {
+  border-left: 4px solid var(--purple60);
+  background-color: var(--purple20);
+  font-weight: bold;
+}
+
+/* === CARRITO Y AUTENTICACIÓN === */
+.rightActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* === RESPONSIVE === */
+@media screen and (max-width: 640px) {
+  .navigationDesktop {
+    display: none;
+  }
+
+  .navigationMobile {
+    display: block;
+  }
+
+  .cart {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
 }

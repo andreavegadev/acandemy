@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import styles from "./ProductListPage.module.css";
+import { useState, useEffect, useId } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import ProductCard from "../../components/ProductCard";
-import "../../styles/Products.css"; // Asegúrate de tener estilos para el listado de productos
+import "../../styles/Products.css";
 import Heading from "../../components/Heading";
 import ResponsiveLayout from "../../components/ResponsiveLayout";
 import Chip from "../../components/Chip";
@@ -12,6 +13,12 @@ import {
   Box,
   HorizontalScroll,
 } from "../../components/LayoutUtilities";
+import { useCart } from "../../context/CartContext";
+import useProductCardActions from "../../hooks/useProductCartActions";
+import Toast from "../../components/Toast";
+import { ButtonPrimary, IconButton } from "../../components/Button";
+import Input from "../../components/Input";
+import Tag from "../../components/Tag";
 
 const ProductListPage = () => {
   const { category } = useParams();
@@ -22,14 +29,30 @@ const ProductListPage = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [search, setSearch] = useState("");
+  const [activeFilters, setActiveFilters] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
-  // Cargar categorías dinámicamente
+  const advancedFilterId = useId();
+
+  const { addToCart, cart } = useCart();
+
+  const {
+    getProductQuantityInCart,
+    isProductOutOfStockOrMaxedInCart,
+    handleAddToCart,
+  } = useProductCardActions({
+    setToastMessage,
+    setShowToast,
+  });
+
   useEffect(() => {
     const fetchCategories = async () => {
       const { data, error } = await supabase
         .from("categories")
         .select("id, name")
         .order("name", { ascending: true });
+
       if (error) {
         console.error("Error fetching categories:", error.message);
       } else {
@@ -39,13 +62,11 @@ const ProductListPage = () => {
     fetchCategories();
   }, []);
 
-  // Cargar productos según la categoría seleccionada o URL
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         let categoryId = null;
 
-        // Si hay categoría en la URL, priorízala
         if (category) {
           const { data: categoryData, error: categoryError } = await supabase
             .from("categories")
@@ -58,17 +79,19 @@ const ProductListPage = () => {
             setProducts([]);
             return;
           }
+
           categoryId = categoryData?.id;
           setSelectedCategory(category);
         } else if (selectedCategory !== "Todos") {
-          // Si no hay categoría en la URL, usa la seleccionada en el chip
           const cat = categories.find((c) => c.name === selectedCategory);
           if (cat) categoryId = cat.id;
         }
 
         let query = supabase
           .from("products")
-          .select("id, name, description, price, photo_url, category_id");
+          .select(
+            "id, name, description, price, product_images, category_id, stock, order_customized"
+          );
 
         if (categoryId) {
           query = query.eq("category_id", categoryId);
@@ -89,15 +112,12 @@ const ProductListPage = () => {
     };
 
     fetchProducts();
-    // eslint-disable-next-line
   }, [category, selectedCategory, categories]);
 
-  // Efecto para actualizar la categoría seleccionada cuando cambia la URL
   useEffect(() => {
     setSelectedCategory(category || "Todos");
   }, [category]);
 
-  // Filtro combinado
   const filteredProducts = products
     .filter((p) =>
       minPrice === "" ? true : Number(p.price) >= Number(minPrice)
@@ -113,6 +133,34 @@ const ProductListPage = () => {
             p.description.toLowerCase().includes(search.toLowerCase()))
     );
 
+  const renderPrimaryAction = (product) => {
+    const disabled = isProductOutOfStockOrMaxedInCart(product);
+
+    if (product.order_customized) {
+      return (
+        <ButtonPrimary
+          small
+          disabled={disabled}
+          onClick={() =>
+            navigate(`/product/${encodeURIComponent(product.name)}`)
+          }
+        >
+          Personalizar
+        </ButtonPrimary>
+      );
+    }
+
+    return (
+      <ButtonPrimary
+        small
+        disabled={disabled}
+        onClick={() => handleAddToCart(product)}
+      >
+        Añadir al Carrito
+      </ButtonPrimary>
+    );
+  };
+
   return (
     <ResponsiveLayout>
       <Box paddingY={48}>
@@ -120,18 +168,18 @@ const ProductListPage = () => {
           <Heading>
             {selectedCategory === "Todos"
               ? "Todos los productos"
-              : `Productos en la categoría: ${selectedCategory}`}
+              : `${selectedCategory}`}
           </Heading>
+
           {/* Filtros */}
-          <Stack>
-            <Inline justify="space-between" wrap>
-              {/* Chips de categoría */}
+          <Stack gap={16}>
+            <Inline justify="space-between" wrap fullWidth>
               <HorizontalScroll>
                 <Inline>
                   {categories.map((cat) => (
                     <Chip
-                      label={cat.name}
                       key={cat.id ?? "todos"}
+                      label={cat.name}
                       onClick={() => {
                         if (cat.name === "Todos") {
                           navigate("/products");
@@ -143,97 +191,109 @@ const ProductListPage = () => {
                         selectedCategory === cat.name ||
                         (cat.name === "Todos" && selectedCategory === "Todos")
                       }
-                    ></Chip>
+                    />
                   ))}
                 </Inline>
               </HorizontalScroll>
 
-              {/* Filtro por texto */}
-              <div>
-                <input
+              <div className={styles.advancedFilters}>
+                <Input
                   type="text"
                   placeholder="Buscar producto..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: 8,
-                    border: "1px solid #d1c4e9",
-                  }}
+                  fullWidth
                 />
+                <IconButton
+                  onClick={() => setActiveFilters(!activeFilters)}
+                  aria-expanded={activeFilters ? "true" : "false"}
+                  aria-controls={advancedFilterId}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="inherit"
+                  >
+                    <g data-name="Layer 2">
+                      <g data-name="options-2">
+                        <rect
+                          width="24"
+                          height="24"
+                          transform="rotate(90 12 12)"
+                          opacity="0"
+                        ></rect>
+                        <path d="M19 9a3 3 0 0 0-2.82 2H3a1 1 0 0 0 0 2h13.18A3 3 0 1 0 19 9zm0 4a1 1 0 1 1 1-1 1 1 0 0 1-1 1z"></path>
+                        <path d="M3 7h1.18a3 3 0 0 0 5.64 0H21a1 1 0 0 0 0-2H9.82a3 3 0 0 0-5.64 0H3a1 1 0 0 0 0 2zm4-2a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"></path>
+                        <path d="M21 17h-7.18a3 3 0 0 0-5.64 0H3a1 1 0 0 0 0 2h5.18a3 3 0 0 0 5.64 0H21a1 1 0 0 0 0-2zm-10 2a1 1 0 1 1 1-1 1 1 0 0 1-1 1z"></path>
+                      </g>
+                    </g>
+                  </svg>
+                </IconButton>
               </div>
             </Inline>
 
             {/* Filtro por precio */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                background: "#f3e5f5",
-                borderRadius: 20,
-                padding: "6px 18px",
-                marginRight: 16,
-                boxShadow: "0 1px 4px #b39ddb33",
-              }}
-            >
-              <span
-                style={{ color: "#5e35b1", fontWeight: 600, marginRight: 6 }}
-              >
-                Precio:
-              </span>
-              <input
-                type="number"
-                min="0"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                placeholder="Mín"
-                style={{
-                  width: 70,
-                  border: "1px solid #d1c4e9",
-                  borderRadius: 8,
-                  padding: "4px 8px",
-                  marginRight: 4,
-                  background: "#fff",
-                  color: "#5e35b1",
-                }}
-              />
-              <span style={{ color: "#5e35b1" }}>-</span>
-              <input
-                type="number"
-                min="0"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="Máx"
-                style={{
-                  width: 70,
-                  border: "1px solid #d1c4e9",
-                  borderRadius: 8,
-                  padding: "4px 8px",
-                  marginLeft: 4,
-                  background: "#fff",
-                  color: "#5e35b1",
-                }}
-              />
-              <span style={{ color: "#5e35b1", marginLeft: 4 }}>€</span>
-            </div>
+            {activeFilters && (
+              <div id={advancedFilterId}>
+                <Stack gap={16}>
+                  <Heading as="h3">Filtros Avanzados</Heading>
+                  <Stack gap={8}>
+                    <Heading as="h4">Filtrar por precio</Heading>
+                    <Inline align="center" gap={16}>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={minPrice}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        placeholder="Mín"
+                        fullWidth
+                      />
+                      <Input
+                        type="number"
+                        min="0"
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        placeholder="Máx"
+                        fullWidth
+                      />
+                    </Inline>
+                  </Stack>
+                </Stack>
+              </div>
+            )}
           </Stack>
 
-          {/* Listado de productos */}
+          {/* Productos */}
           <div className="product-cards">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   id={product.id}
+                  tag={
+                    product.stock === 0 ||
+                    getProductQuantityInCart(product) === product.stock ? (
+                      <Tag type="warning">Agotado</Tag>
+                    ) : null
+                  }
                   title={product.name}
-                  description={product.description}
+                  description={
+                    product.description
+                      ? product.description.split(" ").slice(0, 15).join(" ") +
+                        (product.description.split(" ").length > 15
+                          ? "..."
+                          : "")
+                      : ""
+                  }
                   price={product.price}
-                  //image={product.photo_url}
-                  image={{
-                    src: `https://picsum.photos/200/300`,
-                  }}
+                  customized={product.order_customized}
+                  image={product.product_images?.[0]?.src || ""}
+                  stock={product.stock}
                   linkDetails={`/product/${encodeURIComponent(product.name)}`}
+                  primaryAction={renderPrimaryAction(product)}
+                  category={product.category_id}
                 />
               ))
             ) : (
@@ -242,6 +302,13 @@ const ProductListPage = () => {
           </div>
         </Stack>
       </Box>
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          onClose={() => setShowToast(false)}
+          action={{ label: "Ver carrito", href: "/cart" }}
+        />
+      )}
     </ResponsiveLayout>
   );
 };
