@@ -4,6 +4,7 @@ import { ButtonLink, ButtonPrimary } from "./Button";
 import Price from "./Price";
 import { forwardRef } from "react";
 import Tag from "./Tag";
+import Heading from "./Heading";
 
 const ProductCard = forwardRef((props, ref) => {
   const {
@@ -62,7 +63,7 @@ const ProductCard = forwardRef((props, ref) => {
           className={styles.image}
         />
         {tag && tag}
-        <CardTitle as={titleLevel}>{titleLabel}</CardTitle>
+        <Heading as={titleLevel} size={22}>{titleLabel}</Heading>
         <p className={styles.description}>{shortDescription}</p>
         <Price amount={price} />
       </div>

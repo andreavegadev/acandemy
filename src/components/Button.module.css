@@ -2,7 +2,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: var(--border-radii-button);
-  padding: 8px 12px;
+  padding: 8px 16px;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -11,6 +11,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 40px;
+  font-family: inherit;
 }
 
 .button:disabled {
@@ -33,8 +34,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   padding: 0;
   border: none;
   cursor: pointer;
@@ -51,8 +52,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 2.5rem;
+  height: 2.5rem;
 
   border-radius: var(--border-radii-button);
   background: transparent;
@@ -82,7 +83,7 @@
 
 .button.small {
   font-size: 0.875rem;
-  padding: 6px 8px;
+  padding: 6px 12px;
   min-height: 32px;
 }
 

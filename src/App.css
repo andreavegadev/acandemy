@@ -77,15 +77,7 @@ main {
   min-height: calc(
     100vh - 140px
   ); /* Ajusta el alto del main para que ocupe el espacio restante */
-}
-
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+  font-family: "Raleway", sans-serif;
 }
 
 @media (prefers-reduced-motion: no-preference) {

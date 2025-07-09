@@ -11,6 +11,7 @@
   align-items: center;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   height: 32px;
+  font-family: inherit;
 }
 
 .asset {
