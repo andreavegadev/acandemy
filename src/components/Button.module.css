@@ -162,7 +162,7 @@
 
 .buttonSecondary {
   background-color: transparent;
-  border: 1px solid var(--purple60);
+  border: 1.5px solid var(--purple60);
   border-radius: var(--border-radii-button);
   color: var(--purple60);
 }

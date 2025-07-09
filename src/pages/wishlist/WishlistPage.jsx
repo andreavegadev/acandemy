@@ -1,3 +1,4 @@
+import styles from "./WishlistPage.module.css";
 import { useEffect, useState } from "react";
 import { getWishlist, removeFromWishlist } from "../../utils/wishlist";
 import { getProductById } from "../../api/products";
@@ -88,7 +89,7 @@ const WishlistPage = () => {
       <Box paddingY={48}>
         <Stack gap={32}>
           <Heading>Favoritos</Heading>
-          <div className="product-cards">
+          <div className={styles.productGrid}>
             {products.length > 0 ? (
               products.map((product) => (
                 <ProductCard

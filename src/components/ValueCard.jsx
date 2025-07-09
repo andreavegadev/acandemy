@@ -6,7 +6,7 @@ const ValueCard = ({ asset, title, subtitle }) => {
   return (
     <div className={styles.valueCard}>
       <div className={styles.assetContainer}>{asset && asset}</div>
-      <Heading as="h3" size={16}>
+      <Heading as="h3" size={24}>
         {title}
       </Heading>
       <Text color="var(--text-secondary)" className={styles.subtitle}>
