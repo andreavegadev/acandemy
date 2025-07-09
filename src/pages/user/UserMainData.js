@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
-import { ButtonSecondary } from "./Button";
-import Heading from "./Heading";
+import { supabase } from "../../supabaseClient";
+import { ButtonSecondary } from "../../components/Button";
+import Heading from "../../components/Heading";
 
 const UserMainData = () => {
   const [userData, setUserData] = useState({

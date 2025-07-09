@@ -11,6 +11,7 @@ import ResponsiveLayout from "../../components/ResponsiveLayout";
 import Select from "../../components/Select";
 import Input from "../../components/Input";
 import { ButtonPrimary } from "../../components/Button";
+import { Counter } from "../../components/Counter";
 
 const ProductDetailPage = () => {
   const navigate = useNavigate();
@@ -153,12 +154,6 @@ const ProductDetailPage = () => {
     });
   };
 
-  const handleChange = (e) => {
-    const value = Math.max(1, Math.min(product.stock, Number(e.target.value)));
-    setQuantity(value);
-  };
-
-  // Calcula el precio total sumando el producto base y las personalizaciones seleccionadas
   const totalPrice = React.useMemo(() => {
     if (!product) return 0;
     let sum = Number(product.price);
@@ -168,8 +163,8 @@ const ProductDetailPage = () => {
         sum += Number(perso.additional_price);
       }
     });
-    return sum * quantity;
-  }, [product, selectedPersonalizations, personalizations, quantity]);
+    return sum; // ← No quantity multiplication
+  }, [product, selectedPersonalizations, personalizations]);
 
   if (loading) {
     return <p className="product-loading">Cargando detalles del producto...</p>;
@@ -193,8 +188,6 @@ const ProductDetailPage = () => {
             ]}
           ></Breadcrumbs>
 
-          <Heading>{product.name}</Heading>
-
           <section
             aria-label="Configuración de producto"
             className={styles.productDetail}
@@ -202,7 +195,9 @@ const ProductDetailPage = () => {
             <ImagePreview images={product.product_images} />
 
             <div>
-              <p>{product.short_description}</p>
+              <Heading>{product.name}</Heading>
+              <Price amount={totalPrice} />
+              {product.short_description && <p>{product.short_description}</p>}
               {/* Picklists de personalizaciones agrupadas por tipo */}
               {Object.keys(groupedPersonalizations).length > 0 && (
                 <div className="personalization-block">
@@ -241,15 +236,13 @@ const ProductDetailPage = () => {
                 </div>
               )}
               <div>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  max={product.stock}
-                  label="Cantidad"
+                <Counter
                   value={quantity}
-                  onChange={handleChange}
+                  onChange={setQuantity}
+                  min={1}
+                  max={product.stock}
                 />
+
                 <div
                   style={{
                     marginLeft: 2,
@@ -262,9 +255,7 @@ const ProductDetailPage = () => {
                   (Stock disponible: {product.stock})
                 </div>
               </div>
-              <p>
-                <strong>Precio total:</strong> <Price amount={totalPrice} />
-              </p>
+
               <ButtonPrimary
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}

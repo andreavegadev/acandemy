@@ -1,4 +1,4 @@
-.radioGroup {
+.checkboxGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -7,14 +7,14 @@
   margin: 0;
 }
 
-.radioOption {
+.checkboxOption {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
   gap: 8px;
 }
 
-.radioInput {
+.checkboxInput {
   margin: 0;
 }
 
@@ -30,12 +30,22 @@
 }
 
 .label {
-  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .description {
   font-size: 0.875rem;
   color: var(--text-secondary);
+}
+
+.detail {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+.checked {
+  border-color: #000;
 }
 
 /* Layout modifiers */
@@ -49,7 +59,7 @@
 }
 
 @media (max-width: 600px) {
-  .radioOption {
+  .checkboxOption {
     display: flex;
     justify-self: center;
     border: 1.5px solid var(--neutral50);

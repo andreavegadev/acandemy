@@ -97,89 +97,86 @@ const EditCustomizationProductPage = () => {
   };
 
   return (
-    <Box paddingY={24}>
-      <Stack gap={24}>
-        <Breadcrumbs
-          items={[
-            {
-              label: "Productos",
-              onClick: () => navigate("/admin/products"),
-            },
-            {
-              label: productName ? productName : "Producto",
-              onClick: () =>
-                form.product_id &&
-                navigate(`/admin/products/${form.product_id}`),
-            },
-            {
-              label: `Personalización`,
-              href: `admin/products/customizations`,
-              current: true,
-            },
-          ]}
-        ></Breadcrumbs>
-        <Heading>Editar personalización de {productName}</Heading>
-        <form onSubmit={handleSubmit}>
-          <Stack gap={16}>
+    <Stack gap={24}>
+      <Breadcrumbs
+        items={[
+          {
+            label: "Productos",
+            onClick: () => navigate("/admin/products"),
+          },
+          {
+            label: productName ? productName : "Producto",
+            onClick: () =>
+              form.product_id && navigate(`/admin/products/${form.product_id}`),
+          },
+          {
+            label: `Personalización`,
+            href: `admin/products/customizations`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
+      <Heading>Editar personalización de {productName}</Heading>
+      <form onSubmit={handleSubmit}>
+        <Stack gap={16}>
+          <Input
+            type="text"
+            name="name"
+            label="Nombre"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <Select
+            name="personalization_type_id"
+            label="Tipo de personalización"
+            value={form.personalization_type_id}
+            onChange={handleChange}
+            required
+            options={types.map((t) => ({
+              value: t.id,
+              label: t.name,
+            }))}
+          />
+          <Input
+            type="number"
+            name="additional_price"
+            label="Precio extra"
+            min="0"
+            step="0.01"
+            value={form.additional_price}
+            onChange={handleChange}
+            required
+          />
+          <TextArea
+            type="text"
+            name="description"
+            label="Descripción"
+            value={form.description}
+            onChange={handleChange}
+          />
+          <label>
             <Input
-              type="text"
-              name="name"
-              label="Nombre"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-            <Select
-              name="personalization_type_id"
-              label="Tipo de personalización"
-              value={form.personalization_type_id}
-              onChange={handleChange}
-              required
-              options={types.map((t) => ({
-                value: t.id,
-                label: t.name,
-              }))}
-            />
-            <Input
-              type="number"
-              name="additional_price"
-              label="Precio extra"
-              min="0"
-              step="0.01"
-              value={form.additional_price}
-              onChange={handleChange}
-              required
-            />
-            <TextArea
-              type="text"
-              name="description"
-              label="Descripción"
-              value={form.description}
+              type="checkbox"
+              name="active"
+              checked={form.active}
               onChange={handleChange}
             />
-            <label>
-              <Input
-                type="checkbox"
-                name="active"
-                checked={form.active}
-                onChange={handleChange}
-              />
-              Activa
-            </label>
-            <ButtonPrimary type="submit">Guardar</ButtonPrimary>
-            <ButtonDanger
-              type="button"
-              style={{ marginLeft: 8, background: "#e53935" }}
-              onClick={handleDelete}
-            >
-              Eliminar
-            </ButtonDanger>
-          </Stack>
-        </form>
-        {success && <p className="success">{success}</p>}
-        {error && <p className="error">{error}</p>}
-      </Stack>
-    </Box>
+            Activa
+          </label>
+          <ButtonPrimary type="submit">Guardar</ButtonPrimary>
+          <ButtonDanger
+            type="button"
+            style={{ marginLeft: 8, background: "#e53935" }}
+            onClick={handleDelete}
+          >
+            Eliminar
+          </ButtonDanger>
+        </Stack>
+      </form>
+      {success && <p className="success">{success}</p>}
+      {error && <p className="error">{error}</p>}
+    </Stack>
   );
 };
 

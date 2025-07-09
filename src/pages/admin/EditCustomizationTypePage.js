@@ -79,7 +79,7 @@ const EditCustomizationTypePage = () => {
         <Breadcrumbs
           items={[
             {
-              label: "Tipos de personalización",
+              label: "Personalizaciones",
               onClick: () => navigate("/admin/customizations"),
             },
             {

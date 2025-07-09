@@ -97,7 +97,6 @@ const EditDiscountPage = () => {
   };
 
   return (
-    <Box paddingY={24}>
       <Stack gap={24}>
         {" "}
         <Breadcrumbs
@@ -239,7 +238,7 @@ const EditDiscountPage = () => {
           )}
         </div>
       </Stack>
-    </Box>
+
   );
 };
 

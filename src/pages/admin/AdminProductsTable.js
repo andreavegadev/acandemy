@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import Table from "../../components/Table";
 import { useNavigate } from "react-router-dom";
+import { ButtonPrimary } from "../../components/Button";
+import Heading from "../../components/Heading";
+import { Inline, Stack } from "../../components/LayoutUtilities";
 
 const AdminProductsTable = () => {
   const [products, setProducts] = useState([]);
@@ -121,18 +124,20 @@ const AdminProductsTable = () => {
   ];
 
   return (
-    <div>
+    <Stack gap={24}>
+      <Inline justify="space-between" align="center" fullWidth>
+        <Heading>Productos</Heading>
+        <ButtonPrimary onClick={onAddProduct}>Añadir producto</ButtonPrimary>
+      </Inline>
       <Table
-        title="Productos"
         items={products}
-        onClickAdd={onAddProduct}
         onClick={onProductSelect}
         filters={[
-          { key: "name", label: "Filtrar por nombre" },
+          { key: "name", label: "Nombre" },
           { key: "price", label: "Precio mínimo", type: "number" },
           {
             key: "active",
-            label: "Filtrar por activo",
+            label: "Activo",
             type: "select",
             options: [
               { value: "true", label: "Sí" },
@@ -141,7 +146,7 @@ const AdminProductsTable = () => {
           },
           {
             key: "handmade",
-            label: "Filtrar por hecho a mano",
+            label: "Hecho a mano",
             type: "select",
             options: [
               { value: "true", label: "Sí" },
@@ -151,7 +156,7 @@ const AdminProductsTable = () => {
         ]}
         addItems
       />
-    </div>
+    </Stack>
   );
 };
 

@@ -33,7 +33,7 @@ const CartItem = ({ item, removeFromCart, updateQuantity }) => {
       <div className={styles.cartItemDetails}>
         <Inline gap={8} justify="space-between" fullWidth>
           <a
-            href={`/product/${encodeURIComponent(item.name)}`}
+            href={`/product/${encodeURIComponent(item.title || item.name)}`}
             className={styles.cartItemHeadingLink}
           >
             <Heading as="h3">{item.title || item.name}</Heading>

@@ -4,8 +4,8 @@ import { ButtonPrimary, ButtonSecondary } from "./Button";
 import Heading from "./Heading";
 import Price from "./Price";
 import Select from "./Select";
-import MultiSelect from "./MultiSelect";
 import Input from "./Input";
+import { Inline } from "./LayoutUtilities";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50, 1000];
 
@@ -25,8 +25,6 @@ const Table = ({
   onClickAdd,
   onClick,
   filters = [],
-  featuredItems = [],
-  featuredTitle,
   addItems,
 }) => {
   const [filterValues, setFilterValues] = useState(
@@ -139,13 +137,13 @@ const Table = ({
 
   return (
     <>
-      <Heading>{title}</Heading>
-      {addItems && (
+      {title && <Heading>{title}</Heading>}
+      {addItems && onClickAdd && (
         <ButtonPrimary
           onClick={onClickAdd}
-          aria-label={`Añadir ${title.toLowerCase()}`}
+          aria-label={`Añadir ${title && title.toLowerCase()}`}
         >
-          Añadir {title.toLowerCase()}
+          Añadir {title && title.toLowerCase()}
         </ButtonPrimary>
       )}
       {filters.length > 0 && (
@@ -178,16 +176,13 @@ const Table = ({
             // Filtro multiselect
             if (filter.type === "multiselect") {
               return (
-                <MultiSelect
+                <Select
+                  multiple
                   key={filter.key}
                   label={filter.label || filter.key}
                   name={filter.key}
                   value={filterValues[filter.key] || []}
-                  onChange={(e) => {
-                    const selected = Array.from(
-                      e.target.selectedOptions,
-                      (opt) => opt.value
-                    );
+                  onChange={(selected) => {
                     setFilterValues({
                       ...filterValues,
                       [filter.key]: selected,
@@ -206,7 +201,7 @@ const Table = ({
                   label={filter.label || filter.key}
                   name={filter.key}
                   value={filterValues[filter.key]}
-                  onChange={(e) => handleFilterChange(e, filter.key)}
+                  onChange={(value) => handleFilterChange(value, filter.key)}
                   options={[
                     { value: "all", label: "Todos" },
                     ...(filter.options || []),
@@ -216,17 +211,16 @@ const Table = ({
             }
             if (filter.type === "number") {
               return (
-                <div key={filter.key}>
-                  <Input
+                <div key={filter.key} className={styles.minMaxFilter}>
+                  <Input fullWidth
                     type="number"
-                    placeholder={(filter.label || filter.key) + " mín"}
+                    label={(filter.label || filter.key) + " mín"}
                     value={filterValues[`${filter.key}_min`] || ""}
                     onChange={(e) => handleFilterChange(e, `${filter.key}_min`)}
                   />
-                  <span>-</span>
-                  <Input
+                  <Input fullWidth
                     type="number"
-                    placeholder={(filter.label || filter.key) + " máx"}
+                    label={(filter.label || filter.key) + " máx"}
                     value={filterValues[`${filter.key}_max`] || ""}
                     onChange={(e) => handleFilterChange(e, `${filter.key}_max`)}
                   />
@@ -237,7 +231,7 @@ const Table = ({
               <Input
                 key={filter.key}
                 type="text"
-                placeholder={filter.label || filter.key}
+                label={filter.label || filter.key}
                 value={filterValues[filter.key]}
                 onChange={(e) => handleFilterChange(e, filter.key)}
               />

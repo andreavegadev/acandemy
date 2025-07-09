@@ -12,11 +12,12 @@
 .input {
   padding: 8px 12px;
   border: 1.5px solid var(--neutral50);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
   background: var(--input-background);
   color: var(--text-primary);
   transition: border 0.2s, box-shadow 0.2s;
+  min-height: 40px;
 }
 
 

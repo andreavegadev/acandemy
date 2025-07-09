@@ -216,7 +216,7 @@ const Header = ({ session }) => {
               </IconButton>
             </Badge>
             {session ? (
-              <ButtonPrimary onClick={handleLogout} small >
+              <ButtonPrimary onClick={handleLogout} small>
                 Cerrar Sesión
               </ButtonPrimary>
             ) : (

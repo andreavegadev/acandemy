@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import Table from "../../components/Table";
+import { Inline, Stack } from "../../components/LayoutUtilities";
+import Heading from "../../components/Heading";
+import { ButtonPrimary } from "../../components/Button";
+import Text from "../../components/Text";
 
 const AdminShippingTable = () => {
   const [shippingTypes, setShippingTypes] = useState([]);
@@ -34,9 +38,14 @@ const AdminShippingTable = () => {
   };
 
   return (
-    <div>
+    <Stack gap={24}>
+      <Inline justify="space-between" align="center" fullWidth>
+        <Heading>Tipos de envío</Heading>
+        <ButtonPrimary onClick={onAddShipping}>
+          Añadir tipo de envío
+        </ButtonPrimary>
+      </Inline>
       <Table
-        title="Tipos de Envío"
         items={shippingTypes.map((shipping) => ({
           id: shipping.id,
           nombre: shipping.name,
@@ -56,12 +65,10 @@ const AdminShippingTable = () => {
             ],
           },
         ]}
-        addItems
-        onClickAdd={onAddShipping}
       />
       {loading && <p>Cargando...</p>}
       {!loading && shippingTypes.length === 0 && <p>Sin tipos de envío</p>}
-    </div>
+    </Stack>
   );
 };
 

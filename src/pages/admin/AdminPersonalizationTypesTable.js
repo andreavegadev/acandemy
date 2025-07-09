@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import Table from "../../components/Table";
+import { Inline, Stack } from "../../components/LayoutUtilities";
+import Heading from "../../components/Heading";
+import { ButtonPrimary } from "../../components/Button";
 
 const AdminPersonalizationTypesTable = () => {
   const [types, setTypes] = useState([]);
@@ -49,7 +52,8 @@ const AdminPersonalizationTypesTable = () => {
       label: "Descripción",
       type: "text",
       value: filters.description,
-      onChange: (e) => setFilters((f) => ({ ...f, description: e.target.value })),
+      onChange: (e) =>
+        setFilters((f) => ({ ...f, description: e.target.value })),
     },
   ];
 
@@ -65,20 +69,24 @@ const AdminPersonalizationTypesTable = () => {
   );
 
   return (
-    <div>
+    <Stack gap={24}>
+      <Inline justify="space-between" align="center" fullWidth>
+        <Heading>Personalizaciones</Heading>
+        <ButtonPrimary onClick={onAddPesonalizationType}>
+          Añadir personalización
+        </ButtonPrimary>
+      </Inline>
       <Table
-        title="Tipos de Personalización"
         items={filteredTypes.map((type) => ({
           id: type.id,
           nombre: type.name,
           descripción: type.description,
         }))}
-        onClickAdd={onAddPesonalizationType}
         onClick={onPersonalizationTypeSelect}
         filters={tableFilters}
         addItems
       />
-    </div>
+    </Stack>
   );
 };
 

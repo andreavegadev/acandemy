@@ -139,103 +139,101 @@ const EditOrderPage = () => {
   }));
 
   return (
-    <Box paddingY={24}>
-      <Stack gap={24}>
-        {" "}
-        <Breadcrumbs
-          items={[
-            { label: "Pedidos", onClick: () => navigate("/admin/orders") },
-            {
-              label: `Pedido #${order.id}`,
-              current: true,
-            },
-          ]}
-        ></Breadcrumbs>
-        <Heading as="h1">Pedido #{order.id}</Heading>
-        <form onSubmit={onSubmit}>
-          <Stack gap={16}>
-            <Input
-              label="Usuario"
-              type="text"
-              value={userFullName || order?.user_id}
-              readOnly
-              style={{ marginLeft: 8, width: 220 }}
-            />
+    <Stack gap={24}>
+      {" "}
+      <Breadcrumbs
+        items={[
+          { label: "Pedidos", onClick: () => navigate("/admin/orders") },
+          {
+            label: `Pedido #${order.id}`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
+      <Heading as="h1">Pedido #{order.id}</Heading>
+      <form onSubmit={onSubmit}>
+        <Stack gap={16}>
+          <Input
+            label="Usuario"
+            type="text"
+            value={userFullName || order?.user_id}
+            readOnly
+            style={{ marginLeft: 8, width: 220 }}
+          />
 
-            <Input
-              label="Teléfono"
-              type="text"
-              value={userPhone}
-              readOnly
-              style={{ marginLeft: 8, width: 220 }}
-            />
+          <Input
+            label="Teléfono"
+            type="text"
+            value={userPhone}
+            readOnly
+            style={{ marginLeft: 8, width: 220 }}
+          />
 
-            <Input
-              label="Fecha de pedido"
-              type="text"
-              value={new Date(
-                order.order_date || order.created_at
-              ).toLocaleString()}
-              readOnly
-            />
-            <Select
-              label="Estado"
-              name="status"
-              value={status}
-              onChange={handleStatusChange}
-              disabled={updating}
-              style={{ marginLeft: 8, marginRight: 8, width: 220 }}
-              options={Object.entries(STATUS_LABELS).map(([value, label]) => ({
-                value,
-                label,
-              }))}
-            />
+          <Input
+            label="Fecha de pedido"
+            type="text"
+            value={new Date(
+              order.order_date || order.created_at
+            ).toLocaleString()}
+            readOnly
+          />
+          <Select
+            label="Estado"
+            name="status"
+            value={status}
+            onChange={handleStatusChange}
+            disabled={updating}
+            style={{ marginLeft: 8, marginRight: 8, width: 220 }}
+            options={Object.entries(STATUS_LABELS).map(([value, label]) => ({
+              value,
+              label,
+            }))}
+          />
 
-            <Input
-              label={"Dirección de envío"}
-              type="text"
-              value={order.shipping_address}
-              readOnly
-            />
-            <ButtonSecondary
-              type="button"
-              onClick={handlePrintAddress}
-              aria-label={"Imprimir dirección de envío en nueva pestaña"}
-            >
-              Imprimir dirección
-            </ButtonSecondary>
-            <Input
-              label={"Número de seguimiento"}
-              type="text"
-              value={order.tracking_number || ""}
-              onChange={(e) => {
-                const newTracking = e.target.value;
-                setOrder((prev) => ({
-                  ...prev,
-                  tracking_number: newTracking,
-                }));
-              }}
-              onBlur={async (e) => {
-                const newTracking = e.target.value;
-                setUpdating(true);
-                const { error: updateError } = await supabase
-                  .from("orders")
-                  .update({ tracking_number: newTracking })
-                  .eq("id", id);
-                setUpdating(false);
-                if (updateError)
-                  setError("No se pudo actualizar el número de seguimiento.");
-              }}
-              disabled={updating}
-              placeholder="-"
-            />
-            <Price amount={order.total_amount} />
-          </Stack>
-        </form>
-        <Heading as="h2">Productos del pedido</Heading>
-        <Table title="" items={productTableItems} />
-      </Stack>
-    </Box>
+          <Input
+            label={"Dirección de envío"}
+            type="text"
+            value={order.shipping_address}
+            readOnly
+          />
+          <ButtonSecondary
+            type="button"
+            onClick={handlePrintAddress}
+            aria-label={"Imprimir dirección de envío en nueva pestaña"}
+          >
+            Imprimir dirección
+          </ButtonSecondary>
+          <Input
+            label={"Número de seguimiento"}
+            type="text"
+            value={order.tracking_number || ""}
+            onChange={(e) => {
+              const newTracking = e.target.value;
+              setOrder((prev) => ({
+                ...prev,
+                tracking_number: newTracking,
+              }));
+            }}
+            onBlur={async (e) => {
+              const newTracking = e.target.value;
+              setUpdating(true);
+              const { error: updateError } = await supabase
+                .from("orders")
+                .update({ tracking_number: newTracking })
+                .eq("id", id);
+              setUpdating(false);
+              if (updateError)
+                setError("No se pudo actualizar el número de seguimiento.");
+            }}
+            disabled={updating}
+            placeholder="-"
+          />
+          <Price amount={order.total_amount} />
+        </Stack>
+      </form>
+      <Heading as="h2">Productos del pedido</Heading>
+      <Table title="" items={productTableItems} />
+    </Stack>
   );
 };
 

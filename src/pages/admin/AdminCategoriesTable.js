@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import Table from "../../components/Table";
+import { Inline, Stack } from "../../components/LayoutUtilities";
+import Heading from "../../components/Heading";
+import { ButtonPrimary } from "../../components/Button";
 
 const AdminCategoriesTable = () => {
   const [categories, setCategories] = useState([]);
@@ -48,18 +51,20 @@ const AdminCategoriesTable = () => {
   ];
 
   return (
-    <div>
+    <Stack gap={24}>
+      <Inline justify="space-between" align="center" fullWidth>
+        <Heading>Categorías</Heading>
+        <ButtonPrimary onClick={onAddCategory}>Añadir categoría</ButtonPrimary>
+      </Inline>
       <Table
-        title="Categorías"
         items={categories}
         onClick={onCategorySelect}
         filters={categoryFilters}
         addItems
-        onClickAdd={onAddCategory}
       ></Table>
       {loading && <p>Cargando...</p>}
       {!loading && categories.length === 0 && <p>Sin categorías</p>}
-    </div>
+    </Stack>
   );
 };
 

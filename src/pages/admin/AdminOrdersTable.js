@@ -4,6 +4,7 @@ import { supabase } from "../../supabaseClient";
 import { ORDER_STATUSES, STATUS_LABELS } from "../../constants/order";
 import Table from "../../components/Table";
 import Heading from "../../components/Heading";
+import { Stack } from "../../components/LayoutUtilities";
 
 const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
   const navigate = useNavigate();
@@ -125,88 +126,84 @@ const AdminOrdersTable = ({ onOrderSelect, reloadFlag }) => {
   }));
 
   return (
-    <div style={{ display: "flex", alignItems: "flex-start" }}>
-      <div style={{ flex: 1, marginRight: 32 }}>
-        <div
-          style={{
-            background: "#ede7f6",
-            borderRadius: 12,
-            border: "1.5px solid #b39ddb",
-            boxShadow: "0 2px 8px #b39ddb22",
-            padding: 18,
-            marginBottom: 24,
-          }}
-        >
-          <Heading as="h3" style={{ marginBottom: 12, color: "#5e35b1" }}>
-            Pedidos por estado
-          </Heading>
-          <ul
+    <Stack gap={24}>
+      <Heading>Pedidos</Heading>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+          gap: "24px",
+          padding: "24px 0",
+        }}
+      >
+        {featuredItems.map((item) => (
+          <div
+            key={item.estado}
             style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
+              backgroundColor: "#ffffff",
+              borderRadius: "12px",
+              border: "1px solid var(--purple30)",
+              padding: "16px",
+              textAlign: "center",
               display: "flex",
-              gap: 24,
-              flexWrap: "wrap",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "100px",
             }}
           >
-            {featuredItems.map((item) => (
-              <li
-                key={item.estado}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  minWidth: 90,
-                  fontWeight: 500,
-                  color: "#5e35b1",
-                  background: "#fff",
-                  borderRadius: 8,
-                  border: "1px solid #d1c4e9",
-                  padding: "10px 16px",
-                  boxShadow: "0 1px 4px #b39ddb22",
-                }}
-              >
-                <span style={{ fontSize: 15 }}>{item.estado}</span>
-                <span style={{ fontSize: 22, fontWeight: 700 }}>
-                  {item.cantidad}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div style={{ flex: 2 }}>
-        <Table
-          title="Pedidos"
-          filters={tableFilters}
-          featuredItems={featuredItems}
-          featuredTitle="Pedidos por estado"
-          items={
-            Array.isArray(orders)
-              ? orders.map((order) => ({
-                  id: order.id,
-                  user: order.user
-                    ? `${order.user.full_name} (DNI: ${order.user.id_number})`
-                    : order.user_id,
-                  order_date: order.order_date
-                    ? new Date(order.order_date).toLocaleString()
-                    : "-",
-                  total_amount: Number(order.total_amount).toFixed(2) + " €",
-                  discount_id: order.discount_id || "-",
-                  shipping_type: order.shipping_type
-                    ? String(order.shipping_type)
-                    : "-",
-                  status: order.status,
-                  payment_status: order.payment_status,
-                  tracking_number: order.tracking_number || "-",
-                }))
-              : []
-          }
-          onClick={handleClick}
-        />
-      </div>
-    </div>
+            <span
+              style={{
+                fontSize: "14px",
+                color: "#5e35b1",
+                marginBottom: "8px",
+                fontWeight: 500,
+                textTransform: "capitalize",
+              }}
+            >
+              {item.estado}
+            </span>
+            <span
+              style={{
+                fontSize: "28px",
+                fontWeight: 700,
+                color: "#311b92",
+              }}
+            >
+              {item.cantidad}
+            </span>
+          </div>
+        ))}
+      </section>
+
+      <Table
+        filters={tableFilters}
+        featuredItems={featuredItems}
+        featuredTitle="Pedidos por estado"
+        items={
+          Array.isArray(orders)
+            ? orders.map((order) => ({
+                id: order.id,
+                user: order.user
+                  ? `${order.user.full_name} (DNI: ${order.user.id_number})`
+                  : order.user_id,
+                order_date: order.order_date
+                  ? new Date(order.order_date).toLocaleString()
+                  : "-",
+                total_amount: Number(order.total_amount).toFixed(2) + " €",
+                discount_id: order.discount_id || "-",
+                shipping_type: order.shipping_type
+                  ? String(order.shipping_type)
+                  : "-",
+                status: order.status,
+                payment_status: order.payment_status,
+                tracking_number: order.tracking_number || "-",
+              }))
+            : []
+        }
+        onClick={handleClick}
+      />
+    </Stack>
   );
 };
 

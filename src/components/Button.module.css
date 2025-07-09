@@ -10,6 +10,7 @@
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
+  min-height: 40px;
 }
 
 .button:disabled {
@@ -82,6 +83,7 @@
 .button.small {
   font-size: 0.875rem;
   padding: 6px 8px;
+  min-height: 32px;
 }
 
 .iconButton .small {

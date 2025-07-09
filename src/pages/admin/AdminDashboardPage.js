@@ -13,8 +13,8 @@ const AdminDashboardPage = () => {
       items={[
         {
           label: "Pedidos",
-          onClick: () => navigate("/admin/orders"),
-          active: currentPath.startsWith("/admin/orders"),
+          onClick: () => navigate("/admin"),
+          active: currentPath === "/admin",
         },
         {
           label: "Productos",
@@ -37,7 +37,7 @@ const AdminDashboardPage = () => {
           active: currentPath.startsWith("/admin/categories"),
         },
         {
-          label: "Tipos de personalización",
+          label: "Personalizaciones",
           onClick: () => navigate("/admin/customizations"),
           active: currentPath.startsWith("/admin/customizations"),
         },

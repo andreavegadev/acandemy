@@ -6,6 +6,7 @@ import Heading from "../../components/Heading";
 import { Box, Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
 import Select from "../../components/Select";
+import { Checkbox } from "../../components/Checkbox";
 
 const AddProductPage = () => {
   const [form, setForm] = useState({
@@ -101,79 +102,77 @@ const AddProductPage = () => {
   };
 
   return (
-    <Box paddingY={24}>
-      <Stack gap={24}>
-        <Heading>Añadir Producto</Heading>
-        <form onSubmit={handleSubmit}>
-          <Stack gap={16}>
-            <Input
-              type="text"
-              name="name"
-              label="Nombre"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-            <TextArea
-              name="description"
-              label="Descripción"
-              value={form.description}
-              onChange={handleChange}
-              required
-            />
-            <Input
-              type="number"
-              name="price"
-              label="Precio"
-              value={form.price}
-              onChange={handleChange}
-              required
-              min="0"
-              step="0.01"
-            />
-            <Input
-              label="Stock"
-              type="number"
-              name="stock"
-              value={form.stock}
-              onChange={handleChange}
-              required
-              min="0"
-            />
-            <Select
-              name="category_id"
-              label="Categoría"
-              value={form.category_id}
-              onChange={handleChange}
-              required
-              options={categories.map((cat) => ({
-                value: cat.id,
-                label: cat.name,
-              }))}
-            />
-            <Input
-              type="text"
-              name="product_images"
-              label="URL de la imagen"
-              value={form.product_images}
-              onChange={handleChange}
-            />
-            <Input
-              label="Hecho a mano"
-              type="checkbox"
-              name="handmade"
-              checked={form.handmade}
-              onChange={handleChange}
-            />
-            <ButtonSecondary type="submit" aria-label={`Añadir producto`}>
-              Añadir producto
-            </ButtonSecondary>
-          </Stack>
-        </form>
-        {success && <p className="success">{success}</p>}
-        {error && <p className="error">{error}</p>}
-      </Stack>
-    </Box>
+    <Stack gap={24}>
+      <Heading>Añadir Producto</Heading>
+      <form onSubmit={handleSubmit}>
+        <Stack gap={16}>
+          <Input
+            type="text"
+            name="name"
+            label="Nombre"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <TextArea
+            name="description"
+            label="Descripción"
+            value={form.description}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            type="number"
+            name="price"
+            label="Precio"
+            value={form.price}
+            onChange={handleChange}
+            required
+            min="0"
+            step="0.01"
+          />
+          <Input
+            label="Stock"
+            type="number"
+            name="stock"
+            value={form.stock}
+            onChange={handleChange}
+            required
+            min="0"
+          />
+          <Select
+            name="category_id"
+            label="Categoría"
+            value={form.category_id}
+            onChange={handleChange}
+            required
+            options={categories.map((cat) => ({
+              value: cat.id,
+              label: cat.name,
+            }))}
+          />
+          <Input
+            type="text"
+            name="product_images"
+            label="URL de la imagen"
+            value={form.product_images}
+            onChange={handleChange}
+          />
+          <Checkbox
+            label="Hecho a mano"
+            name="handmade"
+            checked={form.handmade}
+            onChange={handleChange}
+          />
+
+          <ButtonSecondary type="submit" aria-label={`Añadir producto`}>
+            Añadir producto
+          </ButtonSecondary>
+        </Stack>
+      </form>
+      {success && <p className="success">{success}</p>}
+      {error && <p className="error">{error}</p>}
+    </Stack>
   );
 };
 

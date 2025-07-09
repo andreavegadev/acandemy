@@ -44,13 +44,12 @@ const AddCustomizationPage = () => {
   };
 
   return (
-    <Box paddingY={24}>
+
       <Stack gap={24}>
-        <Heading>Crear tipo de personalización</Heading>
         <Breadcrumbs
           items={[
             {
-              label: "Tipos de personalización",
+              label: "Personalizaciones",
               onClick: () => navigate("/admin/customizations"),
             },
             {
@@ -59,6 +58,8 @@ const AddCustomizationPage = () => {
             },
           ]}
         ></Breadcrumbs>
+        <Heading>Crear personalización</Heading>
+
         <form onSubmit={handleSubmit}>
           <Stack gap={16}>
             <Input
@@ -76,15 +77,13 @@ const AddCustomizationPage = () => {
               onChange={handleChange}
               required
             />
-            <ButtonPrimary type="submit">
-              Crear tipo de personalización
-            </ButtonPrimary>
+            <ButtonPrimary type="submit">Crear personalización</ButtonPrimary>
           </Stack>
         </form>
         {success && <p className="success">{success}</p>}
         {error && <p className="error">{error}</p>}
       </Stack>
-    </Box>
+
   );
 };
 

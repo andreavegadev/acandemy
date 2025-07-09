@@ -79,78 +79,73 @@ const EditCategoryPage = () => {
   };
 
   return (
-    <Box paddingY={24}>
-      <Stack gap={24}>
-        <Breadcrumbs
-          items={[
-            {
-              label: "Categorías",
-              onClick: () => navigate("/admin/categories"),
-            },
-            {
-              label: `Categoría`,
-              current: true,
-            },
-          ]}
-        ></Breadcrumbs>
-        <Heading>
-          {isViewMode ? "Detalle de la categoría" : "Editar categoría"}
-        </Heading>
-        <form onSubmit={handleSubmit}>
-          <Stack gap={16}>
-            <Input
-              type="text"
-              name="name"
-              label="Nombre"
-              value={form.name}
-              onChange={handleChange}
-              required
-              disabled={isViewMode}
-            />
-            <TextArea
-              type="text"
-              name="description"
-              label="Descripción"
-              value={form.description}
-              onChange={handleChange}
-              required
-              disabled={isViewMode}
-            />
-            <Input
-              type="text"
-              name="icon"
-              label="Icono (emoji o url)"
-              value={form.icon}
-              onChange={handleChange}
-              disabled={isViewMode}
-            />
-            <Input
-              label={"Destacada"}
-              type="checkbox"
-              name="featured"
-              checked={form.featured}
-              onChange={handleChange}
-              disabled={isViewMode}
-            />
-            {!isViewMode && (
-              <ButtonPrimary type="submit">Guardar cambios</ButtonPrimary>
-            )}
-          </Stack>
-        </form>
-        {success && <p className="success">{success}</p>}
-        {error && <p className="error">{error}</p>}
-        <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
-          {isViewMode && id && (
-            <ButtonPrimary
-              onClick={handleEdit}
-              style={{ background: "#5e35b1" }}
-            >
-              Editar
-            </ButtonPrimary>
+    <Stack gap={24}>
+      <Breadcrumbs
+        items={[
+          {
+            label: "Categorías",
+            onClick: () => navigate("/admin/categories"),
+          },
+          {
+            label: `Categoría`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
+      <Heading>
+        {isViewMode ? "Detalle de la categoría" : "Editar categoría"}
+      </Heading>
+      <form onSubmit={handleSubmit}>
+        <Stack gap={16}>
+          <Input
+            type="text"
+            name="name"
+            label="Nombre"
+            value={form.name}
+            onChange={handleChange}
+            required
+            disabled={isViewMode}
+          />
+          <TextArea
+            type="text"
+            name="description"
+            label="Descripción"
+            value={form.description}
+            onChange={handleChange}
+            required
+            disabled={isViewMode}
+          />
+          <Input
+            type="text"
+            name="icon"
+            label="Icono (emoji o url)"
+            value={form.icon}
+            onChange={handleChange}
+            disabled={isViewMode}
+          />
+          <Input
+            label={"Destacada"}
+            type="checkbox"
+            name="featured"
+            checked={form.featured}
+            onChange={handleChange}
+            disabled={isViewMode}
+          />
+          {!isViewMode && (
+            <ButtonPrimary type="submit">Guardar cambios</ButtonPrimary>
           )}
-        </div>
-      </Stack>
-    </Box>
+        </Stack>
+      </form>
+      {success && <p className="success">{success}</p>}
+      {error && <p className="error">{error}</p>}
+      <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+        {isViewMode && id && (
+          <ButtonPrimary onClick={handleEdit} style={{ background: "#5e35b1" }}>
+            Editar
+          </ButtonPrimary>
+        )}
+      </div>
+    </Stack>
   );
 };
 

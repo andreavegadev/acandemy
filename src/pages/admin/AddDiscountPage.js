@@ -135,7 +135,6 @@ const AddDiscountPage = () => {
   };
 
   return (
-    <Box paddingY={24}>
       <Stack gap={24}>
         <Breadcrumbs
           items={[
@@ -293,7 +292,6 @@ const AddDiscountPage = () => {
           </Stack>
         </form>
       </Stack>
-    </Box>
   );
 };
 

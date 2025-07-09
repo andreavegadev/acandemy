@@ -33,7 +33,7 @@ import CookiesBanner from "./components/CookiesBanner";
 import WishlistPage from "./pages/wishlist/WishlistPage";
 import UserOrderDetailPage from "./pages/user/UserOrderDetailPage";
 import UserOrdersPage from "./pages/user/UserOrdersPage";
-import UserMainData from "./components/UserMainData";
+import UserMainData from "./pages/user/UserMainData";
 import AdminProductsTable from "./pages/admin/AdminProductsTable";
 import AdminCategoriesTable from "./pages/admin/AdminCategoriesTable";
 import AdminPersonalizationTypesTable from "./pages/admin/AdminPersonalizationTypesTable";
@@ -263,7 +263,7 @@ function App() {
               }
             />
 
-            {/* Tipos de personalización */}
+            {/* Personalizaciones */}
             <Route
               path="customizations"
               element={

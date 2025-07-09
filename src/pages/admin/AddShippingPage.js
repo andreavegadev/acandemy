@@ -57,100 +57,98 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
   };
 
   return (
-    <Box paddingY={24}>
-      <Stack gap={24}>
-        {" "}
-        <Breadcrumbs
-          items={[
-            { label: "Envíos", onClick: () => navigate("/admin/shippings") },
-            {
-              label: `Envío`,
-              current: true,
-            },
-          ]}
-        ></Breadcrumbs>
-        <div className="add-panel">
-          <Heading as="h2">Crear método de envío</Heading>
-          <form onSubmit={handleSubmit}>
-            <Stack gap={16}>
-              <label>
-                Nombre:
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Nombre"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                  autoFocus
-                />
-              </label>
-
-              <TextArea
-                name="description"
-                label="Descripción"
-                value={form.description}
+    <Stack gap={24}>
+      {" "}
+      <Breadcrumbs
+        items={[
+          { label: "Envíos", onClick: () => navigate("/admin/shippings") },
+          {
+            label: `Envío`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
+      <div className="add-panel">
+        <Heading as="h2">Crear método de envío</Heading>
+        <form onSubmit={handleSubmit}>
+          <Stack gap={16}>
+            <label>
+              Nombre:
+              <input
+                type="text"
+                name="name"
+                placeholder="Nombre"
+                value={form.name}
                 onChange={handleChange}
                 required
+                autoFocus
               />
-              <label>
-                Precio (€):
-                <input
-                  type="number"
-                  name="price"
-                  placeholder="Precio"
-                  value={form.price}
-                  onChange={handleChange}
-                  required
-                  min="0"
-                  step="0.01"
-                />
-              </label>
-              <label>
-                Días estimados:
-                <input
-                  type="number"
-                  name="estimated_days"
-                  placeholder="Días estimados"
-                  value={form.estimated_days}
-                  onChange={handleChange}
-                  required
-                  min="0"
-                />
-              </label>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginTop: 10,
-                }}
-              >
-                <input
-                  type="checkbox"
-                  name="active"
-                  checked={form.active}
-                  onChange={handleChange}
-                />
-                Activo
-              </label>
-              <div className="panel-actions">
-                <ButtonPrimary type="submit">
-                  Guardar nuevo método de envío
-                </ButtonPrimary>
-                {onCancel && (
-                  <ButtonSecondary aria-label={`Cancel`} onClick={onCancel}>
-                    Cancelar
-                  </ButtonSecondary>
-                )}
-              </div>
-              {error && <div className="error">{error}</div>}
-              {success && <div className="success">{success}</div>}
-            </Stack>
-          </form>
-        </div>
-      </Stack>
-    </Box>
+            </label>
+
+            <TextArea
+              name="description"
+              label="Descripción"
+              value={form.description}
+              onChange={handleChange}
+              required
+            />
+            <label>
+              Precio (€):
+              <input
+                type="number"
+                name="price"
+                placeholder="Precio"
+                value={form.price}
+                onChange={handleChange}
+                required
+                min="0"
+                step="0.01"
+              />
+            </label>
+            <label>
+              Días estimados:
+              <input
+                type="number"
+                name="estimated_days"
+                placeholder="Días estimados"
+                value={form.estimated_days}
+                onChange={handleChange}
+                required
+                min="0"
+              />
+            </label>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginTop: 10,
+              }}
+            >
+              <input
+                type="checkbox"
+                name="active"
+                checked={form.active}
+                onChange={handleChange}
+              />
+              Activo
+            </label>
+            <div className="panel-actions">
+              <ButtonPrimary type="submit">
+                Guardar nuevo método de envío
+              </ButtonPrimary>
+              {onCancel && (
+                <ButtonSecondary aria-label={`Cancel`} onClick={onCancel}>
+                  Cancelar
+                </ButtonSecondary>
+              )}
+            </div>
+            {error && <div className="error">{error}</div>}
+            {success && <div className="success">{success}</div>}
+          </Stack>
+        </form>
+      </div>
+    </Stack>
   );
 };
 

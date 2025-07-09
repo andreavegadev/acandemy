@@ -73,90 +73,88 @@ const AddCustomizationProductPage = () => {
   };
 
   return (
-    <Box paddingY={24}>
-      <Stack gap={24}>
-        {" "}
-        <Breadcrumbs
-          items={[
-            {
-              label: "Productos",
-              onClick: () => navigate("/admin/products"),
-            },
-            {
-              label: productName ? productName : "Producto",
-              onClick: () =>
-                product_id && navigate(`/admin/products/${product_id}`),
-            },
-            {
-              label: `Personalización`,
-              href: `admin/products/customizations`,
-              current: true,
-            },
-          ]}
-        ></Breadcrumbs>
-        <Heading>
-          Añadir personalización a {productName ? `: ${productName}` : ""}
-        </Heading>
-        <form onSubmit={handleSubmit}>
-          <Stack gap={16}>
-            <Input
-              id="name"
-              type="text"
-              name="name"
-              label="Nombre"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-            <Select
-              id="personalization_type_id"
-              name="personalization_type_id"
-              label="Tipo de personalización"
-              value={form.personalization_type_id}
-              onChange={handleChange}
-              required
-              options={[
-                { value: "", label: "Selecciona un tipo" },
-                ...types.map((t) => ({
-                  value: t.id,
-                  label: t.name,
-                })),
-              ]}
-            />
-            <Input
-              id="additional_price"
-              type="number"
-              name="additional_price"
-              label="Precio extra"
-              min="0"
-              step="0.01"
-              value={form.additional_price}
-              onChange={handleChange}
-              required
-            />
-            <TextArea
-              id="description"
-              type="text"
-              name="description"
-              label="Descripción"
-              value={form.description}
-              onChange={handleChange}
-            />
-            <Input
-              label="Activo"
-              type="checkbox"
-              name="active"
-              checked={form.active}
-              onChange={handleChange}
-            />
+    <Stack gap={24}>
+      {" "}
+      <Breadcrumbs
+        items={[
+          {
+            label: "Productos",
+            onClick: () => navigate("/admin/products"),
+          },
+          {
+            label: productName ? productName : "Producto",
+            onClick: () =>
+              product_id && navigate(`/admin/products/${product_id}`),
+          },
+          {
+            label: `Personalización`,
+            href: `admin/products/customizations`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
+      <Heading>
+        Añadir personalización a {productName ? `: ${productName}` : ""}
+      </Heading>
+      <form onSubmit={handleSubmit}>
+        <Stack gap={16}>
+          <Input
+            id="name"
+            type="text"
+            name="name"
+            label="Nombre"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <Select
+            id="personalization_type_id"
+            name="personalization_type_id"
+            label="Tipo de personalización"
+            value={form.personalization_type_id}
+            onChange={handleChange}
+            required
+            options={[
+              { value: "", label: "Selecciona un tipo" },
+              ...types.map((t) => ({
+                value: t.id,
+                label: t.name,
+              })),
+            ]}
+          />
+          <Input
+            id="additional_price"
+            type="number"
+            name="additional_price"
+            label="Precio extra"
+            min="0"
+            step="0.01"
+            value={form.additional_price}
+            onChange={handleChange}
+            required
+          />
+          <TextArea
+            id="description"
+            type="text"
+            name="description"
+            label="Descripción"
+            value={form.description}
+            onChange={handleChange}
+          />
+          <Input
+            label="Activo"
+            type="checkbox"
+            name="active"
+            checked={form.active}
+            onChange={handleChange}
+          />
 
-            <ButtonPrimary type="submit">Guardar</ButtonPrimary>
-          </Stack>
-        </form>
-        {success && <p className="success">{success}</p>}
-        {error && <p className="error">{error}</p>}
-      </Stack>
-    </Box>
+          <ButtonPrimary type="submit">Guardar</ButtonPrimary>
+        </Stack>
+      </form>
+      {success && <p className="success">{success}</p>}
+      {error && <p className="error">{error}</p>}
+    </Stack>
   );
 };
 
