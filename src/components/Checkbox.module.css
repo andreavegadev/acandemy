@@ -1,0 +1,80 @@
+.checkboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checkboxOption {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.checkboxInput {
+  margin: 0;
+}
+
+.content {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.labelGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: 500;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.detail {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+.checked {
+  border-color: #000;
+}
+
+/* Layout modifiers */
+.row {
+  flex-direction: row;
+}
+
+.compact {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+@media (max-width: 600px) {
+  .checkboxOption {
+    display: flex;
+    justify-self: center;
+    border: 1.5px solid var(--neutral50);
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    gap: 16px;
+    min-height: 48px;
+    box-sizing: border-box;
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+}

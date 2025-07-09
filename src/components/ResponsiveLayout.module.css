@@ -1,0 +1,30 @@
+.container {
+  margin: 0 auto;
+  max-width: 960px;
+}
+
+.narrow {
+  max-width: 460px;
+}
+
+@media (max-width: 1008px) {
+  .container {
+    margin: 0 24px;
+    max-width: none;
+  }
+  .narrow {
+    margin: 0 auto;
+    max-width: 460px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    margin: 0 16px;
+    max-width: none;
+  }
+
+  .narrow {
+    max-width: none;
+  }
+}

@@ -1,5 +1,6 @@
 // src/context/CartContext.js
-import React, { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+import getCartLineId from "../utils/getCartLineId";
 
 const CartContext = createContext();
 
@@ -23,27 +24,21 @@ export const CartProvider = ({ children }) => {
 
   // Añadir al carrito usando cartLineId para distinguir producto+personalizaciones
   const addToCart = (product) => {
+    const cartLineId =
+      product.cartLineId ||
+      getCartLineId(product, product.personalizations || []);
+
     setCart((prevCart) => {
-      const idx = prevCart.findIndex(
-        (item) => item.cartLineId === product.cartLineId
-      );
-      const quantityToAdd = product.quantity || 1;
-      const stock = product.stock || Infinity;
-
-      // Suma la cantidad actual en el carrito para este cartLineId
-      const currentQty = idx !== -1 ? prevCart[idx].quantity : 0;
-      if (currentQty + quantityToAdd > stock) {
-        alert("No puedes añadir más unidades, no hay suficiente stock.");
-        return prevCart;
+      const existing = prevCart.find((item) => item.cartLineId === cartLineId);
+      if (existing) {
+        return prevCart.map((item) =>
+          item.cartLineId === cartLineId
+            ? { ...item, quantity: item.quantity + product.quantity }
+            : item
+        );
+      } else {
+        return [...prevCart, { ...product, cartLineId }];
       }
-
-      if (idx !== -1) {
-        const updated = [...prevCart];
-        updated[idx].quantity = currentQty + quantityToAdd;
-        return updated;
-      }
-
-      return [...prevCart, { ...product, quantity: quantityToAdd }];
     });
   };
 
@@ -90,6 +85,14 @@ export const CartProvider = ({ children }) => {
       return total + base * (item.quantity || 1);
     }, 0);
   };
+  const getProductQuantity = (product) => {
+    const cartLineId = getCartLineId(product, product.personalizations || []);
+    return cart.find((item) => item.cartLineId === cartLineId)?.quantity || 0;
+  };
+  const isProductMaxed = (product) => {
+  const quantity = getProductQuantity(product);
+  return product.stock > 0 && quantity === product.stock;
+};
 
   return (
     <CartContext.Provider
@@ -100,6 +103,8 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         clearCart,
         getTotal,
+        getProductQuantity,
+        isProductMaxed,
       }}
     >
       {children}

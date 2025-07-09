@@ -1,0 +1,41 @@
+.container {
+  display: inline-flex;
+  gap: 8px;
+  border-radius: var(--border-radii-chip);
+  padding: 0px 12px;
+  background-color: transparent;
+  color: var(--purple60);
+  cursor: pointer;
+  border: 1px solid var(--purple20);
+  font-weight: 550;
+  align-items: center;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  height: 32px;
+  font-family: inherit;
+}
+
+.asset {
+  font-size: 1rem;
+}
+
+.active {
+  background-color: var(--purple10);
+  border: 1px solid var(--purple40);
+}
+
+@media (hover: hover) {
+  .container:hover {
+    background-color: var(--purple10);
+  }
+
+  .active:hover {
+    background-color: var(--purple20);
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    height: 48px;
+    padding: 8px 16px;
+  }
+}

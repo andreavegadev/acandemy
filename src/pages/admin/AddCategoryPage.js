@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
-import "../../styles/AddProductPage.css"; // Puedes reutilizar el CSS del producto
+import { ButtonPrimary } from "../../components/Button";
+import Input from "../../components/Input";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import Heading from "../../components/Heading";
+import { useNavigate } from "react-router-dom";
+import { Box, Stack } from "../../components/LayoutUtilities";
+import TextArea from "../../components/TextArea";
 
 const AddCategoryPage = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -51,46 +58,63 @@ const AddCategoryPage = () => {
   };
 
   return (
-    <div className="add-product-page">
-      <h1>Añadir Categoría</h1>
+    <Stack gap={24}>
+      <Breadcrumbs
+        items={[
+          {
+            label: "Categorías",
+            onClick: () => navigate("/admin/categories"),
+          },
+          {
+            label: `Categoría`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
+      <Heading>Añadir Categoría</Heading>
       <form onSubmit={onAddCategory}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Nombre"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Descripción"
-          value={form.description}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="icon"
-          placeholder="Icono (emoji o clase CSS)"
-          value={form.icon}
-          onChange={handleChange}
-          required
-        />
-        <label>
-          <input
+        <Stack gap={16}>
+          <Input
+            type="text"
+            name="name"
+            label="Nombre"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <TextArea
+            name="description"
+            label="Descripción"
+            value={form.description}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            type="text"
+            name="icon"
+            label="Icono (emoji o clase CSS)"
+            value={form.icon}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            label="Destacada"
             type="checkbox"
             name="featured"
             checked={form.featured}
             onChange={handleChange}
           />
-          Destacada
-        </label>
-        <button onClick={onAddCategory}>Añadir categoría</button>
+          <ButtonPrimary
+            onClick={onAddCategory}
+            aria-label={`Añadir categoría`}
+          >
+            Añadir categoría
+          </ButtonPrimary>
+        </Stack>
       </form>
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}
-    </div>
+    </Stack>
   );
 };
 

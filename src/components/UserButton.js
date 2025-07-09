@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import { ButtonLink } from "./Button";
 
 const UserButton = () => {
   const [session, setSession] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -19,18 +18,14 @@ const UserButton = () => {
     fetchSession();
   }, []);
 
-  const handleNavigate = () => {
-    navigate("/profile"); // Redirige al perfil del usuario
-  };
-
   if (!session) {
     return null; // No muestra el botón si no hay sesión
   }
 
   return (
-    <button onClick={handleNavigate} className="user-button">
+    <ButtonLink href={`/profile`} aria-label={`Ir al perfil}`}>
       Mi Perfil
-    </button>
+    </ButtonLink>
   );
 };
 

@@ -1,148 +1,81 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { useNavigate } from "react-router-dom";
-import { STATUS_LABELS } from "../../constants/order";
-
-const cardStyle = {
-  background: "#f8f6ff",
-  border: "1px solid #d1c4e9",
-  borderRadius: 12,
-  boxShadow: "0 1px 6px #ede7f6",
-  padding: "18px 24px",
-  marginBottom: 18,
-  display: "flex",
-  flexDirection: "column",
-  gap: 8,
-};
-
-const statusStyle = {
-  fontWeight: 600,
-  borderRadius: 8,
-  padding: "2px 10px",
-  fontSize: 13,
-  display: "inline-block",
-};
-
-const buttonStyle = {
-  background: "#ede7f6",
-  border: "none",
-  color: "#5e35b1",
-  fontWeight: "bold",
-  padding: "6px 16px",
-  borderRadius: 8,
-  cursor: "pointer",
-  marginTop: 8,
-  alignSelf: "flex-start",
-  transition: "background 0.2s",
-};
+import { getOrderTagType, STATUS_LABELS } from "../../constants/order";
+import Tag from "../../components/Tag";
+import { Row, RowList } from "../../components/Row";
+import Heading from "../../components/Heading";
 
 const UserOrdersPage = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [orderProducts, setOrderProducts] = useState({});
 
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoading(true);
       const { data: sessionData, error: sessionError } =
         await supabase.auth.getSession();
       if (sessionError) {
-        setLoading(false);
         return;
       }
       const userId = sessionData?.session?.user?.id;
       if (!userId) {
-        setLoading(false);
         return;
       }
-      const { data: ordersData, error: ordersError } = await supabase
+      const { data: ordersData } = await supabase
         .from("orders")
         .select("id, order_date, total_amount, status")
         .eq("user_id", userId)
         .order("order_date", { ascending: false });
       setOrders(ordersData || []);
-      setLoading(false);
+
+      // Obtener productos de todos los pedidos
+      if (ordersData && ordersData.length > 0) {
+        const orderIds = ordersData.map((o) => o.id);
+        const { data: itemsData } = await supabase
+          .from("order_items")
+          .select("order_id, products(name)")
+          .in("order_id", orderIds);
+
+        // Agrupar productos por pedido
+        const productsByOrder = {};
+        itemsData?.forEach((item) => {
+          if (!productsByOrder[item.order_id]) productsByOrder[item.order_id] = [];
+          productsByOrder[item.order_id].push(item.products?.name || "");
+        });
+        setOrderProducts(productsByOrder);
+      }
     };
     fetchOrders();
   }, []);
 
-  const handleViewOrderDetails = (orderId) => {
-    navigate(`/orders/${orderId}`);
-  };
-
-  if (loading)
-    return (
-      <p style={{ textAlign: "center", marginTop: 40 }}>Cargando pedidos...</p>
-    );
-
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto" }}>
-      <h2
-        style={{
-          color: "#5e35b1",
-          marginBottom: 24,
-          textAlign: "center",
-        }}
-      >
-        Mis pedidos
-      </h2>
+    <div>
+      <Heading>Mis pedidos</Heading>
       {orders.length === 0 ? (
-        <div style={{ textAlign: "center", color: "#888" }}>No tienes pedidos.</div>
-      ) : (
-        <div>
-          {orders.map((order) => (
-            <div key={order.id} style={cardStyle}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <span style={{ fontWeight: 600 }}>Pedido #{order.id}</span>
-                <span
-                  style={{
-                    ...statusStyle,
-                    background:
-                      order.status === "pending"
-                        ? "#fffde7"
-                        : order.status === "delivered"
-                        ? "#e8f5e9"
-                        : order.status === "cancelled"
-                        ? "#ffebee"
-                        : "#ede7f6",
-                    color:
-                      order.status === "pending"
-                        ? "#fbc02d"
-                        : order.status === "delivered"
-                        ? "#43a047"
-                        : order.status === "cancelled"
-                        ? "#e53935"
-                        : "#5e35b1",
-                  }}
-                >
-                  {STATUS_LABELS[order.status] || order.status}
-                </span>
-              </div>
-              <div style={{ fontSize: 15, color: "#3a2e5c" }}>
-                <div>
-                  <b>Fecha:</b> {new Date(order.order_date).toLocaleDateString()}
-                </div>
-                <div>
-                  <b>Total:</b> {Number(order.total_amount).toFixed(2)} €
-                </div>
-              </div>
-              <button
-                style={buttonStyle}
-                onMouseOver={(e) => (e.target.style.background = "#d1c4e9")}
-                onMouseOut={(e) => (e.target.style.background = "#ede7f6")}
-                onClick={() => handleViewOrderDetails(order.id)}
-              >
-                Ver detalles
-              </button>
-            </div>
-          ))}
+        <div style={{ textAlign: "center", color: "#888" }}>
+          No tienes pedidos.
         </div>
+      ) : (
+        <RowList>
+          {orders.map((order) => {
+            const products = orderProducts[order.id] || [];
+            let title = products.slice(0, 3).join(", ");
+            if (products.length > 3) title += "…";
+            if (!title) title = `Pedido ${order.id}`;
+            return (
+              <Row
+                key={order.id}
+                title={title}
+                subtitle={new Date(order.order_date).toLocaleDateString()}
+                tag={
+                  <Tag type={getOrderTagType(order.status)}>
+                    {STATUS_LABELS[order.status] || order.status}
+                  </Tag>
+                }
+                href={`/profile/orders/${order.id}`}
+              />
+            );
+          })}
+        </RowList>
       )}
     </div>
   );

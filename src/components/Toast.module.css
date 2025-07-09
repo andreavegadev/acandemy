@@ -1,0 +1,36 @@
+/* toast.css */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #fff;
+  border: 1px solid var(--purple20);
+  color: var(--text-primary);
+  padding: 16px 24px;
+  border-radius: 8px;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.toastAction {
+  margin-left: 10px;
+  color: var(--purple60);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,5 +1,3 @@
-import React from "react";
-
 const modalStyle = {
   position: "fixed",
   top: 0,
@@ -28,7 +26,7 @@ export default function Modal({ open, onClose, children }) {
   if (!open) return null;
   return (
     <div style={modalStyle} onClick={onClose}>
-      <div style={contentStyle} onClick={e => e.stopPropagation()}>
+      <div style={contentStyle} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </div>

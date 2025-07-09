@@ -1,15 +1,15 @@
-import React from "react";
 import PropTypes from "prop-types";
-
+import "../styles/FeaturedCard.css";
+import { ButtonLink } from "./Button";
 const FeaturedCard = ({ icon, title, description, link }) => {
   return (
     <div className="featured-card">
-      <div className="icon">{icon}</div>
-      <h3>{title}</h3>
-      <p>{description}</p>
-      <a href={link} className="buy-now-button">
-        Comprar Ahora
-      </a>
+      <ButtonLink href={link}>
+        <div className="icon">{icon}</div>
+        <span href={link} className="buy-now-button">
+          {title}
+        </span>
+      </ButtonLink>
     </div>
   );
 };

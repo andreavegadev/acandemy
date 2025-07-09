@@ -1,0 +1,37 @@
+.container {
+  display: inline-flex;
+  max-width: max-content;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.default {
+  background-color: var(--tag-background-default);
+  color: var(--tag-default);
+  border-color: var(--tag-default);
+}
+.info {
+  background-color: var(--tag-background-info);
+  color: var(--tag-info);
+  border-color: var(--tag-info);
+}
+.success {
+  background-color: var(--tag-background-success);
+  color: var(--tag-success);
+  border-color: var(--tag-success);
+}
+.danger {
+  background-color: var(--tag-background-error);
+  color: var(--tag-error);
+  border-color: var(--tag-error);
+}
+.warning {
+  background-color: var(--tag-background-warning);
+  color: var(--tag-warning);
+  border-color: var(--tag-warning);
+}
