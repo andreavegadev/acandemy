@@ -6,7 +6,9 @@ Está enfocada en ofrecer productos especializados y personalizados para perros,
 ---
 ## 🎥 Vídeos demostrativos
 
-- [🔗 Demo subida readme con integración de vercel](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+- [🔗 Demo de una subida readme con integración de vercel](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+
+- [🔗 Demo como Admin](https://www.youtube.com/watch?v=TI-m58GOX4g)
 
 ---
 
