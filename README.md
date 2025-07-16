@@ -12,9 +12,6 @@ Está enfocada en ofrecer productos especializados y personalizados para perros,
   
 - [🔗 Demo como User](https://www.youtube.com/watch?v=0W1EuqzwolU)
 
-
-- https://youtu.be/0W1EuqzwolU
-
 ---
 
 ## ✨ Funcionalidades principales
