@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { ButtonPrimary } from "../../components/Button";
+import { ButtonPrimary, ButtonDanger } from "../../components/Button";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Heading from "../../components/Heading";
 import { Box, Stack } from "../../components/LayoutUtilities";
@@ -72,6 +72,23 @@ const EditCustomizationTypePage = () => {
     navigate(`/admin/customizations/${id}/edit`);
   };
 
+  const handleDelete = async () => {
+    setError("");
+    setSuccess("");
+    const { error } = await supabase
+      .from("personalization_types")
+      .delete()
+      .eq("id", id);
+    if (error) {
+      setError(
+        "Error al eliminar el tipo de personalización: " + error.message
+      );
+    } else {
+      setSuccess("Tipo de personalización eliminado correctamente.");
+      setTimeout(() => navigate("/admin/customizations"), 1200);
+    }
+  };
+
   return (
     <Box paddingY={24}>
       <Stack gap={24}>
@@ -102,7 +119,7 @@ const EditCustomizationTypePage = () => {
               value={form.name}
               onChange={handleChange}
               required
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             <TextArea
               type="text"
@@ -111,7 +128,7 @@ const EditCustomizationTypePage = () => {
               value={form.description}
               onChange={handleChange}
               required
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             {!isViewMode && (
               <ButtonPrimary type="submit">Guardar cambios</ButtonPrimary>
@@ -122,12 +139,10 @@ const EditCustomizationTypePage = () => {
         {error && <p className="error">{error}</p>}
         <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
           {isViewMode && id && (
-            <ButtonPrimary
-              onClick={handleEdit}
-              style={{ background: "#5e35b1" }}
-            >
-              Editar
-            </ButtonPrimary>
+            <>
+              <ButtonPrimary onClick={handleEdit}>Editar</ButtonPrimary>
+              <ButtonDanger onClick={handleDelete}>Eliminar</ButtonDanger>
+            </>
           )}
         </div>
       </Stack>

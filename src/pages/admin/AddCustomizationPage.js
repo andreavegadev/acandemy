@@ -5,7 +5,7 @@ import Input from "../../components/Input";
 import { ButtonPrimary } from "../../components/Button";
 import Heading from "../../components/Heading";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
 
 const AddCustomizationPage = () => {

@@ -1,5 +1,4 @@
-import React from 'react';
-import styles from './Checkbox.module.css';
+import styles from "./Checkbox.module.css";
 
 export const Checkbox = ({
   label,
@@ -13,9 +12,9 @@ export const Checkbox = ({
 }) => {
   const classNames = [
     styles.checkboxOption,
-    checked ? styles.checked : '',
+    checked ? styles.checked : "",
     forceCompact ? styles.compact : styles.row,
-  ].join(' ');
+  ].join(" ");
 
   return (
     <label className={classNames}>
@@ -30,7 +29,9 @@ export const Checkbox = ({
       <div className={styles.content}>
         <div className={styles.labelGroup}>
           <div className={styles.label}>{label}</div>
-          {description && <div className={styles.description}>{description}</div>}
+          {description && (
+            <div className={styles.description}>{description}</div>
+          )}
         </div>
         {detail && <div className={styles.detail}>{detail}</div>}
       </div>

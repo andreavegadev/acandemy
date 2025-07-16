@@ -5,7 +5,6 @@ import Table from "../../components/Table";
 import { Inline, Stack } from "../../components/LayoutUtilities";
 import Heading from "../../components/Heading";
 import { ButtonPrimary } from "../../components/Button";
-import Text from "../../components/Text";
 
 const AdminShippingTable = () => {
   const [shippingTypes, setShippingTypes] = useState([]);

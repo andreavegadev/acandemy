@@ -36,11 +36,6 @@ const PetList = () => {
     fetchPets();
   }, []);
 
-  const handleOpenModal = () => {
-    setForm({ name: "", species: "", breed: "" });
-    setShowModal(true);
-  };
-
   const handleCloseModal = () => {
     setShowModal(false);
   };

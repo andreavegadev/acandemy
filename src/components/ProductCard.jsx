@@ -1,9 +1,8 @@
 import styles from "./ProductCard.module.css";
 import WishlistButton from "./WishlistButton";
-import { ButtonLink, ButtonPrimary } from "./Button";
+import { ButtonLink } from "./Button";
 import Price from "./Price";
 import { forwardRef } from "react";
-import Tag from "./Tag";
 import Heading from "./Heading";
 
 const ProductCard = forwardRef((props, ref) => {
@@ -48,10 +47,6 @@ const ProductCard = forwardRef((props, ref) => {
     </div>
   );
 
-  const CardTitle = ({ children, as: Tag = "h3" }) => (
-    <Tag className={styles.title}>{children}</Tag>
-  );
-
   return (
     <div className={`${styles.container} ${className}`} ref={ref}>
       <TopActions id={id} />
@@ -63,7 +58,9 @@ const ProductCard = forwardRef((props, ref) => {
           className={styles.image}
         />
         {tag && tag}
-        <Heading as={titleLevel} size={22}>{titleLabel}</Heading>
+        <Heading as={titleLevel} size={22}>
+          {titleLabel}
+        </Heading>
         <p className={styles.description}>{shortDescription}</p>
         <Price amount={price} />
       </div>

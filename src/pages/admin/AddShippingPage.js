@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import TextArea from "../../components/TextArea";
 import { ButtonPrimary, ButtonSecondary } from "../../components/Button";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Heading from "../../components/Heading";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
+import { Checkbox } from "../../components/Checkbox";
+import Input from "../../components/Input";
 
 const AddShippingPage = ({ onCreated, onCancel }) => {
   const [form, setForm] = useState({
     name: "",
-    description: "",
     price: "",
     estimated_days: "",
     active: true,
@@ -34,7 +34,6 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
     const { error } = await supabase.from("shipping").insert([
       {
         name: form.name,
-        description: form.description,
         price: Number(form.price),
         estimated_days: Number(form.estimated_days),
         active: form.active,
@@ -47,7 +46,6 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
       setTimeout(() => navigate("/admin/shippings"), 1200);
       setForm({
         name: "",
-        description: "",
         price: "",
         estimated_days: "",
         active: true,
@@ -74,7 +72,7 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
           <Stack gap={16}>
             <label>
               Nombre:
-              <input
+              <Input
                 type="text"
                 name="name"
                 placeholder="Nombre"
@@ -85,54 +83,34 @@ const AddShippingPage = ({ onCreated, onCancel }) => {
               />
             </label>
 
-            <TextArea
-              name="description"
-              label="Descripción"
-              value={form.description}
+            <Input
+              label="Precio"
+              type="number"
+              name="price"
+              placeholder="Precio"
+              value={form.price}
               onChange={handleChange}
               required
+              min="0"
+              step="0.01"
             />
-            <label>
-              Precio (€):
-              <input
-                type="number"
-                name="price"
-                placeholder="Precio"
-                value={form.price}
-                onChange={handleChange}
-                required
-                min="0"
-                step="0.01"
-              />
-            </label>
-            <label>
-              Días estimados:
-              <input
-                type="number"
-                name="estimated_days"
-                placeholder="Días estimados"
-                value={form.estimated_days}
-                onChange={handleChange}
-                required
-                min="0"
-              />
-            </label>
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                marginTop: 10,
-              }}
-            >
-              <input
-                type="checkbox"
-                name="active"
-                checked={form.active}
-                onChange={handleChange}
-              />
-              Activo
-            </label>
+
+            <Input
+              label="Días estimados"
+              type="number"
+              name="estimated_days"
+              placeholder="Días estimados"
+              value={form.estimated_days}
+              onChange={handleChange}
+              required
+              min="0"
+            />
+            <Checkbox
+              label={"Activo"}
+              name="active"
+              checked={form.active}
+              onChange={handleChange}
+            ></Checkbox>
             <div className="panel-actions">
               <ButtonPrimary type="submit">
                 Guardar nuevo método de envío

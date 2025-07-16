@@ -13,6 +13,7 @@ import Heading from "../../components/Heading";
 import { Box, Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
 import Select from "../../components/Select";
+import { Checkbox } from "../../components/Checkbox";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -35,6 +36,7 @@ const EditProductPage = () => {
 
   const [personalizations, setPersonalizations] = useState([]);
 
+  // Al cargar el producto, transforma product_images de array/JSON a string para el input
   useEffect(() => {
     const fetchData = async () => {
       const { data: product, error: prodError } = await supabase
@@ -48,7 +50,12 @@ const EditProductPage = () => {
       if (prodError || !product) {
         setError("No se pudo cargar el producto.");
       } else {
-        setForm(product);
+        setForm({
+          ...product,
+          product_images: product.product_images
+            ? JSON.stringify(product.product_images)
+            : "",
+        });
       }
       setCategories(cats || []);
     };
@@ -75,10 +82,20 @@ const EditProductPage = () => {
     }));
   };
 
+  // Al guardar, transforma el string del input a JSON
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess("");
     setError("");
+    let productImages = [];
+    try {
+      productImages = form.product_images
+        ? JSON.parse(form.product_images)
+        : [];
+    } catch {
+      setError("El campo de imágenes no es un JSON válido.");
+      return;
+    }
     const { error } = await supabase
       .from("products")
       .update({
@@ -86,6 +103,7 @@ const EditProductPage = () => {
         price: Number(form.price),
         stock: Number(form.stock),
         category_id: Number(form.category_id),
+        product_images: productImages,
       })
       .eq("id", id);
     if (error) {
@@ -157,7 +175,7 @@ const EditProductPage = () => {
               value={form.name}
               onChange={handleChange}
               required
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             <TextArea
               name="description"
@@ -165,7 +183,7 @@ const EditProductPage = () => {
               value={form.description}
               onChange={handleChange}
               required
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             <Input
               type="number"
@@ -176,7 +194,7 @@ const EditProductPage = () => {
               required
               min="0"
               step="0.01"
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             €
             <Input
@@ -187,7 +205,7 @@ const EditProductPage = () => {
               onChange={handleChange}
               required
               min="0"
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             <Select
               name="category_id"
@@ -195,27 +213,26 @@ const EditProductPage = () => {
               value={form.category_id}
               onChange={handleChange}
               required
-              disabled={isViewMode}
+              readOnly={isViewMode}
               options={categories.map((cat) => ({
                 value: cat.id,
                 label: cat.name,
               }))}
             />
-            <Input
+            <TextArea
               type="text"
               name="product_images"
               label="URL de la imagen"
               value={form.product_images}
               onChange={handleChange}
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
-            <Input
-              label={"Hecho a mano"}
-              type="checkbox"
+            <Checkbox
+              label="Hecho a mano"
               name="handmade"
               checked={form.handmade}
               onChange={handleChange}
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             {!isViewMode && (
               <div className="button-group">
@@ -227,6 +244,7 @@ const EditProductPage = () => {
                 </ButtonPrimary>
                 <ButtonSecondary
                   aria-label={`Cancelar edición producto ${form.name}`}
+                  type="button"
                   onClick={() => navigate(`/admin/products/${form.id}`)}
                 >
                   Cancelar
@@ -240,7 +258,7 @@ const EditProductPage = () => {
             {error && <p className="error">{error}</p>}
           </Stack>
         </form>
-        <div>
+        <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
           {isViewMode && (
             <>
               <ButtonPrimary

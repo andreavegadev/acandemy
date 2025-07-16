@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { ButtonPrimary } from "../../components/Button";
+import { ButtonPrimary, ButtonDanger } from "../../components/Button";
 import Input from "../../components/Input";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Heading from "../../components/Heading";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
+import { Checkbox } from "../../components/Checkbox";
 
 const EditCategoryPage = () => {
   const { id } = useParams();
@@ -78,6 +79,18 @@ const EditCategoryPage = () => {
     navigate(`/admin/categories/${id}/edit`);
   };
 
+  const handleDelete = async () => {
+    setError("");
+    setSuccess("");
+    const { error } = await supabase.from("categories").delete().eq("id", id);
+    if (error) {
+      setError("Error al eliminar la categoría: " + error.message);
+    } else {
+      setSuccess("Categoría eliminada correctamente.");
+      setTimeout(() => navigate("/admin/categories"), 1200);
+    }
+  };
+
   return (
     <Stack gap={24}>
       <Breadcrumbs
@@ -104,7 +117,7 @@ const EditCategoryPage = () => {
             value={form.name}
             onChange={handleChange}
             required
-            disabled={isViewMode}
+            readOnly={isViewMode}
           />
           <TextArea
             type="text"
@@ -113,7 +126,7 @@ const EditCategoryPage = () => {
             value={form.description}
             onChange={handleChange}
             required
-            disabled={isViewMode}
+            readOnly={isViewMode}
           />
           <Input
             type="text"
@@ -121,15 +134,14 @@ const EditCategoryPage = () => {
             label="Icono (emoji o url)"
             value={form.icon}
             onChange={handleChange}
-            disabled={isViewMode}
+            readOnly={isViewMode}
           />
-          <Input
+          <Checkbox
             label={"Destacada"}
-            type="checkbox"
             name="featured"
             checked={form.featured}
             onChange={handleChange}
-            disabled={isViewMode}
+            readOnly={isViewMode}
           />
           {!isViewMode && (
             <ButtonPrimary type="submit">Guardar cambios</ButtonPrimary>
@@ -140,9 +152,10 @@ const EditCategoryPage = () => {
       {error && <p className="error">{error}</p>}
       <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
         {isViewMode && id && (
-          <ButtonPrimary onClick={handleEdit} style={{ background: "#5e35b1" }}>
-            Editar
-          </ButtonPrimary>
+          <>
+            <ButtonPrimary onClick={handleEdit}>Editar</ButtonPrimary>
+            <ButtonDanger onClick={handleDelete}>Eliminar</ButtonDanger>
+          </>
         )}
       </div>
     </Stack>

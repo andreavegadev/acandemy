@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { ButtonPrimary } from "../../components/Button";
+import { ButtonPrimary, ButtonDanger } from "../../components/Button";
 import Input from "../../components/Input";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Heading from "../../components/Heading";
 import { Box, Stack } from "../../components/LayoutUtilities";
-import TextArea from "../../components/TextArea";
+import { Checkbox } from "../../components/Checkbox";
 
 const EditShippingPage = () => {
   const { id } = useParams();
@@ -16,7 +16,6 @@ const EditShippingPage = () => {
 
   const [form, setForm] = useState({
     name: "",
-    description: "",
     price: "",
     estimated_days: "",
     active: true,
@@ -37,7 +36,6 @@ const EditShippingPage = () => {
       } else {
         setForm({
           name: data.name || "",
-          description: data.description || "",
           price: data.price ?? "",
           estimated_days: data.estimated_days ?? "",
           active: !!data.active,
@@ -63,7 +61,6 @@ const EditShippingPage = () => {
       .from("shipping")
       .update({
         name: form.name,
-        description: form.description,
         price: Number(form.price),
         estimated_days: Number(form.estimated_days),
         active: form.active,
@@ -79,6 +76,21 @@ const EditShippingPage = () => {
 
   const handleEdit = () => {
     navigate(`/admin/shippings/${id}/edit`);
+  };
+
+  const handleDelete = async () => {
+    setError("");
+    setSuccess("");
+    const { error } = await supabase
+      .from("shipping")
+      .delete()
+      .eq("id", id);
+    if (error) {
+      setError("Error al eliminar el método de envío: " + error.message);
+    } else {
+      setSuccess("Método de envío eliminado correctamente.");
+      setTimeout(() => navigate("/admin/shippings"), 1200);
+    }
   };
 
   return (
@@ -107,16 +119,7 @@ const EditShippingPage = () => {
               value={form.name}
               onChange={handleChange}
               required
-              disabled={isViewMode}
-            />
-            <TextArea
-              type="text"
-              name="description"
-              label="Descripción"
-              value={form.description}
-              onChange={handleChange}
-              required
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             <Input
               type="number"
@@ -127,7 +130,7 @@ const EditShippingPage = () => {
               required
               min="0"
               step="0.01"
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
             <Input
               type="number"
@@ -137,18 +140,16 @@ const EditShippingPage = () => {
               onChange={handleChange}
               required
               min="0"
-              disabled={isViewMode}
+              readOnly={isViewMode}
             />
-            <label>
-              <Input
-                type="checkbox"
-                name="active"
-                checked={form.active}
-                onChange={handleChange}
-                disabled={isViewMode}
-              />
-              Activo
-            </label>
+
+            <Checkbox
+              label="Activo"
+              name="active"
+              checked={form.active}
+              onChange={handleChange}
+              readOnly={isViewMode}
+            />
             {!isViewMode && (
               <ButtonPrimary type="submit">Guardar cambios</ButtonPrimary>
             )}
@@ -158,12 +159,10 @@ const EditShippingPage = () => {
         {error && <p className="error">{error}</p>}
         <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
           {isViewMode && id && (
-            <ButtonPrimary
-              onClick={handleEdit}
-              style={{ background: "#5e35b1" }}
-            >
-              Editar
-            </ButtonPrimary>
+            <>
+              <ButtonPrimary onClick={handleEdit}>Editar</ButtonPrimary>
+              <ButtonDanger onClick={handleDelete}>Eliminar</ButtonDanger>
+            </>
           )}
         </div>
       </Stack>

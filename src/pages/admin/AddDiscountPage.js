@@ -5,8 +5,9 @@ import Input from "../../components/Input";
 import { ButtonPrimary } from "../../components/Button";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Heading from "../../components/Heading";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
+import { Checkbox } from "../../components/Checkbox";
 
 const AddDiscountPage = () => {
   const now = new Date();
@@ -135,163 +136,154 @@ const AddDiscountPage = () => {
   };
 
   return (
-      <Stack gap={24}>
-        <Breadcrumbs
-          items={[
-            {
-              label: "Descuentos",
-              onClick: () => navigate("/admin/discounts"),
-            },
-            { label: `Descuento`, current: true },
-          ]}
-        />
-        <Heading as="h2">Crear Código Descuento</Heading>
-        <form
-          onSubmit={handleSubmit}
-          className="discount-form"
-          autoComplete="off"
-        >
-          <Stack gap={16}>
-            <Input
-              type="text"
-              name="code"
-              label="Código de descuento"
-              value={form.code}
-              onChange={handleChange}
-              required
-            />
-            <TextArea
-              name="description"
-              label="Breve descripción"
-              value={form.description}
-              onChange={handleChange}
-              rows={2}
-              maxLength={120}
-            />
-            <div className="discount-radio-group">
-              <span>Tipo de descuento:</span>
-              <label>
-                <Input
-                  type="radio"
-                  name="type"
-                  value="Percentage"
-                  checked={form.type === "Percentage"}
-                  onChange={handleChange}
-                />
-                Porcentaje
-              </label>
-              <label>
-                <Input
-                  type="radio"
-                  name="type"
-                  value="Amount"
-                  checked={form.type === "Amount"}
-                  onChange={handleChange}
-                />
-                Importe fijo
-              </label>
-            </div>
-
-            {form.type === "Percentage" ? (
+    <Stack gap={24}>
+      <Breadcrumbs
+        items={[
+          {
+            label: "Descuentos",
+            onClick: () => navigate("/admin/discounts"),
+          },
+          { label: `Descuento`, current: true },
+        ]}
+      />
+      <Heading as="h2">Crear Código Descuento</Heading>
+      <form
+        onSubmit={handleSubmit}
+        className="discount-form"
+        autoComplete="off"
+      >
+        <Stack gap={16}>
+          <Input
+            type="text"
+            name="code"
+            label="Código de descuento"
+            value={form.code}
+            onChange={handleChange}
+            required
+          />
+          <TextArea
+            name="description"
+            label="Breve descripción"
+            value={form.description}
+            onChange={handleChange}
+            rows={2}
+            maxLength={120}
+          />
+          <div className="discount-radio-group">
+            <span>Tipo de descuento:</span>
+            <label>
               <Input
-                label="Porcentaje (%)"
-                type="number"
-                name="percentage"
-                value={form.percentage}
+                type="radio"
+                name="type"
+                value="Percentage"
+                checked={form.type === "Percentage"}
                 onChange={handleChange}
-                min={1}
-                max={100}
-                required
               />
-            ) : (
+              Porcentaje
+            </label>
+            <label>
               <Input
-                label="Importe (€)"
-                type="number"
-                name="amount"
-                value={form.amount}
+                type="radio"
+                name="type"
+                value="Amount"
+                checked={form.type === "Amount"}
                 onChange={handleChange}
-                min={1}
-                required
               />
-            )}
-
+              Importe fijo
+            </label>
+          </div>
+          {form.type === "Percentage" ? (
             <Input
-              label="Pedido mínimo (€)"
+              label="Porcentaje (%)"
               type="number"
-              name="min_order"
-              value={form.min_order}
-              onChange={handleChange}
-              min={0.01}
-              step="0.01"
-            />
-
-            <Input
-              label="Máximo de usos"
-              type="number"
-              name="max_uses"
-              value={form.max_uses}
+              name="percentage"
+              value={form.percentage}
               onChange={handleChange}
               min={1}
-            />
-
-            <Input
-              label="Buscar usuario (nombre o email)"
-              type="text"
-              value={userSearch}
-              onChange={(e) => {
-                setUserSearch(e.target.value);
-                setForm((prev) => ({ ...prev, user_id: "" }));
-              }}
-            />
-            {users.length > 0 && (
-              <ul className="discount-user-list">
-                {users.map((user) => (
-                  <li key={user.id} onMouseDown={() => handleUserSelect(user)}>
-                    {user.name} ({user.email})
-                  </li>
-                ))}
-              </ul>
-            )}
-            {form.user_id && (
-              <div className="discount-user-selected">Usuario asignado</div>
-            )}
-
-            <Input
-              label="Fecha de inicio"
-              type="datetime-local"
-              name="start_date"
-              value={form.start_date}
-              onChange={handleChange}
+              max={100}
               required
             />
-
+          ) : (
             <Input
-              label="Fecha de finalización"
-              type="datetime-local"
-              name="end_date"
-              value={form.end_date}
+              label="Importe (€)"
+              type="number"
+              name="amount"
+              value={form.amount}
               onChange={handleChange}
+              min={1}
+              required
             />
-
-            <Input
-              label="Activo"
-              type="checkbox"
-              name="active"
-              checked={form.active}
-              onChange={handleChange}
-            />
-
-            <div className="discount-form-actions">
-              <ButtonPrimary type="submit" aria-label="Crear código descuento">
-                Crear código
-              </ButtonPrimary>
-            </div>
-
-            {success && <p className="success">{success}</p>}
-            {error && <p className="error">{error}</p>}
-          </Stack>
-        </form>
-      </Stack>
+          )}
+          <Input
+            label="Pedido mínimo (€)"
+            type="number"
+            name="min_order"
+            value={form.min_order}
+            onChange={handleChange}
+            min={0.01}
+            step="0.01"
+          />
+          <Input
+            label="Máximo de usos"
+            type="number"
+            name="max_uses"
+            value={form.max_uses}
+            onChange={handleChange}
+            min={1}
+          />
+          <Input
+            label="Buscar usuario (nombre o email)"
+            type="text"
+            value={userSearch}
+            onChange={(e) => {
+              setUserSearch(e.target.value);
+              setForm((prev) => ({ ...prev, user_id: "" }));
+            }}
+          />
+          {users.length > 0 && (
+            <ul className="discount-user-list">
+              {users.map((user) => (
+                <li key={user.id} onMouseDown={() => handleUserSelect(user)}>
+                  {user.name} ({user.email})
+                </li>
+              ))}
+            </ul>
+          )}
+          {form.user_id && (
+            <div className="discount-user-selected">Usuario asignado</div>
+          )}
+          <Input
+            label="Fecha de inicio"
+            type="datetime-local"
+            name="start_date"
+            value={form.start_date}
+            onChange={handleChange}
+            required
+          />
+          <Input
+            label="Fecha de finalización"
+            type="datetime-local"
+            name="end_date"
+            value={form.end_date}
+            onChange={handleChange}
+          />
+          <Checkbox
+            label="Activo"
+            name="active"
+            checked={form.active}
+            onChange={handleChange}
+          />
+          {console.log(form)}
+          <div className="discount-form-actions">
+            <ButtonPrimary type="submit" aria-label="Crear código descuento">
+              Crear código
+            </ButtonPrimary>
+          </div>
+          {success && <p className="success">{success}</p>}
+          {error && <p className="error">{error}</p>}
+        </Stack>
+      </form>
+    </Stack>
   );
 };
 
