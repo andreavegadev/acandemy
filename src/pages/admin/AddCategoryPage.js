@@ -5,8 +5,9 @@ import Input from "../../components/Input";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Heading from "../../components/Heading";
 import { useNavigate } from "react-router-dom";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
+import { Checkbox } from "../../components/Checkbox";
 
 const AddCategoryPage = () => {
   const navigate = useNavigate();
@@ -97,9 +98,8 @@ const AddCategoryPage = () => {
             onChange={handleChange}
             required
           />
-          <Input
+          <Checkbox
             label="Destacada"
-            type="checkbox"
             name="featured"
             checked={form.featured}
             onChange={handleChange}

@@ -3,7 +3,7 @@ import { supabase } from "../../supabaseClient";
 import Input from "../../components/Input";
 import { ButtonSecondary } from "../../components/Button";
 import Heading from "../../components/Heading";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
 import Select from "../../components/Select";
 import { Checkbox } from "../../components/Checkbox";
@@ -151,7 +151,7 @@ const AddProductPage = () => {
               label: cat.name,
             }))}
           />
-          <Input
+          <TextArea
             type="text"
             name="product_images"
             label="URL de la imagen"

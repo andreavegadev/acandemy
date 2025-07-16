@@ -6,7 +6,7 @@ import Table from "../../components/Table";
 import Input from "../../components/Input";
 import { STATUS_LABELS } from "../../constants/order";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import Price from "../../components/Price";
 import { ButtonSecondary } from "../../components/Button";
 import Select from "../../components/Select";

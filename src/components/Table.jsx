@@ -5,7 +5,6 @@ import Heading from "./Heading";
 import Price from "./Price";
 import Select from "./Select";
 import Input from "./Input";
-import { Inline } from "./LayoutUtilities";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50, 1000];
 
@@ -264,7 +263,8 @@ const Table = ({
             <tr>
               {Object.keys(items[0] || {}).map((key) => (
                 <th key={key} onClick={() => handleSort(key)}>
-                  {COLUMN_LABELS[key] || key}
+                  {((COLUMN_LABELS[key] || key).charAt(0).toUpperCase() +
+                    (COLUMN_LABELS[key] || key).slice(1))}
                   {sortConfig.key === key
                     ? sortConfig.direction === "asc"
                       ? " ▲"

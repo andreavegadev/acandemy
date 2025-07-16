@@ -83,43 +83,25 @@ const AdminProductsTable = () => {
     }
   };
 
-  const destacados = [
+  // Calcula los destacados tipo "featuredItems"
+  const featuredItems = [
     {
-      title: "Top Ventas",
-      items: Array.isArray(topVentas)
-        ? topVentas.map((p) => ({
-            id: p.id,
-            title: p.name,
-            description: `Ventas: ${p.sales_count ?? 0}`,
-            url: `/product/${encodeURIComponent(p.name)}`,
-          }))
-        : [],
+      label: "Sin stock",
+      cantidad: products.filter((p) => p.stock === 0).length,
     },
     {
-      title: "Stock bajo (< 5)",
-      items: Array.isArray(products)
-        ? products
-            .filter((p) => p.stock > 0 && p.stock < 5)
-            .map((p) => ({
-              id: p.id,
-              title: p.name,
-              description: `Stock: ${p.stock}`,
-              url: `/product/${encodeURIComponent(p.name)}`,
-            }))
-        : [],
+      label: "Stock bajo (<5, no personalizables)",
+      cantidad: products.filter(
+        (p) => p.stock > 0 && p.stock < 5 && !p.personalizable
+      ).length,
     },
     {
-      title: "Sin stock",
-      items: Array.isArray(products)
-        ? products
-            .filter((p) => p.stock === 0)
-            .map((p) => ({
-              id: p.id,
-              title: p.name,
-              description: "Sin stock",
-              url: `/product/${encodeURIComponent(p.name)}`,
-            }))
-        : [],
+      label: "Activos",
+      cantidad: products.filter((p) => p.active).length,
+    },
+    {
+      label: "Top ventas",
+      cantidad: Array.isArray(topVentas) ? topVentas.length : 0,
     },
   ];
 
@@ -129,6 +111,53 @@ const AdminProductsTable = () => {
         <Heading>Productos</Heading>
         <ButtonPrimary onClick={onAddProduct}>Añadir producto</ButtonPrimary>
       </Inline>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+          gap: "24px",
+          padding: "24px 0",
+        }}
+      >
+        {featuredItems.map((item) => (
+          <div
+            key={item.label}
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "12px",
+              border: "1px solid var(--purple30)",
+              padding: "16px",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "100px",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "14px",
+                color: "#5e35b1",
+                marginBottom: "8px",
+                fontWeight: 500,
+                textTransform: "capitalize",
+              }}
+            >
+              {item.label}
+            </span>
+            <span
+              style={{
+                fontSize: "28px",
+                fontWeight: 700,
+                color: "#311b92",
+              }}
+            >
+              {item.cantidad}
+            </span>
+          </div>
+        ))}
+      </section>
       <Table
         items={products}
         onClick={onProductSelect}

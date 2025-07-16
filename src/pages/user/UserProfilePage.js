@@ -177,21 +177,22 @@ const UserProfilePage = () => {
 
         {success && <p className="success">{success}</p>}
         {error && <p className="error">{error}</p>}
-        <div style={{ marginTop: 16 }}>
-          {editMode ? (
-            <>
-              <ButtonPrimary type="submit">Guardar</ButtonPrimary>
-              <ButtonSecondary type="button" onClick={handleCancel}>
-                Cancelar
-              </ButtonSecondary>
-            </>
-          ) : (
-            <ButtonPrimary type="button" onClick={handleEdit}>
-              Editar
-            </ButtonPrimary>
-          )}
-        </div>
+        {editMode && (
+          <div style={{ marginTop: 16 }}>
+            <ButtonPrimary type="submit">Guardar</ButtonPrimary>
+            <ButtonSecondary type="button" onClick={handleCancel}>
+              Cancelar
+            </ButtonSecondary>
+          </div>
+        )}
       </form>
+      {!editMode && (
+        <div style={{ marginTop: 16 }}>
+          <ButtonPrimary type="button" onClick={handleEdit}>
+            Editar
+          </ButtonPrimary>
+        </div>
+      )}
     </div>
   );
 };

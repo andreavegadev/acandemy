@@ -6,8 +6,9 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import Input from "../../components/Input";
 import TextArea from "../../components/TextArea";
 import Heading from "../../components/Heading";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import Select from "../../components/Select";
+import { Checkbox } from "../../components/Checkbox";
 
 const EditCustomizationProductPage = () => {
   const navigate = useNavigate();
@@ -155,25 +156,24 @@ const EditCustomizationProductPage = () => {
             value={form.description}
             onChange={handleChange}
           />
-          <label>
-            <Input
-              type="checkbox"
-              name="active"
-              checked={form.active}
-              onChange={handleChange}
-            />
-            Activa
-          </label>
-          <ButtonPrimary type="submit">Guardar</ButtonPrimary>
-          <ButtonDanger
-            type="button"
-            style={{ marginLeft: 8, background: "#e53935" }}
-            onClick={handleDelete}
-          >
-            Eliminar
-          </ButtonDanger>
+          <Checkbox
+            label={"Activo"}
+            name="active"
+            checked={form.active}
+            onChange={handleChange}
+          ></Checkbox>
         </Stack>
       </form>
+      <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+        <ButtonPrimary type="submit">Guardar</ButtonPrimary>
+        <ButtonDanger
+          type="button"
+          style={{ marginLeft: 8, background: "#e53935" }}
+          onClick={handleDelete}
+        >
+          Eliminar
+        </ButtonDanger>
+      </div>
       {success && <p className="success">{success}</p>}
       {error && <p className="error">{error}</p>}
     </Stack>

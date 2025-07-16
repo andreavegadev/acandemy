@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
-import { ButtonPrimary } from "../../components/Button";
+import { ButtonDanger, ButtonPrimary } from "../../components/Button";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Input from "../../components/Input";
 import Heading from "../../components/Heading";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import TextArea from "../../components/TextArea";
 import Select from "../../components/Select";
+import { Checkbox } from "../../components/Checkbox";
 
 const EditDiscountPage = () => {
   const { id } = useParams();
@@ -95,150 +96,157 @@ const EditDiscountPage = () => {
   const handleEdit = () => {
     navigate(`/admin/discounts/${id}/edit`);
   };
+  const handleDelete = async () => {
+    setError("");
+    setSuccess("");
+    const { error } = await supabase.from("discounts").delete().eq("id", id);
+    if (error) {
+      setError("Error al eliminar el descuento: " + error.message);
+    } else {
+      setSuccess("Descuento eliminado correctamente.");
+      setTimeout(() => navigate("/admin/discounts"), 1200);
+    }
+  };
 
   return (
-      <Stack gap={24}>
-        {" "}
-        <Breadcrumbs
-          items={[
-            {
-              label: "Descuentos",
-              onClick: () => navigate("/admin/discounts"),
-            },
-            {
-              label: `Descuento`,
-              current: true,
-            },
-          ]}
-        ></Breadcrumbs>
-        <Heading>
-          {isViewMode ? "Detalle del descuento" : "Editar descuento"}
-        </Heading>
-        <form onSubmit={handleSubmit}>
-          <Stack gap={16}>
-            <Input
-              type="text"
-              name="code"
-              label="Código"
-              value={form.code}
-              onChange={handleChange}
-              required
-              disabled={isViewMode}
-            />
-            <TextArea
-              name="description"
-              label="Descripción"
-              value={form.description}
-              onChange={handleChange}
-              disabled={isViewMode}
-            />
-            <Select
-              name="type"
-              label="Tipo"
-              value={form.type}
-              onChange={handleChange}
-              disabled={isViewMode}
-              options={[
-                { value: "Percentage", label: "Porcentaje" },
-                { value: "Amount", label: "Importe fijo" },
-              ]}
-            />
-            {form.type === "Percentage" && (
-              <Input
-                type="number"
-                name="percentage"
-                label="Porcentaje (%)"
-                value={form.percentage}
-                onChange={handleChange}
-                min="1"
-                max="100"
-                required
-                disabled={isViewMode}
-              />
-            )}
-            {form.type === "Amount" && (
-              <Input
-                type="number"
-                name="amount"
-                label="Importe (€)"
-                value={form.amount}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                required
-                disabled={isViewMode}
-              />
-            )}
+    <Stack gap={24}>
+      {" "}
+      <Breadcrumbs
+        items={[
+          {
+            label: "Descuentos",
+            onClick: () => navigate("/admin/discounts"),
+          },
+          {
+            label: `Descuento`,
+            current: true,
+          },
+        ]}
+      ></Breadcrumbs>
+      <Heading>
+        {isViewMode ? "Detalle del descuento" : "Editar descuento"}
+      </Heading>
+      <form onSubmit={handleSubmit}>
+        <Stack gap={16}>
+          <Input
+            type="text"
+            name="code"
+            label="Código"
+            value={form.code}
+            onChange={handleChange}
+            required
+            readOnly={isViewMode}
+          />
+          <TextArea
+            name="description"
+            label="Descripción"
+            value={form.description}
+            onChange={handleChange}
+            readOnly={isViewMode}
+          />
+          <Select
+            name="type"
+            label="Tipo"
+            value={form.type}
+            onChange={handleChange}
+            readOnly={isViewMode}
+            options={[
+              { value: "Percentage", label: "Porcentaje" },
+              { value: "Amount", label: "Importe fijo" },
+            ]}
+          />
+          {form.type === "Percentage" && (
             <Input
               type="number"
-              name="min_order"
-              label="Pedido mínimo (€)"
-              value={form.min_order}
+              name="percentage"
+              label="Porcentaje (%)"
+              value={form.percentage}
+              onChange={handleChange}
+              min="1"
+              max="100"
+              required
+              readOnly={isViewMode}
+            />
+          )}
+          {form.type === "Amount" && (
+            <Input
+              type="number"
+              name="amount"
+              label="Importe (€)"
+              value={form.amount}
               onChange={handleChange}
               min="0"
               step="0.01"
-              disabled={isViewMode}
+              required
+              readOnly={isViewMode}
             />
-            <Input
-              type="number"
-              name="max_uses"
-              label="Máx. usos"
-              value={form.max_uses}
-              onChange={handleChange}
-              min="1"
-              disabled={isViewMode}
-            />
-            <Input
-              type="date"
-              name="start_date"
-              label="Válido desde"
-              value={form.start_date}
-              onChange={handleChange}
-              disabled={isViewMode}
-            />
-            <Input
-              type="date"
-              name="end_date"
-              label="Válido hasta"
-              value={form.end_date}
-              onChange={handleChange}
-              disabled={isViewMode}
-            />
-            <Input
-              type="text"
-              name="user_id"
-              label="ID usuario (opcional)"
-              value={form.user_id}
-              onChange={handleChange}
-              disabled={isViewMode}
-            />
-            <Input
-              label={"Activo"}
-              type="checkbox"
-              name="active"
-              checked={form.active}
-              onChange={handleChange}
-              disabled={isViewMode}
-            />
-            {!isViewMode && (
-              <ButtonPrimary type="submit">Guardar cambios</ButtonPrimary>
-            )}
-          </Stack>
-        </form>
-        {success && <p className="success">{success}</p>}
-        {error && <p className="error">{error}</p>}
-        <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
-          {isViewMode && id && (
-            <ButtonPrimary
-              onClick={handleEdit}
-              style={{ background: "#5e35b1" }}
-            >
-              Editar
-            </ButtonPrimary>
           )}
-        </div>
-      </Stack>
-
+          <Input
+            type="number"
+            name="min_order"
+            label="Pedido mínimo (€)"
+            value={form.min_order}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+            readOnly={isViewMode}
+          />
+          <Input
+            type="number"
+            name="max_uses"
+            label="Máx. usos"
+            value={form.max_uses}
+            onChange={handleChange}
+            min="1"
+            readOnly={isViewMode}
+          />
+          <Input
+            type="date"
+            name="start_date"
+            label="Válido desde"
+            value={form.start_date}
+            onChange={handleChange}
+            readOnly={isViewMode}
+          />
+          <Input
+            type="date"
+            name="end_date"
+            label="Válido hasta"
+            value={form.end_date}
+            onChange={handleChange}
+            readOnly={isViewMode}
+          />
+          <Input
+            type="text"
+            name="user_id"
+            label="ID usuario (opcional)"
+            value={form.user_id}
+            onChange={handleChange}
+            readOnly={isViewMode}
+          />
+          <Checkbox
+            label={"Activo"}
+            name="active"
+            checked={form.active}
+            onChange={handleChange}
+            readOnly={isViewMode}
+          />
+          {!isViewMode && (
+            <ButtonPrimary type="submit">Guardar cambios</ButtonPrimary>
+          )}
+        </Stack>
+      </form>
+      {success && <p className="success">{success}</p>}
+      {error && <p className="error">{error}</p>}
+      <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+        {isViewMode && id && (
+          <>
+            <ButtonPrimary onClick={handleEdit}>Editar</ButtonPrimary>
+            <ButtonDanger onClick={handleDelete}>Eliminar</ButtonDanger>
+          </>
+        )}
+      </div>
+    </Stack>
   );
 };
 
