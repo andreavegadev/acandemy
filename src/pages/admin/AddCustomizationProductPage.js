@@ -4,10 +4,11 @@ import { supabase } from "../../supabaseClient";
 import { ButtonPrimary } from "../../components/Button";
 import Heading from "../../components/Heading";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { Box, Stack } from "../../components/LayoutUtilities";
+import { Stack } from "../../components/LayoutUtilities";
 import Input from "../../components/Input";
 import TextArea from "../../components/TextArea";
 import Select from "../../components/Select";
+import { Checkbox } from "../../components/Checkbox";
 
 const AddCustomizationProductPage = () => {
   const navigate = useNavigate();
@@ -141,9 +142,9 @@ const AddCustomizationProductPage = () => {
             value={form.description}
             onChange={handleChange}
           />
-          <Input
+
+          <Checkbox
             label="Activo"
-            type="checkbox"
             name="active"
             checked={form.active}
             onChange={handleChange}

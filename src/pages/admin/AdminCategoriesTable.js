@@ -61,7 +61,7 @@ const AdminCategoriesTable = () => {
         onClick={onCategorySelect}
         filters={categoryFilters}
         addItems
-      ></Table>
+      />
       {loading && <p>Cargando...</p>}
       {!loading && categories.length === 0 && <p>Sin categorías</p>}
     </Stack>
